@@ -1,0 +1,19 @@
+{
+    "Module": "SpawnItems",
+    "MinRound": 2,
+    "Items": [
+        "File:Items/TestAk",
+        {
+            "Type": "Weapon",
+            "Name": "weapon_deagle",
+            "GiveType": "Replace"
+        },
+        {
+            "Type": "Weapon",
+            "Name": "weapon_hegrenade"
+        },
+        {
+            "Type": "DefuseKit"
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+{
+    "Module": "SpawnHealth",
+
+    "Health": 110,
+    "SetHealth": true,
+
+    "Armor": 50,
+    "MaxArmor": 100,
+    "SetArmor": false,
+    "Helmet": true
+}

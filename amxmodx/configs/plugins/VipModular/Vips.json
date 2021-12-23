@@ -1,0 +1,79 @@
+[
+    {
+        "Access": [
+            {
+                "Mode": "SteamId",
+                "SteamId": "STEAM_0:0:57040922"
+            },
+            {
+                "Mode": "Name",
+                "Name": "ArKaNeMaN"
+            }
+        ],
+        "Modules": [
+            {
+                "Module": "TestModule",
+                "Num": 2
+            },
+            {
+                "Module": "TestModule",
+                "Num": 4
+            },
+            "File:SpawnHealth/Test",
+            "File:Vampire/Test",
+            "File:SpawnItems/Test",
+            "File:VipInTab/Test",
+            "File:WeaponMenus/Test"
+        ]
+    },
+    {
+        "Access": {
+            "Mode": "Ip",
+            "Ip": "127.0.0.1"
+        },
+        "Modules": [
+            "File:SpawnHealth/Test",
+            "File:Vampire/Test"
+        ]
+    },
+    {
+        "Access": {
+            "Mode": "Flags",
+            "Flags": "t"
+        },
+        "Modules": [
+            {
+                "Module": "VipInTab",
+                "Enabled": true
+            },
+            {
+                "Module": "SpawnHealth",
+                
+                "Health": 110,
+                "SetHealth": true,
+
+                "Armor": 50,
+                "MaxArmor": 100,
+                "SetArmor": false,
+                "Helmet": true
+            },
+            {
+                "Module": "SpawnItems",
+                "MinRound": 2,
+                "Items": [
+                    {
+                        "Type": "Weapon",
+                        "Name": "weapon_deagle",
+                        "GiveType": "Replace"
+                    },
+                    {
+                        "Type": "Weapon",
+                        "Name": "weapon_hegrenade",
+                        "GiveType": "Replace"
+                    },
+                    {"Type": "DefuseKit"}
+                ]
+            }
+        ]
+    }
+]

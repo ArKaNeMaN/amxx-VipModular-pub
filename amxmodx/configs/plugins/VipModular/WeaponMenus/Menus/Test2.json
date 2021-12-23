@@ -1,0 +1,23 @@
+{
+    "Name": "Меню 2",
+    "Title": "\\r[\\yTest\\r] \\wМеню №2",
+    "MinRound": 2,
+
+    "Items": [
+        {
+            "Title": "Активный пункт 1",
+            "Item": "File:Items/TestAk"
+        },
+        {
+            "Title": "Просто текст 1"
+        },
+        {},
+        {
+            "Title": "Просто текст 2"
+        },
+        {
+            "Title": "Активный пункт 2",
+            "Item": "File:Items/TestAk"
+        }
+    ]
+}

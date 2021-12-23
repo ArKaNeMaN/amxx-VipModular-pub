@@ -1,0 +1,55 @@
+{
+    /* Название пункта в главном меню */
+    "Name": "Меню 1",
+    /* Заголовок меню */
+    "Title": "\\r[\\yTest\\r] \\wМеню №1",
+    /* С какого рандуа доступно это меню */
+    "MinRound": 1,
+
+    /* Список пугктов меню */
+    "Items": [
+        {
+            /* Название пункта */
+            "Title": "Калаш",
+            /* С какого рандуа доступен этот пункт */
+            "MinRound": 2,
+
+            /* Предмет, выдаваемый при выборе этого пункта */
+            "Item": "File:Items/TestAk"
+        },
+        {
+            "Title": "Все гранаты",
+            "MinRound": 3,
+
+            /* Список предметов, выдаваемых при выборе этого пункта */
+            "Items": [
+                {
+                    "Type": "Weapon",
+                    "Name": "weapon_hegrenade"
+                },
+                {
+                    "Type": "Weapon",
+                    "Name": "weapon_smokegrenade"
+                },
+                {
+                    "Type": "Weapon",
+                    "Name": "weapon_flashbang"
+                },
+                {
+                    "Type": "Weapon",
+                    "Name": "weapon_flashbang"
+                }
+            ]
+        },
+        {
+            "Title": "Обновить админов",
+            "MinRound": 0,
+
+            "Item": {
+                "Type": "Command",
+                "Command": "amx_reloadadmins",
+                "ByServer": true
+            }
+        }
+    ]
+}

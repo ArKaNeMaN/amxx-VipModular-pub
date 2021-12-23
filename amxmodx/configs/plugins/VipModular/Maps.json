@@ -1,0 +1,5 @@
+{
+    "_ALL": ["WeaponMenu", "SpawnItems", "SpawnHealth", "Vampire", "VipInTab"],
+    
+    "$2000$": ["VipInTab"]
+}

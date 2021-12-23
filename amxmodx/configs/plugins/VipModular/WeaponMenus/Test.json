@@ -1,0 +1,18 @@
+{
+    "Module": "WeaponMenu",
+
+    /* Заголовок главного меню. По умолчанию используется MENU_MAIN_TITLE из lang файла */
+    "MainMenuTitle": "Оружейки:",
+
+    /* Сколько предметов за раунд можно взять из всех доступных меню */
+    "Count": 2,
+
+    /* С какого раунда доступны меню */
+    "MinRound": 2,
+
+    /* Список доступных меню */
+    "Menus": [
+        "File:WeaponMenus/Menus/Test1",
+        "File:WeaponMenus/Menus/Test2"
+    ]
+}
