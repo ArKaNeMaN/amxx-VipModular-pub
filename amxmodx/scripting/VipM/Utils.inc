@@ -52,6 +52,7 @@ stock const __CMD_LANG_TEMPLATE_STR[] = "%s%d";
 #define GET_FILE_JSON_PATH(%1) \
     GET_FILE(fmt(__JSON_FILE_TEMPLATE_STR, %1))
 
+// TODO: Дописывать в корень жисона, для возможности указать файл при выводе ошибки
 #define GET_FILE_JSON(%1) \
     json_parse(GET_FILE_JSON_PATH(%1), true, true)
 

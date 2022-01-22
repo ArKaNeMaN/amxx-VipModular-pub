@@ -1,5 +1,6 @@
 #include amxmodx
 #include "VipM/ArrayMap"
+#include "VipM/Utils"
 
 enum T_Limit {Invalid_Limit = -1}
 
@@ -37,14 +38,15 @@ new ArrayMap(Limits);
     ArrayMapSetArray(Limits, %1[Limit_Name], %1)
 
 new const __CHECK_LIMIT_FOR_PLAYER_errmsg[] = "[ERROR] Limit `%s` must used for player.";
-#define CHECK_LIMIT_FOR_PLAYER(%1,%2,%3) \
+#define CHECK_LIMIT_FOR_PLAYER(%1,%2,%3) CompositeMacros( \
     if( \
         !IsUserIdValid(%2) \
         && %1[Limit_ForPlayer] \
     ){ \
         log_error(1, __CHECK_LIMIT_FOR_PLAYER_errmsg, %1[Limit_Name]); \
         return %3; \
-    }
+    } \
+)
 
 new const __CHECK_LIMIT_STATIC_errmsg[] = "[ERROR] Limit type `%s` isn`t static.";
 #define CHECK_LIMIT_STATIC(%1,%2) \
@@ -113,7 +115,7 @@ Limits_SetStaticValue(const sLimitName[], const bool:bValue, const UserId = 0){
     LIMIT_TYPE_GET(sLimitName, LimitType);
 
     CHECK_LIMIT_STATIC(LimitType, 0)
-    CHECK_LIMIT_FOR_PLAYER(LimitType, UserId, 0)
+    CHECK_LIMIT_FOR_PLAYER(LimitType, UserId, 0);
 
     if(LimitType[Limit_ForPlayer]){
         if(bValue)
@@ -132,7 +134,7 @@ bool:Limits_GetStaticValue(const sLimitName[], const UserId = 0){
     LIMIT_TYPE_GET(sLimitName, LimitType);
 
     CHECK_LIMIT_STATIC(LimitType, false)
-    CHECK_LIMIT_FOR_PLAYER(LimitType, UserId, false)
+    CHECK_LIMIT_FOR_PLAYER(LimitType, UserId, false);
 
     return LimitType[Limit_ForPlayer] 
         ? BitIs(LimitType[Limit_StaticValue], UserId) 
@@ -143,7 +145,7 @@ bool:Limits_Execute(const T_Limit:iLimitType, const Trie:Params = Invalid_Trie, 
     static LimitType[S_Limit];
     LIMIT_TYPE_GET_BY_ID(iLimitType, LimitType);
 
-    CHECK_LIMIT_FOR_PLAYER(LimitType, UserId, false)
+    CHECK_LIMIT_FOR_PLAYER(LimitType, UserId, false);
 
     if(LimitType[Limit_Static])
         return Limits_GetStaticValue(LimitType[Limit_Name], UserId);

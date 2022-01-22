@@ -17,6 +17,9 @@ new Array:ModuleUnits;
 #define ModuleUnits_Push(%1) \
     T_ModuleUnit:ArrayPushArray(ModuleUnits, %1)
 
+#define ModuleUnits_Get(%1,%2) \
+    ArrayGetArray(ModuleUnits, _:%1, %2)
+
 
 // Cache
 
@@ -73,17 +76,17 @@ ModuleUnits_AddListToUser(const UserId, const Array:aUnits){
     if(aUnits == Invalid_Array)
         return;
     
-    new Unit[S_ModuleUnit];
     for(new i = 0; i < ArraySize(aUnits); i++){
-        ArrayGetArray(aUnits, i, Unit);
-
-        ModuleUnits_AddToUser(UserId, Unit);
+        ModuleUnits_AddToUser(UserId, T_ModuleUnit:ArrayGetCell(aUnits, i));
     }
 }
 
-ModuleUnits_AddToUser(const UserId, const Unit[S_ModuleUnit]){
+ModuleUnits_AddToUser(const UserId, const T_ModuleUnit:iMUnit){
     if(gUserVip[UserId] == Invalid_Trie)
         gUserVip[UserId] = TrieCreate();
+
+    new Unit[S_ModuleUnit];
+    ModuleUnits_Get(iMUnit, Unit);
 
     new Module[S_Module];
     GET_MODULE_BY_ID(Unit[ModuleUnit_ModuleId], Module);
