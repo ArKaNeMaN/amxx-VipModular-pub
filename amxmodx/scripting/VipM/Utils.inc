@@ -52,12 +52,64 @@ stock const __CMD_LANG_TEMPLATE_STR[] = "%s%d";
 #define GET_FILE_JSON_PATH(%1) \
     GET_FILE(fmt(__JSON_FILE_TEMPLATE_STR, %1))
 
-// TODO: Дописывать в корень жисона, для возможности указать файл при выводе ошибки
 #define GET_FILE_JSON(%1) \
-    json_parse(GET_FILE_JSON_PATH(%1), true, true)
+    Json_ParseFromFileEx(GET_FILE_JSON_PATH(%1))
 
 #define JSON_FILE_EXTSTS(%1) \
     file_exists(GET_FILE_JSON_PATH(%1))
+
+
+stock const __JSON_WRAPPER_FIELD_FILE[] = "_file";
+stock const __JSON_WRAPPER_FIELD_VALUE[] = "_value";
+
+#define Json_IsWrapper(%1) \
+    ( \
+        %1 != Invalid_JSON \
+        && json_object_has_value(%1, __JSON_WRAPPER_FIELD_FILE, JSONString) \
+        && json_object_has_value(%1, __JSON_WRAPPER_FIELD_VALUE) \
+        && json_get_parent(%1) == Invalid_JSON \
+    )
+
+stock JSON:Json_ParseFromFileEx(const Path[]) {
+    new JSON:jFile = json_parse(Path, true, true);
+    new JSON:jWrapper = json_init_object();
+    json_object_set_string(jWrapper, __JSON_WRAPPER_FIELD_FILE, Path);
+    json_object_set_value(jWrapper, __JSON_WRAPPER_FIELD_VALUE, jFile);
+    return jFile;
+}
+
+stock JSON:Json_DeepFree(&JSON:jValue) {
+    new JSON:jParent;
+    while(jValue != Invalid_JSON) {
+        jParent = json_get_parent(jValue);
+        json_free(jValue);
+        jValue = jParent;
+    }
+    return jValue;
+}
+
+stock JSON:Json_GetRoot(const JSON:jValue) {
+    new JSON:jParent;
+    new JSON:jIterator = json_get_parent(jValue);
+    while(jIterator != Invalid_JSON) {
+        jParent = json_get_parent(jIterator);
+        if(jParent == Invalid_JSON) {
+            break;
+        }
+        json_free(jIterator);
+        jIterator = jParent;
+    }
+    return jIterator;
+}
+
+stock Json_GetFilePath(const JSON:jValue, Out[], const OutLen) {
+    new JSON:jRoot = Json_GetRoot(jValue);
+    if(!Json_IsWrapper(jRoot)) {
+        return formatex(Out, OutLen, "unknown_file");
+    }
+
+    return json_object_get_string(jRoot, __JSON_WRAPPER_FIELD_FILE, Out, OutLen);
+}
 
 stock Trie:__LangCmdsCache;
 stock RegisterClientCommandByLang(const Lang[], const Handler[]){
