@@ -50,7 +50,7 @@ forward VipM_IC_OnInitTypes();
  *
  * @return  Если вернёт VIPM_STOP, предмет не будет загружен.
  */
-forward VipM_FwdReturn:VipM_IC_OnReadItem(const JSON:jItem, Trie:Params);
+forward VipM_IC_OnReadItem(const JSON:jItem, Trie:Params);
 
 /**
  * Вызывается перед выдачей предмета игроку.
@@ -60,7 +60,7 @@ forward VipM_FwdReturn:VipM_IC_OnReadItem(const JSON:jItem, Trie:Params);
  *
  * @return  Если вернёт VIPM_STOP, предмет не будет выдан.
  */
-forward VipM_FwdReturn:VipM_IC_OnGiveItem(const UserId, const Trie:Params);
+forward VipM_IC_OnGiveItem(const UserId, const Trie:Params);
 
 /**
  * Регистрирует новый тип предмета.
