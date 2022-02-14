@@ -4,10 +4,6 @@
 #pragma semicolon 1
 #pragma compress 1
 
-#if !defined STANDALONE
-    #define STANDALONE 0
-#endif
-
 public stock const PluginName[] = "[VipM] Items Controller";
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = "https://arkanaplugins.ru/plugin/9";
@@ -24,12 +20,21 @@ public stock const PluginDescription[] = "Vip modular`s items controller";
 DefineArrayMap(Types); // S_ItemType
 new Array:Items;
 
-#if STANDALONE
-public plugin_precache()
-#else
-public VipM_OnInitModules()
-#endif
-{
+public plugin_precache() {
+    PluginInit();
+}
+
+public VipM_OnInitModules() {
+    PluginInit();
+}
+
+PluginInit() {
+    static bool:bIsInited;
+    if (bIsInited) {
+        return;
+    }
+    bIsInited = true;
+
     register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
     Fwds_Init();
     SrvCmds_Init();
