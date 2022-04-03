@@ -117,23 +117,26 @@ stock Array:VipM_IC_JsonGetItems(JSON:jItems){
     switch(json_get_type(jItems)){
         case JSONArray: {
             new cItems = json_array_get_count(jItems);
-            if(cItems < 1)
+            if (cItems < 1) {
                 return Invalid_Array;
+            }
 
             aItems = ArrayCreate(1, cItems);
             for(new i = 0; i < cItems; i++){
                 new JSON:jItem = json_array_get_value(jItems, i);
                 new VipM_IC_T_Item:ItemId = VipM_IC_JsonGetItem(jItem);
-                if(ItemId != VipM_IC_Invalid_Item)
+                if (ItemId != VipM_IC_Invalid_Item) {
                     ArrayPushCell(aItems, ItemId);
+                }
             }
             json_free(jItems);
         }
 
         case JSONObject, JSONString: {
             new VipM_IC_T_Item:ItemId = VipM_IC_JsonGetItem(jItems);
-            if(ItemId == VipM_IC_Invalid_Item)
+            if (ItemId == VipM_IC_Invalid_Item) {
                 return Invalid_Array;
+            }
 
             aItems = ArrayCreate(1, 1);
             ArrayPushCell(aItems, ItemId);
@@ -143,11 +146,13 @@ stock Array:VipM_IC_JsonGetItems(JSON:jItems){
 }
 
 stock bool:VipM_IC_GiveItems(const UserId, const Array:aItems){
-    if(aItems == Invalid_Array)
+    if (aItems == Invalid_Array) {
         return false;
+    }
 
-    for(new i = 0; i < ArraySize(aItems); i++)
+    for (new i = 0; i < ArraySize(aItems); i++) {
         VipM_IC_GiveItem(UserId, VipM_IC_T_Item:ArrayGetCell(aItems, i));
+    }
 
     return true;
 }
