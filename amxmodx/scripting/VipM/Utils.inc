@@ -80,7 +80,7 @@ stock JSON:Json_ParseFromFileEx(const Path[]) {
 
 stock JSON:Json_DeepFree(&JSON:jValue) {
     new JSON:jParent;
-    while(jValue != Invalid_JSON) {
+    while (jValue != Invalid_JSON) {
         jParent = json_get_parent(jValue);
         json_free(jValue);
         jValue = jParent;
@@ -91,9 +91,9 @@ stock JSON:Json_DeepFree(&JSON:jValue) {
 stock JSON:Json_GetRoot(const JSON:jValue) {
     new JSON:jParent;
     new JSON:jIterator = json_get_parent(jValue);
-    while(jIterator != Invalid_JSON) {
+    while (jIterator != Invalid_JSON) {
         jParent = json_get_parent(jIterator);
-        if(jParent == Invalid_JSON) {
+        if (jParent == Invalid_JSON) {
             break;
         }
         json_free(jIterator);
@@ -111,64 +111,14 @@ stock Json_GetFilePath(const JSON:jValue, Out[], const OutLen) {
     return json_object_get_string(jRoot, __JSON_WRAPPER_FIELD_FILE, Out, OutLen);
 }
 
-stock Trie:__LangCmdsCache;
-stock RegisterClientCommandByLang(const Lang[], const Handler[]){
-    TrieCreateIfNotCreated(__LangCmdsCache);
-
-    new Cmd[32];
-    new i = 1;
-    new langId = LANG_SERVER;
-    for(;;){
-        if(
-            _:GetLangTransKey(fmt(__CMD_LANG_TEMPLATE_STR, Lang, i)) == -1
-            || !LookupLangKey(Cmd, charsmax(Cmd), fmt(__CMD_LANG_TEMPLATE_STR, Lang, i), langId)
-        ) break;
-
-        register_clcmd(Cmd, Handler);
-
-        if(i == 1)
-            TrieSetString(__LangCmdsCache, Lang, Cmd, false);
-
-        i++;
-    }
-}
-
-stock bool:ClientCmdByLang(const UserId, const Lang[], const fmtParams[] = NULL_STRING, const any:...){
-    static Cmd[128];
-    if(!GetClientCmdByLang(Cmd, charsmax(Cmd), Lang))
-        return false;
-
-    if(fmtParams[0]){
-        static Params[256];
-        vformat(Params, charsmax(Params), fmtParams, 4);
-        add(Cmd, charsmax(Cmd), " ");
-        add(Cmd, charsmax(Cmd), Params);
-    }
-    client_cmd(UserId, Cmd);
-
-    return true;
-}
-
-stock bool:GetClientCmdByLang(Out[], const Len, const Lang[]){
-    if(TrieGetString(__LangCmdsCache, Lang, Out, Len))
-        return true;
-
-    new langId = LANG_SERVER;
-    if(
-        _:GetLangTransKey(fmt(__CMD_LANG_TEMPLATE_STR, Lang, 1)) == -1
-        || !LookupLangKey(Out, Len, fmt(__CMD_LANG_TEMPLATE_STR, Lang, 1), langId)
-    ) return false;
-
-    return true;
-}
-
 stock __CMD_NULL_ARG = 0;
-stock CMD_INIT_PARAMS(){
+stock CMD_INIT_PARAMS() {
     __CMD_NULL_ARG = 0;
     static Cmd[32];
     read_argv(__CMD_NULL_ARG, Cmd, charsmax(Cmd));
-    if(equali(Cmd, "say", 3))
+    if (equali(Cmd, "say", 3)) {
         __CMD_NULL_ARG++;
+    }
 }
 
 #define CMD_ARG(%1) \
@@ -179,7 +129,7 @@ stock CMD_INIT_PARAMS(){
 
 stock static const JSON_FILE_VALUE_PREFIX[] = "File:";
 stock __JSON_LAST_FILE_OBJECT[PLATFORM_MAX_PATH];
-stock JSON:JSON_GET_FILE_OR_OBJECT(JSON:Value){
+stock JSON:JSON_GET_FILE_OR_OBJECT(JSON:Value) {
     __JSON_LAST_FILE_OBJECT[0] = 0;
 
     if(!json_is_string(Value))
@@ -210,17 +160,20 @@ stock JSON:JSON_GET_FILE_OR_OBJECT(JSON:Value){
 #define SaveLastJsonObjectFile(%1) \
     new %1[PLATFORM_MAX_PATH];copy(%1, charsmax(%1), GetLastJsonObjectFile())
 
-stock bool:Json_IsRef(const JSON:jValue, FileName[] = NULL_STRING, const Len = 0){
-    if(!json_is_string(jValue))
+stock bool:Json_IsRef(const JSON:jValue, FileName[] = NULL_STRING, const Len = 0) {
+    if (!json_is_string(jValue)) {
         return false;
+    }
 
     new Str[128];
     json_get_string(jValue, Str, charsmax(Str));
-    if(!equali(JSON_FILE_VALUE_PREFIX, Str, charsmax(JSON_FILE_VALUE_PREFIX)))
+    if (!equali(JSON_FILE_VALUE_PREFIX, Str, charsmax(JSON_FILE_VALUE_PREFIX))) {
         return false;
+    }
 
-    if(Len > 0)
+    if (Len > 0) {
         copy(FileName, Len, Str[charsmax(JSON_FILE_VALUE_PREFIX)]);
+    }
     
     return true;
 }

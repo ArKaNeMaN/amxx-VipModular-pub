@@ -1,0 +1,24 @@
+{
+    "vipmenu": [
+        "vm",
+        "say /vm",
+        "say_team /vm",
+
+        "vipmenu",
+        "say /vipmenu",
+        "say_team /vipmenu"
+    ],
+    "vipmenu_autoopen": [
+        "vm_autoopen",
+        "say /vm_autoopen",
+        "say_team /vm_autoopen",
+        
+        "vm_ao",
+        "say /vm_ao",
+        "say_team /vm_ao",
+        
+        "vipmenu_autoopen",
+        "say /vipmenu_autoopen",
+        "say_team /vipmenu_autoopen"
+    ]
+}

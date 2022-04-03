@@ -31,7 +31,7 @@ public stock const PluginURL[] = "https://arkanaplugins.ru/plugin/9";
 
 // _:GetRound()
 #define GetRound() \
-    get_member_game(m_iTotalRoundsPlayed)+1
+    get_member_game(m_iTotalRoundsPlayed) + 1
 
 new g_sSteamIds[MAX_PLAYERS + 1][64];
 new g_sIps[MAX_PLAYERS + 1][32];
@@ -42,6 +42,8 @@ public VipM_OnInitModules(){
 
     VipM_Limits_RegisterType("ForAll", false, true);
     VipM_Limits_SetStaticValue("ForAll", true);
+    VipM_Limits_RegisterType("Always", false, true);
+    VipM_Limits_SetStaticValue("Always", true);
 
     VipM_Limits_RegisterType("Never", false, true);
     VipM_Limits_SetStaticValue("Never", false);
@@ -141,9 +143,9 @@ public client_authorized(UserId, const AuthId[]){
     VipM_Params_GetStr(Params, "Map", sMap, charsmax(sMap));
     bReal = VipM_Params_GetBool(Params, "Real", false);
 
-    if(bReal)
+    if (bReal) {
         return equali(sMap, g_sRealMapName);
-    else {
+    } else {
         static sSetMapName[32];
         rh_get_mapname(sSetMapName, charsmax(sSetMapName), MNT_SET);
         return equali(sMap, sSetMapName);

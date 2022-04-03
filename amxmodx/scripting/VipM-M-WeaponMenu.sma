@@ -12,11 +12,12 @@ public stock const PluginDescription[] = "Vip modular`s module - Weapon Menu";
 
 new const MODULE_NAME[] = "WeaponMenu";
 
-new const CMD_LANG_WEAPON_MENU[] = "CMD_OPEN_WEAPON_MENU_";
-new const CMD_LANG_AUTOOPEN[] = "CMD_SWITCH_AUTOOPEN_";
+new const CMD_WEAPON_MENU_OPEN[] = "vipmenu";
+new const CMD_SWITCH_AUTOOPEN[] = "vipmenu_autoopen";
 
 #include "VipM/ArrayTrieUtils"
 #include "VipM/Utils"
+#include "VipM/CommandAliases"
 
 new gUserLeftItems[MAX_PLAYERS + 1] = {0, ...};
 new bool:gUserAutoOpen[MAX_PLAYERS + 1] = {true, ...};
@@ -25,7 +26,7 @@ new bool:gUserAutoOpen[MAX_PLAYERS + 1] = {true, ...};
 #include "VipM/WeaponMenu/Configs"
 #include "VipM/WeaponMenu/Menus"
 
-public VipM_OnInitModules(){
+public VipM_OnInitModules() {
     register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
     register_dictionary("VipM-WeaponMenu.ini");
 
@@ -41,8 +42,8 @@ public VipM_OnInitModules(){
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnRead, "@OnReadConfig");
 }
 
-@OnReadConfig(const JSON:jCfg, Trie:Params){
-    if(!json_object_has_value(jCfg, "Menus", JSONArray)){
+@OnReadConfig(const JSON:jCfg, Trie:Params) {
+    if (!json_object_has_value(jCfg, "Menus", JSONArray)) {
         log_amx("[WARNING] Param `Menus` required for module `%s`.", MODULE_NAME);
         return VIPM_STOP;
     }
@@ -51,53 +52,63 @@ public VipM_OnInitModules(){
     new Array:aMenus = Cfg_ReadMenus(jMenus);
     TrieSetCell(Params, "Menus", aMenus);
 
-    if(!TrieKeyExists(Params, "MainMenuTitle"))
+    if (!TrieKeyExists(Params, "MainMenuTitle")) {
         TrieSetString(Params, "MainMenuTitle", Lang("MENU_MAIN_TITLE"));
+    }
 
     return VIPM_CONTINUE;
 }
 
-@OnModuleActivate(){
+@OnModuleActivate() {
     RegisterHookChain(RG_CBasePlayer_Spawn, "@OnPlayerSpawn", true);
-
-    RegisterClientCommandByLang(CMD_LANG_WEAPON_MENU, "@Cmd_OpenMenu");
-    RegisterClientCommandByLang(CMD_LANG_AUTOOPEN, "@Cmd_SwitchAutoOpen");
+    
+    CommandAliases_Open(GET_FILE_JSON_PATH("Cmds/WeaponMenu"), true);
+    CommandAliases_RegisterClient(CMD_WEAPON_MENU_OPEN, "@Cmd_OpenMenu");
+    CommandAliases_RegisterClient(CMD_SWITCH_AUTOOPEN, "@Cmd_SwitchAutoOpen");
+    CommandAliases_Close();
 }
 
-@OnPlayerSpawn(const UserId){
-    if(!IsUserValidA(UserId))
+@OnPlayerSpawn(const UserId) {
+    if (!IsUserValidA(UserId)) {
         return;
+    }
 
     new Trie:Params = VipM_Modules_GetParams(MODULE_NAME, UserId);
     gUserLeftItems[UserId] = VipM_Params_GetInt(Params, "Count", 0);
 
-    if(!gUserAutoOpen[UserId])
+    if (!gUserAutoOpen[UserId]) {
         return;
+    }
 
-    if(VipM_Params_GetArr(Params, "Menus") == Invalid_Array)
+    if (VipM_Params_GetArr(Params, "Menus") == Invalid_Array) {
         return;
+    }
 
-    if(GetRound() < VipM_Params_GetInt(Params, "MinRound", 0))
+    if (GetRound() < VipM_Params_GetInt(Params, "MinRound", 0)) {
         return;
+    }
 
-    if(
+    if (
         VipM_Params_GetBool(Params, "CheckPrimaryWeapon", false)
         && get_member(UserId, m_bHasPrimary)
-    ) return;
+    ) {
+        return;
+    }
 
-    ClientCmdByLang(UserId, CMD_LANG_WEAPON_MENU, "");
+    CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU_OPEN);
 }
 
-@Cmd_SwitchAutoOpen(const UserId){
+@Cmd_SwitchAutoOpen(const UserId) {
     gUserAutoOpen[UserId] = !gUserAutoOpen[UserId];
     ChatPrintL(UserId, gUserAutoOpen[UserId] ? "MSG_AUTOOPEN_TURNED_ON" : "MSG_AUTOOPEN_TURNED_OFF");
 }
 
-@Cmd_OpenMenu(const UserId){
-    if(!IsUserValid(UserId))
+@Cmd_OpenMenu(const UserId) {
+    if (!IsUserValid(UserId)) {
         return;
+    }
 
-    if(!is_user_alive(UserId)){
+    if (!is_user_alive(UserId)) {
         ChatPrintL(UserId, "MSG_YOU_DEAD");
         return;
     }
@@ -105,25 +116,24 @@ public VipM_OnInitModules(){
     new Trie:Params = VipM_Modules_GetParams(MODULE_NAME, UserId);
     new Array:aMenus = VipM_Params_GetArr(Params, "Menus");
 
-    if(ArraySizeSafe(aMenus) < 1){
+    if (ArraySizeSafe(aMenus) < 1) {
         ChatPrintL(UserId, "MSG_NO_ACCESS");
         return;
     }
 
     new MinRound = VipM_Params_GetInt(Params, "MinRound", 0);
-    // log_amx("[DEBUG] @Cmd_OpenMenu: MinRound = %d", MinRound);
-    // log_amx("[DEBUG] @Cmd_OpenMenu: GetRound() = %d", GetRound());
-    if(GetRound() < MinRound){
+    
+    if (GetRound() < MinRound) {
         ChatPrintL(UserId, "MSG_MAIN_MIN_ROUND", MinRound);
         return;
     }
 
     CMD_INIT_PARAMS();
 
-    if(CMD_ARG_NUM() < 1){
-        if(ArraySizeSafe(aMenus) == 1)
-            ClientCmdByLang(UserId, CMD_LANG_WEAPON_MENU, "0");
-        else{
+    if (CMD_ARG_NUM() < 1) {
+        if (ArraySizeSafe(aMenus) == 1) {
+            CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU_OPEN, "0");
+        } else {
             static MainMenuTitle[128];
             VipM_Params_GetStr(Params, "MainMenuTitle", MainMenuTitle, charsmax(MainMenuTitle));
             Menu_MainMenu(UserId, MainMenuTitle, aMenus);
@@ -132,43 +142,48 @@ public VipM_OnInitModules(){
     }
 
     new MenuId = read_argv_int(CMD_ARG(1));
-    if(
+    if (
         ArraySizeSafe(aMenus) <= MenuId
         || MenuId < 0
-    ) return;
+    ) {
+        return;
+    }
 
     static Menu[S_WeaponMenu];
     ArrayGetArray(aMenus, MenuId, Menu);
 
-    if(GetRound() < Menu[WeaponMenu_MinRound]){
+    if (GetRound() < Menu[WeaponMenu_MinRound]) {
         ChatPrintL(UserId, "MSG_MENU_MIN_ROUND", Menu[WeaponMenu_MinRound]);
         return;
     }
     
-    if(CMD_ARG_NUM() < 2){
+    if (CMD_ARG_NUM() < 2) {
         Menu_WeaponsMenu(UserId, MenuId, Menu);
         return;
     }
 
     new ItemId = read_argv_int(CMD_ARG(2));
-    if(
+    if (
         ArraySizeSafe(Menu[WeaponMenu_Items]) <= ItemId
         || ItemId < 0
-    ) return;
+    ) {
+        return;
+    }
 
     static MenuItem[S_MenuItem];
     ArrayGetArray(Menu[WeaponMenu_Items], ItemId, MenuItem);
 
-    if(gUserLeftItems[UserId] < 1){
+    if (gUserLeftItems[UserId] < 1) {
         ChatPrintL(UserId, "MSG_NO_LEFT_ITEMS");
         return;
     }
 
-    if(GetRound() < MenuItem[MenuItem_MinRound]){
+    if (GetRound() < MenuItem[MenuItem_MinRound]) {
         ChatPrintL(UserId, "MSG_MENUITEM_MIN_ROUND", MenuItem[MenuItem_MinRound]);
         return;
     }
     
-    if(VipM_IC_GiveItems(UserId, MenuItem[MenuItem_Items]))
+    if (VipM_IC_GiveItems(UserId, MenuItem[MenuItem_Items])) {
         gUserLeftItems[UserId]--;
+    }
 }
