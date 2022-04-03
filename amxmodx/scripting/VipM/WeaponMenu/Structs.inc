@@ -3,7 +3,7 @@ enum _:S_WeaponMenu{
     WeaponMenu_Name[64],
     WeaponMenu_Title[128],
     Array:WeaponMenu_Items,
-    WeaponMenu_MinRound,
+    Array:WeaponMenu_Limits,
 }
 
 enum MenuItemType{
@@ -15,7 +15,7 @@ enum MenuItemType{
 enum _:S_MenuItem{
     MenuItem_Title[64],
     Array:MenuItem_Items,
-    MenuItem_MinRound,
+    Array:MenuItem_Limits,
     
     MenuItemType:MenuItem_Type,
 }

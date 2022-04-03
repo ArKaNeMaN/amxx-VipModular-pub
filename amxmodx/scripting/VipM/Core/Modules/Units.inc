@@ -153,10 +153,11 @@ bool:ModuleUnits_ReadFromJson(const JSON:jMUnit, sMUnit[S_ModuleUnit]){
 // Loaders
 
 T_ModuleUnit:ModuleUnits_LoadFromFile(const FileName[]){
-    if(ModuleUnits_CacheExists(FileName))
+    if (ModuleUnits_CacheExists(FileName)) {
         return ModuleUnits_GetFromCache(FileName);
+    }
     
-    if(!JSON_FILE_EXTSTS(FileName)){
+    if (!JSON_FILE_EXTSTS(FileName)) {
         log_amx("[WARNING] File `%s` not found.", FileName);
         return Invalid_ModuleUnit;
     }
@@ -169,13 +170,19 @@ T_ModuleUnit:ModuleUnits_LoadFromFile(const FileName[]){
 }
 
 T_ModuleUnit:ModuleUnits_LoadFromJson(const JSON:jModuleUnit){
+    if (jModuleUnit == Invalid_JSON) {
+        return Invalid_ModuleUnit;
+    }
+
     new Ref[128];
-    if(Json_IsRef(jModuleUnit, Ref, charsmax(Ref)))
+    if (Json_IsRef(jModuleUnit, Ref, charsmax(Ref))) {
         return ModuleUnits_LoadFromFile(Ref);
+    }
 
     new sModuleUnit[S_ModuleUnit];
-    if(ModuleUnits_ReadFromJson(jModuleUnit, sModuleUnit))
+    if (ModuleUnits_ReadFromJson(jModuleUnit, sModuleUnit)) {
         return ModuleUnits_Push(sModuleUnit);
+    }
     
     return Invalid_ModuleUnit;
 }
@@ -184,16 +191,17 @@ Array:ModuleUnits_LoadListFromJson(const JSON:jModules, Array:aModules = Invalid
     new T_ModuleUnit:iMUnit;
     ArrayCreateIfNotCreated(aModules, 1, json_get_count(jModules));
 
-    if(!json_is_array(jModules)){
+    if (!json_is_array(jModules)) {
         iMUnit = ModuleUnits_LoadFromJson(jModules);
-        if(iMUnit != Invalid_ModuleUnit)
-            ArrayPushCell(aModules, iMUnit);
-    }
-    else {
-        json_array_foreach_value(jModules: i => jModule){
+        if (iMUnit != Invalid_ModuleUnit) {
+            ArrayPushCell(aModules, iMUnit);    
+        }
+    } else {
+        json_array_foreach_value(jModules: i => jModule) {
             iMUnit = ModuleUnits_LoadFromJson(jModule);
-            if(iMUnit != Invalid_ModuleUnit)
+            if (iMUnit != Invalid_ModuleUnit) {
                 ArrayPushCell(aModules, iMUnit);
+            }
         }
     }
 

@@ -33,10 +33,12 @@ public VipM_OnInitModules() {
     VipM_Modules_Register(MODULE_NAME, true);
     VipM_Modules_AddParams(MODULE_NAME,
         "MainMenuTitle", ptString, false,
-        // "Menus", ptCustom, true,
-        "MinRound", ptInteger, false,
-        "Count", ptInteger, false,
-        "CheckPrimaryWeapon", ptBoolean, false
+        "Menus", ptCustom, true,
+        "Count", ptInteger, false
+    );
+    VipM_Modules_AddParams(MODULE_NAME,
+        "Limits", ptLimits, false,
+        "AutoopenLimits", ptLimits, false
     );
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnActivated, "@OnModuleActivate");
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnRead, "@OnReadConfig");
@@ -84,14 +86,7 @@ public VipM_OnInitModules() {
         return;
     }
 
-    if (GetRound() < VipM_Params_GetInt(Params, "MinRound", 0)) {
-        return;
-    }
-
-    if (
-        VipM_Params_GetBool(Params, "CheckPrimaryWeapon", false)
-        && get_member(UserId, m_bHasPrimary)
-    ) {
+    if (!VipM_Limits_ExecuteList(VipM_Params_GetCell(Params, "AutoopenLimits", Invalid_Array), UserId)) {
         return;
     }
 
@@ -120,11 +115,9 @@ public VipM_OnInitModules() {
         ChatPrintL(UserId, "MSG_NO_ACCESS");
         return;
     }
-
-    new MinRound = VipM_Params_GetInt(Params, "MinRound", 0);
     
-    if (GetRound() < MinRound) {
-        ChatPrintL(UserId, "MSG_MAIN_MIN_ROUND", MinRound);
+    if (!VipM_Limits_ExecuteList(VipM_Params_GetCell(Params, "Limits", Invalid_Array), UserId)) {
+        ChatPrintL(UserId, "MSG_MAIN_NOT_PASSED_LIMIT");
         return;
     }
 
@@ -152,8 +145,8 @@ public VipM_OnInitModules() {
     static Menu[S_WeaponMenu];
     ArrayGetArray(aMenus, MenuId, Menu);
 
-    if (GetRound() < Menu[WeaponMenu_MinRound]) {
-        ChatPrintL(UserId, "MSG_MENU_MIN_ROUND", Menu[WeaponMenu_MinRound]);
+    if (!VipM_Limits_ExecuteList(Menu[WeaponMenu_Limits], UserId)) {
+        ChatPrintL(UserId, "MSG_MENU_NOT_PASSED_LIMIT");
         return;
     }
     
@@ -178,8 +171,8 @@ public VipM_OnInitModules() {
         return;
     }
 
-    if (GetRound() < MenuItem[MenuItem_MinRound]) {
-        ChatPrintL(UserId, "MSG_MENUITEM_MIN_ROUND", MenuItem[MenuItem_MinRound]);
+    if (!VipM_Limits_ExecuteList(MenuItem[MenuItem_Limits], UserId)) {
+        ChatPrintL(UserId, "MSG_MENUITEM_NOT_PASSED_LIMIT");
         return;
     }
     

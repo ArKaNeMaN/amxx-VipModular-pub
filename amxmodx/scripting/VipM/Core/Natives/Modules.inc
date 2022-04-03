@@ -1,4 +1,5 @@
 #include <amxmodx>
+#include "VipM/DebugMode"
 
 Natives_Modules_Init(){
     RegisterNative("Modules_Register");
@@ -25,18 +26,24 @@ Natives_Modules_Init(){
 }
 
 @_Modules_AddParams(const PluginId, const ParamsCount){
-    enum {Arg_Module = 1}
+    enum {Arg_Module = 1, Arg_Params}
     
     new ModuleName[32], Module[S_Module];
     get_string(Arg_Module, ModuleName, charsmax(ModuleName));
 
     NATIVE_CHECK_MODULE(ModuleName)
     GET_MODULE(ModuleName, Module);
+    new bool:bSave = (Module[Module_Params] == Invalid_Array);
+
+    Dbg_PrintServer("Module_AddParams(%s): bSave = %s", ModuleName, bSave ? "+" : "-");
     
-    // ArrayDestroy(Module[Module_Params]);
-    Module[Module_Params] = Native_GetParamsList(Arg_Module, ParamsCount, Module[Module_Params]);
+    Module[Module_Params] = Native_GetParamsList(Arg_Params - 1, ParamsCount, Module[Module_Params]);
     
-    SET_MODULE(Module);
+    Dbg_PrintServer(":---");
+    
+    if (bSave) {
+        SET_MODULE(Module);
+    }
 }
 
 bool:@_Modules_RegisterEvent(const PluginId){

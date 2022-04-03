@@ -44,7 +44,7 @@ bool:Cfg_ReadMenu(&JSON:jMenu, Menu[S_WeaponMenu]){
 
     json_object_get_string(jMenu, "Name", Menu[WeaponMenu_Name], charsmax(Menu[WeaponMenu_Name]));
     json_object_get_string(jMenu, "Title", Menu[WeaponMenu_Title], charsmax(Menu[WeaponMenu_Title]));
-    Menu[WeaponMenu_MinRound] = json_object_get_number(jMenu, "MinRound");
+    Menu[WeaponMenu_Limits] = VipM_Limits_ReadListFromJson(json_object_get_value(jMenu, "Limits"));
 
     new JSON:jMenuItems = JsonObjectGetItemsValue(jMenu);
     Menu[WeaponMenu_Items] = Cfg_ReadMenuItems(jMenuItems);
@@ -91,28 +91,28 @@ Array:Cfg_ReadMenuItems(&JSON:jMenuItems){
 }
 
 bool:Cfg_ReadMenuItem(&JSON:jMenuItem, MenuItem[S_MenuItem]){
-    if(!json_is_object(jMenuItem)){
+    if (!json_is_object(jMenuItem)) {
         log_amx("[WARNING] Invalid weapon menu item format.");
         return false;
     }
 
-    if(!json_object_get_string(jMenuItem, "Title", MenuItem[MenuItem_Title], charsmax(MenuItem[MenuItem_Title]))){
+    if (!json_object_get_string(jMenuItem, "Title", MenuItem[MenuItem_Title], charsmax(MenuItem[MenuItem_Title]))) {
         MenuItem[MenuItem_Type] = MenuItemType_Blank;
         return true;
     }
 
     new JSON:jItems = JsonObjectGetItemsValue(jMenuItem);
-    if(jItems == Invalid_JSON){
+    if (jItems == Invalid_JSON) {
         MenuItem[MenuItem_Type] = MenuItemType_Text;
         return true;
     }
     
     MenuItem[MenuItem_Type] = MenuItemType_Default;
-    MenuItem[MenuItem_MinRound] = json_object_get_number(jMenuItem, "MinRound");
+    MenuItem[MenuItem_Limits] = VipM_Limits_ReadListFromJson(json_object_get_value(jMenuItem, "Limits"));
     json_free(jMenuItem);
 
     MenuItem[MenuItem_Items] = VipM_IC_JsonGetItems(jItems);
-    if(MenuItem[MenuItem_Items] == Invalid_Array){
+    if (MenuItem[MenuItem_Items] == Invalid_Array) {
         log_amx("[WARNING] Invalid weapon menu item format. Empty items list.");
         return false;
     }
@@ -121,9 +121,11 @@ bool:Cfg_ReadMenuItem(&JSON:jMenuItem, MenuItem[S_MenuItem]){
 }
 
 JSON:JsonObjectGetItemsValue(const JSON:jObj){
-    if(json_object_has_value(jObj, "Items"))
+    if (json_object_has_value(jObj, "Items")) {
         return json_object_get_value(jObj, "Items");    
-    else if(json_object_has_value(jObj, "Item"))
+    } else if (json_object_has_value(jObj, "Item")) {
         return json_object_get_value(jObj, "Item");
-    else return Invalid_JSON;
+    } else {
+        return Invalid_JSON;
+    }
 }
