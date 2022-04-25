@@ -117,12 +117,15 @@ Limits_SetStaticValue(const sLimitName[], const bool:bValue, const UserId = 0){
     CHECK_LIMIT_STATIC(LimitType, 0)
     CHECK_LIMIT_FOR_PLAYER(LimitType, UserId, 0);
 
-    if(LimitType[Limit_ForPlayer]){
-        if(bValue)
+    if (LimitType[Limit_ForPlayer]) {
+        if (bValue) {
             BitSet(LimitType[Limit_StaticValue], UserId);
-        else BitReset(LimitType[Limit_StaticValue], UserId);
+        } else {
+            BitReset(LimitType[Limit_StaticValue], UserId);
+        }
+    } else {
+        LimitType[Limit_StaticValue] = _:bValue;
     }
-    else LimitType[Limit_StaticValue] = _:bValue;
     
     SET_LIMIT_TYPE(LimitType);
 
@@ -147,8 +150,9 @@ bool:Limits_Execute(const T_Limit:iLimitType, const Trie:Params = Invalid_Trie, 
 
     CHECK_LIMIT_FOR_PLAYER(LimitType, UserId, false);
 
-    if(LimitType[Limit_Static])
+    if (LimitType[Limit_Static]) {
         return Limits_GetStaticValue(LimitType[Limit_Name], UserId);
+    }
 
     new bool:ret;
     EMIT_LIMIT_TYPE_EVENT(LimitType, Limit_OnCheck, ret, Params, UserId)

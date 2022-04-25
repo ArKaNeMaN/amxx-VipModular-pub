@@ -93,7 +93,6 @@ forward VipM_OnUserUpdated(const UserId);
 native VipM_UserUpdate(const UserId);
 
 #include <VipM/Modules>
-#include <VipM/AccessModes>
 #include <VipM/Limits>
 #include <VipM/ItemsController>
 #include <VipM/Params>

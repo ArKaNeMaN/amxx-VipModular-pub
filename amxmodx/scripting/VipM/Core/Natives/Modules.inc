@@ -61,7 +61,7 @@ bool:@_Modules_RegisterEvent(const PluginId){
     get_string(Arg_Func, FuncName, charsmax(FuncName));
 
     new FwdId = -1;
-    switch(Event){
+    switch (Event) {
         case Module_OnRead: // (const JSON:jCfg, Trie:Params)
             FwdId = CreateOneForward(PluginId, FuncName, FP_CELL, FP_CELL);
 
@@ -72,8 +72,9 @@ bool:@_Modules_RegisterEvent(const PluginId){
             FwdId = CreateOneForward(PluginId, FuncName, FP_CELL, FP_CELL);
     }
 
-    if(FwdId < 0)
+    if (FwdId < 0) {
         return false;
+    }
 
     SET_MODULE_EVENT(Module, Event, FwdId);
     SET_MODULE(Module);
@@ -84,7 +85,7 @@ bool:@_Modules_RegisterEvent(const PluginId){
 @_Modules_IsActive(){
     enum {Arg_Module = 1}
     
-    new ModuleName[32], Module[S_Module];
+    static ModuleName[32], Module[S_Module];
     get_string(Arg_Module, ModuleName, charsmax(ModuleName));
 
     NATIVE_CHECK_MODULE(ModuleName)
@@ -96,18 +97,20 @@ bool:@_Modules_RegisterEvent(const PluginId){
 Trie:@_Modules_GetParams(){
     enum {Arg_Module = 1, Arg_UserId}
     
-    new ModuleName[32];
+    static ModuleName[32];
     get_string(Arg_Module, ModuleName, charsmax(ModuleName));
     NATIVE_CHECK_MODULE(ModuleName)
 
     new UserId = get_param(Arg_UserId);
     
     new Trie:Params = Invalid_Trie;
-    if(
+    if (
         !is_user_connected(UserId)
         || gUserVip[UserId] == Invalid_Trie
         || !TrieGetCell(gUserVip[UserId], ModuleName, Params)
-    ) return Invalid_Trie;
+    ) {
+        return Invalid_Trie;
+    }
     
     return Params;
 }
