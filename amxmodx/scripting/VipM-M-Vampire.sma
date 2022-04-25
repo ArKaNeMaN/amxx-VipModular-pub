@@ -17,13 +17,13 @@ public VipM_OnInitModules(){
     register_dictionary("VipM-Vampire.ini");
 
     VipM_Modules_Register(MODULE_NAME, true);
-    VipM_SetModuleParams(MODULE_NAME,
+    VipM_Modules_AddParams(MODULE_NAME,
         "MaxHealth", ptInteger, false,
         "ByKill", ptInteger, false,
         "ByHead", ptInteger, false,
         "ByKnife", ptInteger, false
     );
-    Vip(MODULE_NAME,
+    VipM_Modules_AddParams(MODULE_NAME,
         "Limits", ptLimits, false
     );
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnActivated, "@Event_ModuleActivate");

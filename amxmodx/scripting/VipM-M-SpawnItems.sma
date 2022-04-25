@@ -20,7 +20,7 @@ public VipM_OnInitModules(){
     register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
     
     VipM_Modules_Register(MODULE_NAME, true);
-    VipM_SetModuleParams(MODULE_NAME,
+    VipM_Modules_AddParams(MODULE_NAME,
         "Items", ptCustom, false,
         "Limits", ptLimits, false
     );
