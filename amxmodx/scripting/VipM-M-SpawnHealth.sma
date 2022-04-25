@@ -35,6 +35,7 @@ public VipM_OnInitModules(){
     if(Params == Invalid_Trie)
         return;
 
+    // TODO: Заменить MinRound на лимиты
     if(GetRound() < VipM_Params_GetInt(Params, "MinRound", 0))
         return;
 
