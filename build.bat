@@ -22,7 +22,7 @@ for /R ..\scripting\ %%F in (*.sma) do (
     echo / /
     echo / / Compile %%~nF:
     echo / /
-    amxx190 %%F -d0C
+    amxx190 %%F
     echo %%~nF.amxx>>%PLUGINS_LIST%
 )
 

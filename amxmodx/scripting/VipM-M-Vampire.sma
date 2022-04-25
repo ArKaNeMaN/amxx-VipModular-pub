@@ -23,6 +23,9 @@ public VipM_OnInitModules(){
         "ByHead", ptInteger, false,
         "ByKnife", ptInteger, false
     );
+    Vip(MODULE_NAME,
+        "Limits", ptLimits, false
+    );
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnActivated, "@Event_ModuleActivate");
 }
 
@@ -31,34 +34,43 @@ public VipM_OnInitModules(){
 }
 
 @Event_PlayerKilled(const VictimId, UserId, InflictorId){
-    if(
+    if (
         UserId == VictimId
         || !is_user_alive(UserId)
         || !is_user_connected(VictimId)
-    ) return;
+    ) {
+        return;
+    }
 
     new Trie:Params = VipM_Modules_GetParams(MODULE_NAME, UserId);
-    if(Params == Invalid_Trie)
+    if (Params == Invalid_Trie) {
         return;
+    }
+
+    if (!VipM_Limits_ExecuteList(VipM_Params_GetCell(Params, "Limits", Invalid_Array), UserId)) {
+        return;
+    }
 
     new MaxHealth = VipM_Params_GetInt(Params, "MaxHealth", 100);
     new Health = floatround(get_entvar(UserId, var_health));
-    if(Health >= MaxHealth)
+    if (Health >= MaxHealth) {
         return;
+    }
     
     new ByKill = VipM_Params_GetInt(Params, "ByKill", 0);
     new VampHealth = 0;
     new ActiveItem; ActiveItem = get_member(UserId, m_pActiveItem);
-    if(
+    if (
         !(get_member(VictimId, m_bitsDamageType) & DMG_SLASH)
         && is_entity(ActiveItem)
         && rg_get_iteminfo(ActiveItem, ItemInfo_iId) == CSW_KNIFE
-    )
+    ) {
         VampHealth = VipM_Params_GetInt(Params, "ByKnife", ByKill);
-    else if(get_member(VictimId, m_bHeadshotKilled))
+    } else if(get_member(VictimId, m_bHeadshotKilled)) {
         VampHealth = VipM_Params_GetInt(Params, "ByHead", ByKill);
-    else VampHealth = ByKill;
-    
+    } else {
+        VampHealth = ByKill;
+    }
 
     client_print(UserId, print_center, "%L", UserId, "VAMPIRE_HEALTH_MESSAGE", VampHealth);
     Health = clamp(Health + VampHealth, 1, MaxHealth < 1 ? cellmax : MaxHealth);

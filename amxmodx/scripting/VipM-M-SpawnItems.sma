@@ -22,7 +22,7 @@ public VipM_OnInitModules(){
     VipM_Modules_Register(MODULE_NAME, true);
     VipM_SetModuleParams(MODULE_NAME,
         "Items", ptCustom, false,
-        "MinRound", ptInteger, false
+        "Limits", ptLimits, false
     );
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnRead, "@OnReadConfig");
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnActivated, "@OnModuleActivate");
@@ -53,19 +53,23 @@ public VipM_OnInitModules(){
 }
 
 @OnPlayerSpawned(const UserId){
-    if(!is_user_alive(UserId))
+    if (!is_user_alive(UserId)) {
         return;
+    }
 
     new Trie:Params = VipM_Modules_GetParams(MODULE_NAME, UserId);
-    if(Params == Invalid_Trie)
+    if (Params == Invalid_Trie) {
         return;
+    }
 
-    if(GetRound() < VipM_Params_GetInt(Params, "MinRound", 0))
+    if (!VipM_Limits_ExecuteList(VipM_Params_GetCell(Params, "Limits", Invalid_Array), UserId)) {
         return;
+    }
 
     new Array:aItems = Array:VipM_Params_GetInt(Params, "Items", _:Invalid_Array);
-    if(aItems == Invalid_Array)
+    if (aItems == Invalid_Array) {
         return;
+    }
     
     VipM_IC_GiveItems(UserId, aItems);
 }
