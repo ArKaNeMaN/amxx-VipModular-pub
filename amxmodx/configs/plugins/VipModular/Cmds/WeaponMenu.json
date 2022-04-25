@@ -1,5 +1,7 @@
 {
+    /* Ключ команды (опредеяется плагином) */
     "vipmenu": [
+        /* Список команд-алиасов */
         "vm",
         "say /vm",
         "say_team /vm",
@@ -8,6 +10,7 @@
         "say /vipmenu",
         "say_team /vipmenu"
     ],
+    
     "vipmenu_autoopen": [
         "vm_autoopen",
         "say /vm_autoopen",

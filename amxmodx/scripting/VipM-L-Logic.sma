@@ -32,7 +32,7 @@ public VipM_OnInitModules(){
 
     VipM_Limits_RegisterType("Logic-NOT", false, false);
     VipM_Limits_AddTypeParams("Logic-NOT",
-        "Limit", ptLimit, true
+        "Limits", ptLimits, true
     );
     VipM_Limits_RegisterTypeEvent("Logic-NOT", Limit_OnCheck, "@OnNotCheck");
 }
@@ -50,9 +50,5 @@ public VipM_OnInitModules(){
 }
 
 @OnNotCheck(const Trie:Params, const UserId){
-    new T_LimitUnit:iLimit = VipM_Params_GetLimit(Params, "Limit");
-    if(iLimit == Invalid_LimitUnit)
-        return false;
-        
-    return VipM_Limits_Execute(iLimit, UserId);
+    return !VipM_Limits_ExecuteList(VipM_Params_GetArr(Params, "Limits"), UserId);
 }

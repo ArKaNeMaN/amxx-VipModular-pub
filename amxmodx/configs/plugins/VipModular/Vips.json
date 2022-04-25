@@ -1,34 +1,33 @@
 [
+    /* Применяется первый доступный модуль привилегий */
+    /* Исключение: Если модуль поддерживает обьединение конфигов. */
     {
         "Access": [
+            /* Проверки для получения доступа к привилегиям из поля Modules */
+
             {
-                "Mode": "SteamId",
+                "Limit": "SteamId",
                 "SteamId": "STEAM_0:0:57040922"
             },
             {
-                "Mode": "Name",
+                "Limit": "Name",
                 "Name": "ArKaNeMaN"
             }
         ],
         "Modules": [
-            {
-                "Module": "TestModule",
-                "Num": 2
-            },
-            {
-                "Module": "TestModule",
-                "Num": 4
-            },
+            /* Список привилегий, которые будут доступны игроку при прохождении проверок из поля Access */
+            
             "File:SpawnHealth/Test",
             "File:Vampire/Test",
-            "File:SpawnItems/Test",
+            // "File:SpawnItems/Test",
             "File:VipInTab/Test",
             "File:WeaponMenus/Test"
         ]
     },
+
     {
         "Access": {
-            "Mode": "Ip",
+            "Limit": "Ip",
             "Ip": "127.0.0.1"
         },
         "Modules": [
@@ -38,7 +37,7 @@
     },
     {
         "Access": {
-            "Mode": "Flags",
+            "Limit": "Flags",
             "Flags": "t"
         },
         "Modules": [
@@ -57,23 +56,7 @@
                 "SetArmor": false,
                 "Helmet": true
             },
-            {
-                "Module": "SpawnItems",
-                "MinRound": 2,
-                "Items": [
-                    {
-                        "Type": "Weapon",
-                        "Name": "weapon_deagle",
-                        "GiveType": "Replace"
-                    },
-                    {
-                        "Type": "Weapon",
-                        "Name": "weapon_hegrenade",
-                        "GiveType": "Replace"
-                    },
-                    {"Type": "DefuseKit"}
-                ]
-            }
+            "File:SpawnItems/Test"
         ]
     }
 ]

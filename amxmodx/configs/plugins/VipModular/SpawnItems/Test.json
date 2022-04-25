@@ -1,6 +1,18 @@
 {
+    /* Модуль выдачи предметов при спавне */
     "Module": "SpawnItems",
-    "MinRound": 2,
+
+    // (Устарело. См Limits)
+    // "MinRound": 2,
+
+    /* Условия получения предметов. Если выполняется хоть одно - предметы выдаются */
+    "Limits": [
+        {
+            "Limit": "Round",
+            "Min": 2
+        }
+    ],
+
     "Items": [
         "File:Items/TestAk",
         {
@@ -12,8 +24,7 @@
             "Type": "Weapon",
             "Name": "weapon_hegrenade"
         },
-        {
-            "Type": "DefuseKit"
-        }
+        
+        "Item:Items/DefuseKit"
     ]
 }

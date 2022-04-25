@@ -153,6 +153,7 @@ public client_authorized(UserId, const AuthId[]){
 }
 
 @OnHasPrimaryWeaponCheck(const Trie:Params, const UserId){
+    // TODO: Добавить параметр реверса ответа
     return get_member(UserId, m_bHasPrimary);
 }
 

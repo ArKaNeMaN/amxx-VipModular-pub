@@ -1,8 +1,8 @@
 {
     /* Название типа предмета */
-    "Type": "Cwapi",
+    "Type": "Command",
 
     /* Параметры предмета */
-    "Name": "TestAk",
-    "GiveType": "Replace"
+    "Command": "HealthNade_Give {UserId}",
+    "ByServer": true
 }
