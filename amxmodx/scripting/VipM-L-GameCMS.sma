@@ -29,13 +29,15 @@ public VipM_OnInitModules(){
 @OnMemberCheck(const Trie:Params, const UserId){
     new sGroupName[64];
     new iGroupId = cmsapi_get_user_group(UserId, sGroupName, charsmax(sGroupName));
-    if(!iGroupId)
+    if (!iGroupId) {
         return false;
+    }
 
     new spGroupName[64];
     VipM_Params_GetStr(Params, "Group", sGroupName, charsmax(sGroupName));
-    if(!sGroupName[0])
+    if (!sGroupName[0]) {
         return true;
+    }
 
     return equali(sGroupName, spGroupName);
 }

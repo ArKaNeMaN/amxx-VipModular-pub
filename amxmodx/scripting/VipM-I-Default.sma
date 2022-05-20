@@ -15,7 +15,7 @@ public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = "https://arkanaplugins.ru/plugin/9";
 public stock const PluginDescription[] = "[VipModular][Item] Default items.";
 
-public VipM_IC_OnInitTypes(){
+public VipM_IC_OnInitTypes() {
     register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
 
     VipM_IC_RegisterType("Weapon");
@@ -133,6 +133,7 @@ public VipM_IC_OnInitTypes(){
 
     new WeaponIdType:iWpnId = rg_get_weapon_info(WeaponName, WI_ID);
     new iWpnSlot = rg_get_iteminfo(ItemId, ItemInfo_iSlot);
+
     if (
         iBpAmmo < 0
         && !(
@@ -156,7 +157,7 @@ GiveType:Json_Object_GetGiveType(const JSON:Obj, const Key[], const bool:DotNot 
 }
 
 GiveType:StrToGiveType(const Str[]) {
-    if (equali(Str, "GT_APPEND") || equali(Str, "Append")) {
+    if (equali(Str, "GT_APPEND") || equali(Str, "Append") || equali(Str, "Add")) {
         return GT_APPEND;
     } else if (equali(Str, "GT_REPLACE") || equali(Str, "Replace")) {
         return GT_REPLACE;

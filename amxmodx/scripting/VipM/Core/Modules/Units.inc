@@ -1,6 +1,7 @@
 #include <amxmodx>
 #include <json>
 #include "VipM/ArrayMap"
+#include "VipM/DebugMode"
 
 const MODULE_UNITS_PRESERVED_SIZE = 8;
 new const MODULE_PARAMS_ISTEMP_KEY[] = "__IsTemp";
@@ -26,8 +27,10 @@ new Array:ModuleUnits;
 new Trie:__cache_ModuleUnits;
 
 T_ModuleUnit:ModuleUnits_AddToCache(const T_ModuleUnit:iMUnit, const CacheKey[] = ""){
-    if(CacheKey[0])
+    if (CacheKey[0]) {
         TrieSetCell(__cache_ModuleUnits, CacheKey, iMUnit);
+    }
+
     return iMUnit;
 }
 
@@ -53,17 +56,20 @@ Modules_InitUnits(){
 // Actions
 
 ModuleUnits_ResetUser(const UserId){
-    if(gUserVip[UserId] == Invalid_Trie)
+    if (gUserVip[UserId] == Invalid_Trie) {
         return;
+    }
 
     new TrieIter:Iter = TrieIterCreate(gUserVip[UserId]);
-    while(!TrieIterEnded(Iter)){
+    while (!TrieIterEnded(Iter)) {
         new Trie:Params = Invalid_Trie;
-        if(
+        if (
             TrieIterGetCell(Iter, Params)
             && TrieKeyExists(Params, MODULE_PARAMS_ISTEMP_KEY)
             && Params != Invalid_Trie
-        ) TrieDestroy(Params);
+        ) {
+            TrieDestroy(Params);
+        }
 
         TrieIterNext(Iter);
     }
@@ -73,17 +79,19 @@ ModuleUnits_ResetUser(const UserId){
 }
 
 ModuleUnits_AddListToUser(const UserId, const Array:aUnits){
-    if(aUnits == Invalid_Array)
+    if (aUnits == Invalid_Array) {
         return;
+    }
     
-    for(new i = 0; i < ArraySize(aUnits); i++){
+    for (new i = 0; i < ArraySize(aUnits); i++) {
         ModuleUnits_AddToUser(UserId, T_ModuleUnit:ArrayGetCell(aUnits, i));
     }
 }
 
 ModuleUnits_AddToUser(const UserId, const T_ModuleUnit:iMUnit){
-    if(gUserVip[UserId] == Invalid_Trie)
+    if (gUserVip[UserId] == Invalid_Trie) {
         gUserVip[UserId] = TrieCreate();
+    }
 
     new Unit[S_ModuleUnit];
     ModuleUnits_Get(iMUnit, Unit);
@@ -91,26 +99,31 @@ ModuleUnits_AddToUser(const UserId, const T_ModuleUnit:iMUnit){
     new Module[S_Module];
     GET_MODULE_BY_ID(Unit[ModuleUnit_ModuleId], Module);
 
-    if(TrieKeyExists(gUserVip[UserId], Module[Module_Name])){
-        if(Module[Module_Once])
+    if (TrieKeyExists(gUserVip[UserId], Module[Module_Name])) {
+        if (Module[Module_Once]) {
             return;
+        }
 
         new Trie:Params;
         TrieGetCell(gUserVip[UserId], Module[Module_Name], Params);
 
         new Trie:Ret = Invalid_Trie;
         EMIT_MODULE_EVENT(Module, Module_OnCompareParams, _:Ret, Params, Unit[ModuleUnit_Params]);
-        if(Ret == Invalid_Trie)
+        if (Ret == Invalid_Trie) {
             return;
+        }
 
-        if(TrieKeyExists(Params, MODULE_PARAMS_ISTEMP_KEY))
+        if (TrieKeyExists(Params, MODULE_PARAMS_ISTEMP_KEY)) {
             TrieDestroy(Params);
+        }
 
         TrieSetCell(Ret, MODULE_PARAMS_ISTEMP_KEY, true);
         TrieSetCell(gUserVip[UserId], Module[Module_Name], Ret);
+        Dbg_Log("ModuleUnits_AddToUser(#%d, '%s'): Compared", UserId, Module[Module_Name]);
+    } else {
+        TrieSetCell(gUserVip[UserId], Module[Module_Name], Unit[ModuleUnit_Params], false);
+        Dbg_Log("ModuleUnits_AddToUser(#%d, '%s'): First add", UserId, Module[Module_Name]);
     }
-    else TrieSetCell(gUserVip[UserId], Module[Module_Name], Unit[ModuleUnit_Params], false);
-
 }
 
 
@@ -121,7 +134,7 @@ bool:ModuleUnits_ReadFromJson(const JSON:jMUnit, sMUnit[S_ModuleUnit]){
     json_object_get_string(jMUnit, "Module", ModuleName, charsmax(ModuleName));
     json_object_remove(jMUnit, "Module");
 
-    if(!MODULE_EXISTS(ModuleName)){
+    if (!MODULE_EXISTS(ModuleName)) {
         log_amx("[WARNING] Module `%s` not found.", ModuleName);
         return false;
     }
@@ -133,7 +146,7 @@ bool:ModuleUnits_ReadFromJson(const JSON:jMUnit, sMUnit[S_ModuleUnit]){
     sMUnit[ModuleUnit_Params] = TrieCreate();
     
     new ErrParam[32];
-    if(!Cfg_ReadParams(jMUnit, sMUnit[ModuleUnit_Params], sModule[Module_Params], ErrParam, charsmax(ErrParam))){
+    if (!Cfg_ReadParams(jMUnit, sMUnit[ModuleUnit_Params], sModule[Module_Params], ErrParam, charsmax(ErrParam))) {
         log_amx("[WARNING] Param `%s` required for module `%s`, but not found.", ErrParam, sModule[Module_Name]);
         return false;
     }
@@ -141,7 +154,7 @@ bool:ModuleUnits_ReadFromJson(const JSON:jMUnit, sMUnit[S_ModuleUnit]){
     new ret;
     EMIT_MODULE_EVENT(sModule, Module_OnRead, ret, jMUnit, sMUnit[ModuleUnit_Params]);
 
-    if(ret == VIPM_STOP){
+    if (ret == VIPM_STOP) {
         TrieDestroySafe(sMUnit[ModuleUnit_Params]);
         return false;
     }

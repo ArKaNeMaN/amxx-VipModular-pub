@@ -49,8 +49,9 @@ public client_disconnected(UserId){
 }
 
 public client_putinserver(UserId){
-    if(is_user_bot(UserId))
+    if(is_user_bot(UserId)) {
         return;
+    }
 
     Vips_UserUpdate(UserId);
 }

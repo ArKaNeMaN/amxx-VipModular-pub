@@ -29,11 +29,12 @@ Vips_UserUpdate(const UserId){
     ModuleUnits_AddListToUser(%1, %2[CfgUnit_ModuleUnits])
 
 CfgUnits_CheckAndAdd(const UserId, const Array:aUnits){
-    if(aUnits == Invalid_Array)
+    if (aUnits == Invalid_Array) {
         return;
+    }
     
     new Unit[S_CfgUnit];
-    for(new i = 0; i < ArraySize(aUnits); i++){
+    for (new i = 0; i < ArraySize(aUnits); i++) {
         ArrayGetArray(aUnits, i, Unit);
 
         CfgUnit_CheckAndAdd(UserId, Unit);
@@ -41,8 +42,9 @@ CfgUnits_CheckAndAdd(const UserId, const Array:aUnits){
 }
 
 bool:CfgUnit_CheckAndAdd(const UserId, const Unit[S_CfgUnit]){
-    if(!CfgUnit_CheckAccess(UserId, Unit))
+    if (!CfgUnit_CheckAccess(UserId, Unit)) {
         return false;
+    }
     
     CfgUnit_AddToUser(UserId, Unit);
     return true;
