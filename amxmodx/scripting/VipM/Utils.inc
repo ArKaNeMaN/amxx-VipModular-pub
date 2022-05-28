@@ -248,3 +248,7 @@ stock GetWeekDayIdByName(const sWeekDayName[]) {
         return -1;
     }
 }
+
+stock CreateConstCvar(const sCvarName[], const sCvarValue[]) {
+    set_pcvar_string(create_cvar(sCvarName, sCvarValue), sCvarValue);
+}

@@ -28,7 +28,7 @@ new Trie:gUserVip[MAX_PLAYERS + 1] = {Invalid_Trie, ...}; // ModuleName => Trie:
 public plugin_precache(){
     register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
     register_library(VIPM_LIBRARY);
-    InitVersionCvar();
+    CreateConstCvar("vipm_version", VIPM_VERSION);
     
     Fwds_Init();
     SrvCmds_Init();
@@ -55,9 +55,4 @@ public client_putinserver(UserId){
     }
 
     Vips_UserUpdate(UserId);
-}
-
-InitVersionCvar() {
-    new iCvarPointer = create_cvar("vipm_version", VIPM_VERSION);
-    set_pcvar_string(iCvarPointer, VIPM_VERSION);
 }
