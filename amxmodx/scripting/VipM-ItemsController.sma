@@ -36,6 +36,7 @@ PluginInit() {
     bIsInited = true;
 
     register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
+    CreateConstCvar("vipm_ic_version", VIPM_VERSION);
     Fwds_Init();
     SrvCmds_Init();
 
