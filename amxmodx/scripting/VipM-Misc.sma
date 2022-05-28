@@ -14,8 +14,18 @@ public VipM_OnLoaded(){
     register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
     
     RegisterHookChain(RG_CBasePlayer_Spawn, "@OnPlayerSpawned", false);
+
+    register_srvcmd("vipm_update_users", "@SrvCmd_UpdateUsers");
 }
 
 @OnPlayerSpawned(const UserId){
     VipM_UserUpdate(UserId);
+}
+
+@SrvCmd_UpdateUsers() {
+    for (new UserId = 1; UserId <= MAX_PLAYERS; UserId++) {
+        if (is_user_connected(UserId) && !is_user_bot(UserId)) {
+            VipM_UserUpdate(UserId);
+        }
+    }
 }

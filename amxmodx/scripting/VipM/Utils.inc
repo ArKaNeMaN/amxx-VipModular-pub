@@ -5,6 +5,7 @@
 
 #include amxmodx
 #include json
+#include reapi
 #include VipModular
 
 stock const __INT_TEMPLATE_STR[] = "%d";
@@ -12,6 +13,7 @@ stock const __SLANG_TEMPLATE_STR[] = "%l";
 stock const __CLANG_TEMPLATE_STR[] = "%L";
 stock const __JSON_FILE_TEMPLATE_STR[] = "%s.json";
 stock const __CMD_LANG_TEMPLATE_STR[] = "%s%d";
+stock const __USER_NAME_TEMPLATE_STR[] = "%n";
 
 #define CompositeMacros(%1) \
     do { %1 } while(is_linux_server() == 0xDEADBEEF)
@@ -203,3 +205,46 @@ stock bool:Json_IsRef(const JSON:jValue, FileName[] = NULL_STRING, const Len = 0
 
 #define BitIs(%1,%2) \
     (bool:(%1 & (1 << (%2 - 1))))
+
+stock bool:HasUserFlagsStr(const UserId, const sFlags[], const bool:bStrict = false) {
+    return HasUserFlags(UserId, read_flags(sFlags), bStrict);
+}
+
+stock bool:HasUserFlags(const UserId, const bitFlags, const bool:bStrict = false) {
+    return HasBits(get_user_flags(UserId), bitFlags, bStrict);
+}
+
+stock bool:HasBits(const bits, const bitSearch, const bool:bStrict = false) {
+    new bitRes = bits & bitSearch;
+    return bStrict
+        ? bitRes == bitSearch
+        : bitRes > 0
+}
+
+// []GetUserName(const UserId)
+#define GetUserName(%1) \
+    fmt(__USER_NAME_TEMPLATE_STR,%1)
+
+// bool:IsEqualUserName(const UserId, const sName[])
+#define IsEqualUserName(%1,%2) \
+    equal(GetUserName(%1), %2)
+
+stock GetWeekDayIdByName(const sWeekDayName[]) {
+    if (equali("Вс", sWeekDayName) || equali("Воскресенье", sWeekDayName) || equali("Sun", sWeekDayName) || equali("Sunday", sWeekDayName)) {
+        return 0;
+    } else if (equali("Пн", sWeekDayName) || equali("Понедельник", sWeekDayName) || equali("Mon", sWeekDayName) || equali("Monday", sWeekDayName)) {
+        return 1;
+    } else if (equali("Вт", sWeekDayName) || equali("Вторник", sWeekDayName) || equali("Tue", sWeekDayName) || equali("Tuesday", sWeekDayName)) {
+        return 2;
+    } else if (equali("Ср", sWeekDayName) || equali("Среда", sWeekDayName) || equali("Wed", sWeekDayName) || equali("Wednesday", sWeekDayName)) {
+        return 3;
+    } else if (equali("Чт", sWeekDayName) || equali("Четверг", sWeekDayName) || equali("Thu", sWeekDayName) || equali("Thursday", sWeekDayName)) {
+        return 4;
+    } else if (equali("Пт", sWeekDayName) || equali("Пятница", sWeekDayName) || equali("Fri", sWeekDayName) || equali("Friday", sWeekDayName)) {
+        return 5;
+    } else if (equali("Сб", sWeekDayName) || equali("Суббота", sWeekDayName) || equali("Sat", sWeekDayName) || equali("Saturday", sWeekDayName)) {
+        return 6;
+    } else {
+        return -1;
+    }
+}

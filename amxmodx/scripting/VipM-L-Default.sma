@@ -1,6 +1,7 @@
 #include amxmodx
 #include reapi
 #include VipModular
+#include "VipM/Utils"
 
 #pragma semicolon 1
 #pragma compress 1
@@ -8,34 +9,6 @@
 public stock const PluginName[] = "[VipM][L] Default";
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = "https://arkanaplugins.ru/plugin/9";
-
-// bool:HasAllBits(const iBitSum1, const iBitSumm2)
-#define HasAllBits(%1,%2) \
-    bool:(%1 & %2 == %2)
-
-// bool:HasAllBits(const iBitSum1, const iBitSumm2)
-#define HasAllBits(%1,%2) \
-    bool:(%1 & %2 == %2)
-
-// bool:HasUserFlags(const UserId, const iFlags)
-#define HasUserFlags(%1,%2) \
-    HasBits(get_user_flags(%1), %2)
-
-// bool:HasUserFlagsS(const UserId, const sFlags[])
-#define HasUserFlagsS(%1,%2) \
-    HasUserFlags(%1, read_flags(%2))
-
-// []GetUserName(const UserId)
-#define GetUserName(%1) \
-    fmt("%n",%1)
-
-// bool:IsEqualUserName(const UserId, const sName[])
-#define IsEqualUserName(%1,%2) \
-    equal(GetUserName(%1), %2)
-
-// _:GetRound()
-#define GetRound() \
-    get_member_game(m_iTotalRoundsPlayed) + 1
 
 new g_sSteamIds[MAX_PLAYERS + 1][64];
 new g_sIps[MAX_PLAYERS + 1][32];
@@ -134,26 +107,6 @@ public client_authorized(UserId, const AuthId[]){
     return VIPM_CONTINUE;
 }
 
-GetWeekDayIdByName(const sWeekDayName[]) {
-    if (equali("Вс", sWeekDayName) || equali("Воскресенье", sWeekDayName) || equali("Sun", sWeekDayName) || equali("Sunday", sWeekDayName)) {
-        return 0;
-    } else if (equali("Пн", sWeekDayName) || equali("Понедельник", sWeekDayName) || equali("Mon", sWeekDayName) || equali("Monday", sWeekDayName)) {
-        return 1;
-    } else if (equali("Вт", sWeekDayName) || equali("Вторник", sWeekDayName) || equali("Tue", sWeekDayName) || equali("Tuesday", sWeekDayName)) {
-        return 2;
-    } else if (equali("Ср", sWeekDayName) || equali("Среда", sWeekDayName) || equali("Wed", sWeekDayName) || equali("Wednesday", sWeekDayName)) {
-        return 3;
-    } else if (equali("Чт", sWeekDayName) || equali("Четверг", sWeekDayName) || equali("Thu", sWeekDayName) || equali("Thursday", sWeekDayName)) {
-        return 4;
-    } else if (equali("Пт", sWeekDayName) || equali("Пятница", sWeekDayName) || equali("Fri", sWeekDayName) || equali("Friday", sWeekDayName)) {
-        return 5;
-    } else if (equali("Сб", sWeekDayName) || equali("Суббота", sWeekDayName) || equali("Sat", sWeekDayName) || equali("Saturday", sWeekDayName)) {
-        return 6;
-    } else {
-        return -1;
-    }
-}
-
 @OnWeekDayCheck(const Trie:Params) {
     new sWeekDay[4];
     get_time("%w", sWeekDay, charsmax(sWeekDay));
@@ -174,13 +127,8 @@ GetWeekDayIdByName(const sWeekDayName[]) {
 bool:@OnFlagsCheck(const Trie:Params, const UserId) {
     static sFlags[16];
     VipM_Params_GetStr(Params, "Flags", sFlags, charsmax(sFlags));
-    new iFlags = read_flags(sFlags);
 
-    new bitwiseAndRes = get_user_flags(UserId) & iFlags;
-
-    return VipM_Params_GetBool(Params, "Strict", false)
-        ? bitwiseAndRes == iFlags
-        : bitwiseAndRes > 0;
+    return HasUserFlagsStr(UserId, sFlags, VipM_Params_GetBool(Params, "Strict", false));
 }
 
 @OnSteamIdCheck(const Trie:Params, const UserId) {
@@ -198,11 +146,10 @@ bool:@OnFlagsCheck(const Trie:Params, const UserId) {
 }
 
 @OnMapCheck(const Trie:Params) {
-    static sMap[32], bool:bReal = false;
+    static sMap[32];
     VipM_Params_GetStr(Params, "Map", sMap, charsmax(sMap));
-    bReal = VipM_Params_GetBool(Params, "Real", false);
 
-    if (bReal) {
+    if (VipM_Params_GetBool(Params, "Real", false)) {
         return equali(sMap, g_sRealMapName);
     } else {
         static sSetMapName[32];
