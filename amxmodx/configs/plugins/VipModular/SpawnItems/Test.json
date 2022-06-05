@@ -25,6 +25,6 @@
             "Name": "weapon_hegrenade"
         },
         
-        "Item:Items/DefuseKit"
+        "File:Items/DefuseKit"
     ]
 }
