@@ -4,10 +4,7 @@
 
     // "MinRound": 2,
     "Limits": [
-        {
-            "Limit": "Round",
-            "Min": 2
-        }
+        "File:Limits/MinRound-2"
     ],
 
     "Items": [
@@ -15,6 +12,10 @@
         {
             "Title": "Активный пункт",
             "Item": "File:Items/TestAk"
+
+            // "Limits": [ // Эта проверка тут избыточна, т.к. выше меню уже ограничено вторым раундом
+            //     "File:Limits/MinRound-2"
+            // ]
         },
 
         /* Пустая строка */

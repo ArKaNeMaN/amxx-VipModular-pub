@@ -4,9 +4,9 @@
 Menu_MainMenu(const UserId, const MainMenuTitle[], const Array:aMenus){
     new iMenu = menu_create(MainMenuTitle, "@MenuHandler_Command");
 
-    ArrayForeachArray(aMenus => Menu[S_WeaponMenu]){
+    ArrayForeachArray(aMenus => Menu[S_WeaponMenu]) {
         static Cmd[128];
-        CommandAliases_GetMainCmd(CMD_WEAPON_MENU_OPEN, Cmd, charsmax(Cmd));
+        CommandAliases_GetMainCmd(CMD_WEAPON_MENU, Cmd, charsmax(Cmd));
         menu_additem(iMenu, Menu[WeaponMenu_Name], fmt("%s %d", Cmd, __i__));
     }
     menu_display(UserId, iMenu);
@@ -19,7 +19,7 @@ Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]){
         switch(MenuItem[MenuItem_Type]){
             case MenuItemType_Default: {
                 static Cmd[128];
-                CommandAliases_GetMainCmd(CMD_WEAPON_MENU_OPEN, Cmd, charsmax(Cmd));
+                CommandAliases_GetMainCmd(CMD_WEAPON_MENU, Cmd, charsmax(Cmd));
                 menu_additem(iMenu, MenuItem[MenuItem_Title], fmt("%s %d %d", Cmd, MenuId, __i__));
             }
             

@@ -12,7 +12,8 @@ public stock const PluginDescription[] = "Vip modular`s module - Weapon Menu";
 
 new const MODULE_NAME[] = "WeaponMenu";
 
-new const CMD_WEAPON_MENU_OPEN[] = "vipmenu";
+new const CMD_WEAPON_MENU[] = "vipmenu";
+new const CMD_WEAPON_MENU_SILENT[] = "vipmenu_silent";
 new const CMD_SWITCH_AUTOOPEN[] = "vipmenu_autoopen";
 
 #include "VipM/ArrayTrieUtils"
@@ -21,6 +22,7 @@ new const CMD_SWITCH_AUTOOPEN[] = "vipmenu_autoopen";
 
 new gUserLeftItems[MAX_PLAYERS + 1] = {0, ...};
 new bool:gUserAutoOpen[MAX_PLAYERS + 1] = {true, ...};
+new bool:gUserExecutedAutoOpen[MAX_PLAYERS + 1] = {false, ...};
 
 #include "VipM/WeaponMenu/Structs"
 #include "VipM/WeaponMenu/Configs"
@@ -65,7 +67,8 @@ public VipM_OnInitModules() {
     RegisterHookChain(RG_CBasePlayer_Spawn, "@OnPlayerSpawn", true);
     
     CommandAliases_Open(GET_FILE_JSON_PATH("Cmds/WeaponMenu"), true);
-    CommandAliases_RegisterClient(CMD_WEAPON_MENU_OPEN, "@Cmd_OpenMenu");
+    CommandAliases_RegisterClient(CMD_WEAPON_MENU, "@Cmd_Menu");
+    CommandAliases_RegisterClient(CMD_WEAPON_MENU_SILENT, "@Cmd_MenuSilent");
     CommandAliases_RegisterClient(CMD_SWITCH_AUTOOPEN, "@Cmd_SwitchAutoOpen");
     CommandAliases_Close();
 }
@@ -86,11 +89,12 @@ public VipM_OnInitModules() {
         return;
     }
 
-    if (!VipM_Limits_ExecuteList(VipM_Params_GetCell(Params, "AutoopenLimits", Invalid_Array), UserId)) {
+    if (!VipM_Params_ExecuteLimitsList(Params, "AutoopenLimits", UserId, Limit_Exec_AND)) {
         return;
     }
 
-    CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU_OPEN);
+    gUserExecutedAutoOpen[UserId] = true;
+    CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU);
 }
 
 @Cmd_SwitchAutoOpen(const UserId) {
@@ -98,13 +102,24 @@ public VipM_OnInitModules() {
     ChatPrintL(UserId, gUserAutoOpen[UserId] ? "MSG_AUTOOPEN_TURNED_ON" : "MSG_AUTOOPEN_TURNED_OFF");
 }
 
-@Cmd_OpenMenu(const UserId) {
+@Cmd_Menu(const UserId) {
+    _Cmd_Menu(UserId);
+}
+
+@Cmd_MenuSilent(const UserId) {
+    _Cmd_Menu(UserId, true);
+}
+
+_Cmd_Menu(const UserId, const bool:bSilent = false) {
     if (!IsUserValid(UserId)) {
         return;
     }
 
     if (!is_user_alive(UserId)) {
-        ChatPrintL(UserId, "MSG_YOU_DEAD");
+        if (!bSilent) {
+            ChatPrintL(UserId, "MSG_YOU_DEAD");
+        }
+
         return;
     }
 
@@ -112,12 +127,18 @@ public VipM_OnInitModules() {
     new Array:aMenus = VipM_Params_GetArr(Params, "Menus");
 
     if (ArraySizeSafe(aMenus) < 1) {
-        ChatPrintL(UserId, "MSG_NO_ACCESS");
+        if (!bSilent) {
+            ChatPrintL(UserId, "MSG_NO_ACCESS");
+        }
+
         return;
     }
     
-    if (!VipM_Limits_ExecuteList(VipM_Params_GetCell(Params, "Limits", Invalid_Array), UserId)) {
-        ChatPrintL(UserId, "MSG_MAIN_NOT_PASSED_LIMIT");
+    if (!VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_AND)) {
+        if (!bSilent) {
+            ChatPrintL(UserId, "MSG_MAIN_NOT_PASSED_LIMIT");
+        }
+
         return;
     }
 
@@ -125,7 +146,7 @@ public VipM_OnInitModules() {
 
     if (CMD_ARG_NUM() < 1) {
         if (ArraySizeSafe(aMenus) == 1) {
-            CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU_OPEN, "0");
+            CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU, "0");
         } else {
             static MainMenuTitle[128];
             VipM_Params_GetStr(Params, "MainMenuTitle", MainMenuTitle, charsmax(MainMenuTitle));
@@ -146,7 +167,10 @@ public VipM_OnInitModules() {
     ArrayGetArray(aMenus, MenuId, Menu);
 
     if (!VipM_Limits_ExecuteList(Menu[WeaponMenu_Limits], UserId)) {
-        ChatPrintL(UserId, "MSG_MENU_NOT_PASSED_LIMIT");
+        if (!bSilent) {
+            ChatPrintL(UserId, "MSG_MENU_NOT_PASSED_LIMIT");
+        }
+
         return;
     }
     
@@ -167,12 +191,18 @@ public VipM_OnInitModules() {
     ArrayGetArray(Menu[WeaponMenu_Items], ItemId, MenuItem);
 
     if (gUserLeftItems[UserId] < 1) {
-        ChatPrintL(UserId, "MSG_NO_LEFT_ITEMS");
+        if (!bSilent) {
+            ChatPrintL(UserId, "MSG_NO_LEFT_ITEMS");
+        }
+        
         return;
     }
 
     if (!VipM_Limits_ExecuteList(MenuItem[MenuItem_Limits], UserId)) {
-        ChatPrintL(UserId, "MSG_MENUITEM_NOT_PASSED_LIMIT");
+        if (!bSilent) {
+            ChatPrintL(UserId, "MSG_MENUITEM_NOT_PASSED_LIMIT");
+        }
+        
         return;
     }
     

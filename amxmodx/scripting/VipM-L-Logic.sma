@@ -38,17 +38,17 @@ public VipM_OnInitModules(){
 }
 
 @OnOrCheck(const Trie:Params, const UserId){
-    return VipM_Limits_ExecuteList(VipM_Params_GetArr(Params, "Limits"), UserId, Limit_Exec_OR);
+    return VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_OR);
 }
 
 @OnXorCheck(const Trie:Params, const UserId){
-    return VipM_Limits_ExecuteList(VipM_Params_GetArr(Params, "Limits"), UserId, Limit_Exec_XOR);
+    return VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_XOR);
 }
 
 @OnAndCheck(const Trie:Params, const UserId){
-    return VipM_Limits_ExecuteList(VipM_Params_GetArr(Params, "Limits"), UserId, Limit_Exec_AND);
+    return VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_AND);
 }
 
 @OnNotCheck(const Trie:Params, const UserId){
-    return !VipM_Limits_ExecuteList(VipM_Params_GetArr(Params, "Limits"), UserId);
+    return !VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_AND);
 }

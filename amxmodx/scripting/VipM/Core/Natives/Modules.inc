@@ -35,11 +35,11 @@ Natives_Modules_Init(){
     GET_MODULE(ModuleName, Module);
     new bool:bSave = (Module[Module_Params] == Invalid_Array);
 
-    Dbg_PrintServer("Module_AddParams(%s): bSave = %s", ModuleName, bSave ? "+" : "-");
+    // Dbg_PrintServer("Module_AddParams(%s): bSave = %s", ModuleName, bSave ? "+" : "-");
     
     Module[Module_Params] = Native_GetParamsList(Arg_Params - 1, ParamsCount, Module[Module_Params]);
     
-    Dbg_PrintServer(":---");
+    // Dbg_PrintServer(":---");
     
     if (bSave) {
         SET_MODULE(Module);

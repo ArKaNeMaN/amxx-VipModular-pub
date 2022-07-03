@@ -62,7 +62,7 @@ public VipM_OnInitModules(){
         return;
     }
 
-    if (!VipM_Limits_ExecuteList(VipM_Params_GetCell(Params, "Limits", Invalid_Array), UserId)) {
+    if (!VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_AND)) {
         return;
     }
 

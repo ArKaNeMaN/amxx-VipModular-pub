@@ -74,6 +74,12 @@ stock const __JSON_WRAPPER_FIELD_VALUE[] = "_value";
 
 stock JSON:Json_ParseFromFileEx(const Path[]) {
     new JSON:jFile = json_parse(Path, true, true);
+    
+    if (jFile == Invalid_JSON) {
+        log_amx("[ERROR] Can't read JSON from file '%s'.", Path);
+        return jFile;
+    }
+
     new JSON:jWrapper = json_init_object();
     json_object_set_string(jWrapper, __JSON_WRAPPER_FIELD_FILE, Path);
     json_object_set_value(jWrapper, __JSON_WRAPPER_FIELD_VALUE, jFile);

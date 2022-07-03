@@ -64,7 +64,7 @@ enum E_ParamType {
 }
 stock const VIPM_PARAM_TYPE_NAMES[E_ParamType][] = {"Custom", "Integer", "Float", "Bool", "String", "Color", "Vector2", "Vector3", "Limit", "Limits"};
 
-stock VipM_Params_GetInt(const Trie:Params, const Key[], const Def = 0){
+stock VipM_Params_GetInt(const Trie:Params, const Key[], const Def = 0) {
     new Val;
     if (Params == Invalid_Trie) {
         return Def;
@@ -72,11 +72,11 @@ stock VipM_Params_GetInt(const Trie:Params, const Key[], const Def = 0){
     return TrieGetCell(Params, Key, Val) ? Val : Def;
 }
 
-stock any:VipM_Params_GetCell(const Trie:Params, const Key[], const any:Def = 0){
+stock any:VipM_Params_GetCell(const Trie:Params, const Key[], const any:Def = 0) {
     return any:VipM_Params_GetInt(Params, Key, _:Def);
 }
 
-stock bool:VipM_Params_GetBool(const Trie:Params, const Key[], const bool:Def = false){
+stock bool:VipM_Params_GetBool(const Trie:Params, const Key[], const bool:Def = false) {
     new bool:Val;
     if (Params == Invalid_Trie) {
         return Def;
@@ -84,7 +84,7 @@ stock bool:VipM_Params_GetBool(const Trie:Params, const Key[], const bool:Def = 
     return TrieGetCell(Params, Key, Val) ? Val : Def;
 }
 
-stock Float:VipM_Params_GetFloat(const Trie:Params, const Key[], const Float:Def = 0.0){
+stock Float:VipM_Params_GetFloat(const Trie:Params, const Key[], const Float:Def = 0.0) {
     new Float:Val;
     if (Params == Invalid_Trie) {
         return Def;
@@ -92,7 +92,7 @@ stock Float:VipM_Params_GetFloat(const Trie:Params, const Key[], const Float:Def
     return TrieGetCell(Params, Key, Val) ? Val : Def;
 }
 
-stock VipM_Params_GetStr(const Trie:Params, const Key[], Out[], const Len, const Def[] = NULL_STRING){
+stock VipM_Params_GetStr(const Trie:Params, const Key[], Out[], const Len, const Def[] = NULL_STRING) {
     new s = 0;
     if (
         Params != Invalid_Trie
@@ -104,7 +104,7 @@ stock VipM_Params_GetStr(const Trie:Params, const Key[], Out[], const Len, const
     return formatex(Out, Len, Def);
 }
 
-stock Array:VipM_Params_GetArr(const Trie:Params, const Key[]){
+stock Array:VipM_Params_GetArr(const Trie:Params, const Key[]) {
     new Array:Arr = Invalid_Array;
     if (
         Params == Invalid_Trie
@@ -116,10 +116,37 @@ stock Array:VipM_Params_GetArr(const Trie:Params, const Key[]){
     return Arr;
 }
 
-stock T_LimitUnit:VipM_Params_GetLimit(const Trie:Params, const Key[], const T_LimitUnit:Def = Invalid_LimitUnit){
+stock T_LimitUnit:VipM_Params_GetLimit(const Trie:Params, const Key[], const T_LimitUnit:Def = Invalid_LimitUnit) {
     new T_LimitUnit:iLimit;
     if (Params == Invalid_Trie) {
         return Def;
     }
     return TrieGetCell(Params, Key, iLimit) ? iLimit : Def;
+}
+
+stock bool:VipM_Params_ExecuteLimit(
+    const Trie:tParams,
+    const sKey[] = "Limit",
+    const UserId = 0,
+    const bool:bDef = true
+) {
+    new T_LimitUnit:iLimit = VipM_Params_GetLimit(tParams, sKey);
+    if (iLimit == Invalid_LimitUnit) {
+        return bDef;
+    }
+    return VipM_Limits_Execute(iLimit, UserId);
+}
+
+stock bool:VipM_Params_ExecuteLimitsList(
+    const Trie:tParams,
+    const sKey[] = "Limits",
+    const UserId = 0,
+    const E_LimitsExecType:iType = Limit_Exec_OR,
+    const bool:bDef = true
+) {
+    new Array:aLimits = VipM_Params_GetArr(tParams, sKey);
+    if (aLimits == Invalid_Array) {
+        return bDef;
+    }
+    return VipM_Limits_ExecuteList(aLimits, UserId, iType);
 }

@@ -12,17 +12,19 @@
 
     /* Проверки перед открытием списка меню */
     "Limits": [
-        {
-            "Limit": "Round",
-            "Min": 2
-        }
+        "File:Limits/MinRound-2"
     ],
 
     /* Проверки перед автооткрытием меню в начале раунда */
     "AutoopenLimits": [
-        { /* Автоматически открывать меню, если у игрока НЕТ основного оружия */
-            "Limit": "Logic-NOT",
-            "Limits": { "Limit": "HasPrimaryWeapon" }
+        // { /* Автоматически открывать меню, если у игрока НЕТ основного оружия */
+        //     "Limit": "Logic-NOT",
+        //     "Limits": 
+        // }
+
+        { // Для ограничения HasPrimaryWeapon добавлен параметр реверса (HasNot)
+            "Limit": "HasPrimaryWeapon",
+            "HasNot": true
         }
     ],
 

@@ -50,7 +50,7 @@ public VipM_OnInitModules(){
     }
     
     Dbg_Log("@Event_PlayerSpawned(%d): Limits Count = %d", UserId, ArraySizeSafe(VipM_Params_GetCell(Params, "Limits", Invalid_Array)));
-    if (!VipM_Limits_ExecuteList(VipM_Params_GetCell(Params, "Limits", Invalid_Array), UserId)) {
+    if (!VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_AND)) {
         return;
     }
     Dbg_Log("@Event_PlayerSpawned(%d): Round №%d -> Passed", UserId, get_member_game(m_iTotalRoundsPlayed) + 1);

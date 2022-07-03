@@ -33,7 +33,7 @@ Array:Native_GetParamsList(const NullArg, const ParamsCount, Array:aParams = Inv
         Param[CfgParam_Type] = E_ParamType:get_param_byref(i+1);
         Param[CfgParam_Required] = bool:get_param_byref(i+2);
         
-        Dbg_PrintServer("^t- %s: %d, %s", Param[CfgParam_Name], _:Param[CfgParam_Type], Param[CfgParam_Required] ? "+" : "-");
+        // Dbg_PrintServer("^t- %s: %d, %s", Param[CfgParam_Name], _:Param[CfgParam_Type], Param[CfgParam_Required] ? "+" : "-");
 
         ArrayPushArray(aParams, Param);
     }

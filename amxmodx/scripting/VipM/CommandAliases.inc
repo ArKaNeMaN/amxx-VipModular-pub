@@ -23,7 +23,7 @@ enum _:{
 static JSON:jFile = Invalid_JSON;
 static Trie:g_tMainCmd = Invalid_Trie;
 
-stock CommandAliases_Open(const sFilePath[], const bool:bCreateIfNotExists = false) {
+stock bool:CommandAliases_Open(const sFilePath[], const bool:bCreateIfNotExists = false) {
     jFile = Invalid_JSON;
     
     if (!file_exists(sFilePath)) {
@@ -31,20 +31,25 @@ stock CommandAliases_Open(const sFilePath[], const bool:bCreateIfNotExists = fal
             new JSON:jObj = json_init_object();
             json_serial_to_file(jObj, sFilePath, true);
             json_free(jObj);
+        } else {
+            return false;
         }
-        return;
     }
 
     jFile = json_parse(sFilePath, true, true);
 
     if (jFile == Invalid_JSON) {
         log_amx("[CommandAliases][Warn] Can't read from file: %s", sFilePath);
+        return false;
     }
 
     if (!json_is_object(jFile)) {
         jFile = Invalid_JSON;
         log_amx("[CommandAliases][Warn] Invalid file format: %s", sFilePath);
+        return false;
     }
+
+    return true;
 }
 
 stock CommandAliases_Close() {
@@ -68,6 +73,7 @@ static stock Array:ReadCommandsByKey(const sCmdKey[]) {
         new JSON:jCmds = json_object_get_value(jFile, sCmdKey);
         if (!json_is_array(jCmds)) {
             log_amx("[CommandAliases][Warn] Invalid file format. Commands list must be an array.");
+            return aCmds;
         }
 
         aCmds = ArrayCreate(COMMAND_ALIASES_COMMAND_MAX_LENGTH, json_array_get_count(jCmds));
@@ -150,4 +156,3 @@ stock bool:CommandAliases_ClientCmd(const UserId, const sCmdKey[], const sArgsFm
         }
     }
 }
-

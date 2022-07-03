@@ -11,6 +11,11 @@
         "say_team /vipmenu"
     ],
     
+    "vipmenu_silent": [
+        "vm_silent",
+        "vipmenu_silent"
+    ],
+    
     "vipmenu_autoopen": [
         "vm_autoopen",
         "say /vm_autoopen",
