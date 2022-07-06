@@ -9,6 +9,7 @@
 - [Стандартные модули](readme/default-modules.md)
 - [Стандартные типы проверок](readme/default-limits.md)
 - [Стандартные предметы](readme/default-items.md)
+- [Сторонние модули](readme/thirdparty-modules.md)
 
 ## Серверные команды
 
