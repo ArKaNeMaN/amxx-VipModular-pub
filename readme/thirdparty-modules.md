@@ -2,7 +2,7 @@
 
 ## Модули
 
-- ...
+- [MultiJump](https://github.com/ArKaNeMaN/VipM-M-MultiJump)
 
 ## Ограничения
 
