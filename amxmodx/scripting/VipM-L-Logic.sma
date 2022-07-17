@@ -1,5 +1,4 @@
 #include amxmodx
-#include reapi
 #include VipModular
 
 #pragma semicolon 1
