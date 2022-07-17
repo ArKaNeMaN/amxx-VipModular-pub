@@ -57,9 +57,8 @@ Cfg_JsonGetItem(&JSON:jItem){
         TrieSetString(Item[Item_Params], "Name", ItemName);
     }
 
-    FwdRetInit(VIPM_CONTINUE);
-    FwdExecP(ReadItem, [jItem, Item[Item_Params]]);
-    if (FwdRet() == VIPM_STOP) {
+    Forwards_DefaultReturn(VIPM_CONTINUE);
+    if (Forwards_CallP("ReadItem", jItem, Item[Item_Params]) == VIPM_STOP) {
         TrieDestroySafe(Item[Item_Params]);
         return -1;
     }

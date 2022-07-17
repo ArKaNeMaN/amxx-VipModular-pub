@@ -64,6 +64,22 @@ enum _:VipM_FwdReturn{
 forward VipM_OnInitModules();
 
 /**
+ * Вызывается в момент чтения элемента конфига (модуля или ограничения).
+ *
+ * @param jUnit     JSON-обьект с параметрами
+ * @param tParams   Хэш-карта с прочитанными параметрами. Может быть изменена.
+ *
+ * @note    Параметр tParams содержит только прочитанные ядром параметры.
+ *
+ * @note    Соответствует событиям Limit_OnRead и Module_OnRead,
+ *          и форвардам VipM_OnReadLimitUnit и VipM_OnReadModuleUnit.
+ *          Вызывается перед ними.
+ *
+ * @return По умолчанию VIPM_CONTINUE. Если вернуть VIPM_STOP, элемент конфига будет проигнорирован.
+ */
+forward VipM_OnReadUnit(const JSON:jUnit, const Trie:tParams);
+
+/**
  * Вызывается после полной загрузки вип-системы.
  *
  * @note    Вызывается из plugin_precache

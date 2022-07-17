@@ -1,12 +1,7 @@
 #include amxmodx
 #include json
 #include "VipM/Utils"
-
-#define RegisterNative(%1) \
-    register_native(fmt(__NATIVE_NAME_TPL, %1), fmt(__NATIVE_FUNC_TPL, %1))
-
-new const __NATIVE_NAME_TPL[] = "VipM_IC_%s";
-new const __NATIVE_FUNC_TPL[] = "@_%s";
+#include "VipM/Natives"
 
 enum {
     ERROR_TYPE_NOT_FOUND,
@@ -21,15 +16,17 @@ enum {
 
 #define NATIVE_CHECK_TYPE(%1) CompositeMacros( \
     if (!TYPE_EXISTS(%1)) { \
-        log_error(ERROR_TYPE_NOT_FOUND, "[ERROR] Item type '%s' not found.", %1);\
+        log_error(ERROR_TYPE_NOT_FOUND, "[ERROR] Item type '%s' not found.", %1); \
     } \
 )
 
 public plugin_natives() {
-    RegisterNative("RegisterType");
-    RegisterNative("RegisterTypeEvent");
-    RegisterNative("JsonGetItem");
-    RegisterNative("GiveItem");
+    Natives_Init("VipM_IC");
+
+    Natives_Reg("RegisterType");
+    Natives_Reg("RegisterTypeEvent");
+    Natives_Reg("JsonGetItem");
+    Natives_Reg("GiveItem");
 }
 
 @_RegisterType(const PluginId) {
@@ -99,9 +96,8 @@ bool:@_GiveItem(){
     new Type[S_ItemType];
     GET_ITEM_TYPE(Item, Type);
 
-    FwdRetInit(VIPM_CONTINUE);
-    FwdExecP(GiveItem, [UserId, Item[Item_Params]]);
-    if (FwdRet() == VIPM_STOP) {
+    Forwards_DefaultReturn(VIPM_CONTINUE);
+    if (Forwards_CallP("GiveItem", UserId, Item[Item_Params]) == VIPM_STOP) {
         return false;
     }
 

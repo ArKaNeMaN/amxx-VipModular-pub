@@ -60,6 +60,11 @@ stock ArrayMapGetIndex(AM[ArrayMap], const Key[]){
         for(new %2[%3], %4 = 0; %4 < ArrayMapSize(%1); %4++)\
             if(ArrayMapGetiArray(%1, %4, %2))
 
+#define ArrayMapForeachArray2(%1:%4=>%2[%3]) \
+    if(ArrayMapCreated(%1)) \
+        for(new %2[%3], %4 = 0; %4 < ArrayMapSize(%1); %4++) \
+            if(ArrayMapGetiArray(%1, %4, %2))
+
 
 #define ArrayMapCreated(%1) \
     (%1[AM_Arr] != Invalid_Array)

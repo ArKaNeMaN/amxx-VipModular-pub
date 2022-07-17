@@ -19,7 +19,7 @@ Vips_UserUpdate(const UserId){
     Vips_Reset(UserId);
     Vips_CheckAndAdd(UserId);
 
-    FwdExecP(UserUpdated, [UserId]);
+    Forwards_CallP("UserUpdated", UserId);
 }
 
 #define CfgUnit_CheckAccess(%1,%2) \

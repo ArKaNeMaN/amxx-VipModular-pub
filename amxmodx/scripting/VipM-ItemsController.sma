@@ -12,9 +12,9 @@ public stock const PluginDescription[] = "Vip Modular`s items controller";
 #include "VipM/ArrayTrieUtils"
 #include "VipM/ArrayMap"
 #include "VipM/Utils"
+#include "VipM/Forwards"
 
 #include "VipM/ItemsController/Structs"
-#include "VipM/ItemsController/Forwards"
 #include "VipM/ItemsController/Utils"
 
 DefineArrayMap(Types); // S_ItemType
@@ -33,14 +33,17 @@ PluginInit() {
 
     register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
     CreateConstCvar("vipm_ic_version", VIPM_VERSION);
-    Fwds_Init();
     SrvCmds_Init();
 
+    Forwards_Init("VipM_IC");
+    Forwards_Reg("GiveItem", ET_STOP, FP_CELL, FP_CELL);
+    Forwards_Reg("ReadItem", ET_STOP, FP_CELL, FP_CELL);
+
     InitArrayMap(Types, S_ItemType, 8);
-    FwdExec(InitTypes);
+    Forwards_RegAndCall("InitTypes", ET_IGNORE);
 
     Items = ArrayCreate(S_Item, 16);
-    FwdExec(Loaded);
+    Forwards_RegAndCall("Loaded", ET_IGNORE);
 }
 
 #include "VipM/ItemsController/Natives"

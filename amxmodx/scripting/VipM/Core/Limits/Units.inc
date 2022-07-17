@@ -1,5 +1,5 @@
-#include amxmodx
-#include json
+#include <amxmodx>
+#include <json>
 
 // Structs
 
@@ -64,6 +64,15 @@ bool:Limits_ReadUnitFromJson(const JSON:jUnit, Unit[S_LimitUnit]){
             log_amx("[WARNING] Param `%s` required for limit `%s`, but not found.", ErrParam, LimitType[Limit_Name]);
             return false;
         }
+    }
+
+    Forwards_DefaultReturn(VIPM_CONTINUE);
+    if (
+        Forwards_CallP("ReadUnit", jUnit, Unit[LimitUnit_Params]) == VIPM_STOP
+        || Forwards_CallP("ReadLimitUnit", jUnit, Unit[LimitUnit_Params]) == VIPM_STOP
+    ) {
+        TrieDestroySafe(Unit[LimitUnit_Params]);
+        return false;
     }
     
     new ret;

@@ -43,6 +43,8 @@ enum E_ModuleEvent{
     Module_OnCompareParams,
 }
 
+forward VipM_OnReadModuleUnit(const JSON:jUnit, const Trie:tParams);
+
 /**
  * Регистрирует новый модуль.
  *

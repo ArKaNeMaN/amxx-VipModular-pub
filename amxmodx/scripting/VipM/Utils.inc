@@ -28,15 +28,15 @@ stock const __USER_NAME_TEMPLATE_STR[] = "%n";
     (%1 >= 1 && %1 <= 32)
 
 #define IsUserValid(%1) \
-    (\
-        IsUserIdValid(%1)\
-        && is_user_connected(%1)\
+    ( \
+        IsUserIdValid(%1) \
+        && is_user_connected(%1) \
     )
 
 #define IsUserValidA(%1) \
-    (\
-        IsUserIdValid(%1)\
-        && is_user_alive(%1)\
+    ( \
+        IsUserIdValid(%1) \
+        && is_user_alive(%1) \
     )
 
 #define Lang(%1) \
@@ -112,7 +112,7 @@ stock JSON:Json_GetRoot(const JSON:jValue) {
 
 stock Json_GetFilePath(const JSON:jValue, Out[], const OutLen) {
     new JSON:jRoot = Json_GetRoot(jValue);
-    if(!Json_IsWrapper(jRoot)) {
+    if (!Json_IsWrapper(jRoot)) {
         return formatex(Out, OutLen, "unknown_file");
     }
 
@@ -140,21 +140,24 @@ stock __JSON_LAST_FILE_OBJECT[PLATFORM_MAX_PATH];
 stock JSON:JSON_GET_FILE_OR_OBJECT(JSON:Value) {
     __JSON_LAST_FILE_OBJECT[0] = 0;
 
-    if(!json_is_string(Value))
+    if (!json_is_string(Value)) {
         return Value;
+    }
     
     new FileName[PLATFORM_MAX_PATH];
     json_get_string(Value, FileName, charsmax(FileName));
-    if(!equali(JSON_FILE_VALUE_PREFIX, FileName, charsmax(JSON_FILE_VALUE_PREFIX)))
+    if (!equali(JSON_FILE_VALUE_PREFIX, FileName, charsmax(JSON_FILE_VALUE_PREFIX))) {
         return Value;
+    }
 
     json_free(Value);
 
     formatex(__JSON_LAST_FILE_OBJECT, charsmax(__JSON_LAST_FILE_OBJECT), FileName[charsmax(JSON_FILE_VALUE_PREFIX)]);
 
     Value = GET_FILE_JSON(__JSON_LAST_FILE_OBJECT);
-    if(Value == Invalid_JSON)
-        log_amx("[WARNING] JSON syntax error in file `%s`.", __JSON_LAST_FILE_OBJECT);
+    if (Value == Invalid_JSON) {
+        log_amx("[WARNING] JSON syntax error in file `%s`.", __JSON_LAST_FILE_OBJECT);        
+    }
 
     return Value;
 }
@@ -261,16 +264,12 @@ stock CreateConstCvar(const sCvarName[], const sCvarValue[]) {
 
 #define CallOnce() CompositeMacros( \
     static bool:__CallOnce_bCalled; \
-    if (__CallOnce_bCalled) { \
-        return; \
-    } \
+    if (__CallOnce_bCalled) return; \
     __CallOnce_bCalled = true; \
 )
 
 #define CallOnceR(%1) CompositeMacros( \
     static bool:__CallOnce_bCalled; \
-    if (__CallOnce_bCalled) { \
-        return %1; \
-    } \
+    if (__CallOnce_bCalled) return %1; \
     __CallOnce_bCalled = true; \
 )

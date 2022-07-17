@@ -1,15 +1,16 @@
 #include <amxmodx>
 #include "VipM/DebugMode"
+#include "VipM/Natives"
 
 Natives_Modules_Init(){
-    RegisterNative("Modules_Register");
-    RegisterNative("Modules_AddParams");
-    RegisterNative("Modules_RegisterEvent");
-    RegisterNative("Modules_IsActive");
-    RegisterNative("Modules_GetParams");
+    Natives_Reg("Modules_Register");
+    Natives_Reg("Modules_AddParams");
+    Natives_Reg("Modules_RegisterEvent");
+    Natives_Reg("Modules_IsActive");
+    Natives_Reg("Modules_GetParams");
 }
 
-@_Modules_Register(const PluginId){
+@_Modules_Register(const PluginId) {
     enum {Arg_Module = 1, Arg_Once}
 
     new Module[S_Module];
@@ -25,7 +26,7 @@ Natives_Modules_Init(){
     ArrayMapPushArray(Modules, Module, Module[Module_Name]);
 }
 
-@_Modules_AddParams(const PluginId, const ParamsCount){
+@_Modules_AddParams(const PluginId, const ParamsCount) {
     enum {Arg_Module = 1, Arg_Params}
     
     new ModuleName[32], Module[S_Module];
@@ -46,7 +47,7 @@ Natives_Modules_Init(){
     }
 }
 
-bool:@_Modules_RegisterEvent(const PluginId){
+bool:@_Modules_RegisterEvent(const PluginId) {
     enum {Arg_Module = 1, Arg_Event, Arg_Func}
     
     new ModuleName[32], Module[S_Module];
@@ -82,7 +83,7 @@ bool:@_Modules_RegisterEvent(const PluginId){
     return FwdId >= 0;
 }
 
-@_Modules_IsActive(){
+@_Modules_IsActive() {
     enum {Arg_Module = 1}
     
     static ModuleName[32], Module[S_Module];
@@ -94,7 +95,7 @@ bool:@_Modules_RegisterEvent(const PluginId){
     return Module[Module_Enabled];
 }
 
-Trie:@_Modules_GetParams(){
+Trie:@_Modules_GetParams() {
     enum {Arg_Module = 1, Arg_UserId}
     
     static ModuleName[32];

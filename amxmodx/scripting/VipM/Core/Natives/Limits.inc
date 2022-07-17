@@ -1,21 +1,22 @@
 #include amxmodx
+#include "VipM/Natives"
 
 Natives_Limits_Init(){
-    RegisterNative("Limits_RegisterType");
-    RegisterNative("Limits_AddTypeParams");
-    RegisterNative("Limits_RegisterTypeEvent");
+    Natives_Reg("Limits_RegisterType");
+    Natives_Reg("Limits_AddTypeParams");
+    Natives_Reg("Limits_RegisterTypeEvent");
 
-    RegisterNative("Limits_ReadFromJson");
-    RegisterNative("Limits_ReadListFromJson");
+    Natives_Reg("Limits_ReadFromJson");
+    Natives_Reg("Limits_ReadListFromJson");
 
-    RegisterNative("Limits_SetStaticValue");
+    Natives_Reg("Limits_SetStaticValue");
 
-    RegisterNative("Limits_Execute");
-    RegisterNative("Limits_ExecuteList");
+    Natives_Reg("Limits_Execute");
+    Natives_Reg("Limits_ExecuteList");
 }
 
 // native VipM_Limits_RegisterType(const sName[], const bool:bForPlayer = true, const bool:bStatic = false);
-@_Limits_RegisterType(const PluginId){
+@_Limits_RegisterType(const PluginId) {
     enum {Arg_LimitName = 1, Arg_ForPlayer, Arg_Static}
 
     new sName[32];
@@ -28,7 +29,7 @@ Natives_Limits_Init(){
 }
 
 // native VipM_Limits_AddTypeParams(const sName[], any:...);
-@_Limits_AddTypeParams(const PluginId, const cParams){
+@_Limits_AddTypeParams(const PluginId, const cParams) {
     enum {Arg_LimitName = 1, Arg_Params}
 
     new sName[32];
@@ -43,7 +44,7 @@ Natives_Limits_Init(){
 }
 
 // native VipM_Limits_RegisterTypeEvent(const sName[], const E_LimitEvent:iEvent, const sFunc[]);
-@_Limits_RegisterTypeEvent(const PluginId){
+@_Limits_RegisterTypeEvent(const PluginId) {
     enum {Arg_LimitName = 1, Arg_Event, Arg_FuncName}
 
     new sName[32], E_LimitEvent:iEvent, sFunc[64];
@@ -57,7 +58,7 @@ Natives_Limits_Init(){
 }
 
 // native T_LimitUnit:VipM_Limits_ReadFromJson(const JSON:jLimit);
-T_LimitUnit:@_Limits_ReadFromJson(){
+T_LimitUnit:@_Limits_ReadFromJson() {
     enum {Arg_JsonValue = 1}
 
     new JSON:jLimit = JSON:get_param(Arg_JsonValue);
@@ -66,7 +67,7 @@ T_LimitUnit:@_Limits_ReadFromJson(){
 }
 
 // native Array:VipM_Limits_ReadListFromJson(const JSON:jLimits, Array:aLimits = Invalid_Array);
-Array:@_Limits_ReadListFromJson(){
+Array:@_Limits_ReadListFromJson() {
     enum {Arg_JsonValue = 1, Arg_Array}
 
     new JSON:jLimits = JSON:get_param(Arg_JsonValue);
@@ -76,7 +77,7 @@ Array:@_Limits_ReadListFromJson(){
 }
 
 // native VipM_Limits_Execute(const sName[], const bool:bNewValue, const UserId = 0);
-@_Limits_SetStaticValue(){
+@_Limits_SetStaticValue() {
     enum {Arg_LimitName = 1, Arg_NewValue, Arg_UserId}
 
     static sName[32];
@@ -90,7 +91,7 @@ Array:@_Limits_ReadListFromJson(){
 }
 
 // native bool:VipM_Limits_Execute(const T_LimitUnit:iLimit, const UserId = 0);
-bool:@_Limits_Execute(){
+bool:@_Limits_Execute() {
     enum {Arg_LimitUnit = 1, Arg_UserId}
 
     new T_LimitUnit:iLimit = T_LimitUnit:get_param(Arg_LimitUnit);
@@ -100,7 +101,7 @@ bool:@_Limits_Execute(){
 }
 
 // native bool:VipM_Limits_ExecuteList(const Array:aLimits, const UserId = 0, const E_LimitsExecType:iType = Limit_Exec_OR);
-bool:@_Limits_ExecuteList(){
+bool:@_Limits_ExecuteList() {
     enum {Arg_LimitUnitList = 1, Arg_UserId, Arg_Type}
 
     new Array:aLimits = Array:get_param(Arg_LimitUnitList);

@@ -150,6 +150,15 @@ bool:ModuleUnits_ReadFromJson(const JSON:jMUnit, sMUnit[S_ModuleUnit]){
         log_amx("[WARNING] Param `%s` required for module `%s`, but not found.", ErrParam, sModule[Module_Name]);
         return false;
     }
+
+    Forwards_DefaultReturn(VIPM_CONTINUE);
+    if (
+        Forwards_CallP("ReadUnit", jMUnit, sMUnit[ModuleUnit_Params]) == VIPM_STOP
+        || Forwards_CallP("ReadModuleUnit", jMUnit, sMUnit[ModuleUnit_Params]) == VIPM_STOP
+    ) {
+        TrieDestroySafe(sMUnit[ModuleUnit_Params]);
+        return false;
+    }
     
     new ret;
     EMIT_MODULE_EVENT(sModule, Module_OnRead, ret, jMUnit, sMUnit[ModuleUnit_Params]);

@@ -34,22 +34,22 @@
 
 // EMIT_TYPE_EVENT(Type, E_ItemTypeEvent:Event, Return, ...Params)
 #define EMIT_TYPE_EVENT(%1,%2,%3) \
-    if(\
-        %1[ItemType_Events] != Invalid_Trie\
-        && TrieKeyExists(%1[ItemType_Events], IntToStr(%2))\
-    ){\
-        new ___EVENT_FWD;\
-        TrieGetCell(%1[ItemType_Events], IntToStr(%2), ___EVENT_FWD);\
-        ExecuteForward(___EVENT_FWD, %3);\
+    if ( \
+        %1[ItemType_Events] != Invalid_Trie \
+        && TrieKeyExists(%1[ItemType_Events], IntToStr(%2)) \
+    ) { \
+        new ___EVENT_FWD; \
+        TrieGetCell(%1[ItemType_Events], IntToStr(%2), ___EVENT_FWD); \
+        ExecuteForward(___EVENT_FWD, %3); \
     }
 
 // SET_TYPE_EVENT(Type, E_ItemTypeEvent:Event, FwdId)
 #define SET_TYPE_EVENT(%1,%2,%3) \
-    if(%3 >= 0){\
-        if(%1[ItemType_Events] == Invalid_Trie)\
-            %1[ItemType_Events] = TrieCreate();\
-        TrieSetCell(%1[ItemType_Events], IntToStr(%2), %3);\
-    }\
+    if (%3 >= 0) { \
+        if(%1[ItemType_Events] == Invalid_Trie) \
+            %1[ItemType_Events] = TrieCreate(); \
+        TrieSetCell(%1[ItemType_Events], IntToStr(%2), %3); \
+    } \
     else TrieDeleteKey(%1[ItemType_Events], IntToStr(%2))
 
 
@@ -57,7 +57,8 @@ PrintTypesData(const am[ArrayMap]){
     server_print("╔═════╤══════════════════════════════════╗");
     server_print("║  #  │ Type name                        ║");
     server_print("╟─────┼──────────────────────────────────╢");
-    ArrayMapForeachArray(am => Type[S_ItemType])
+    ArrayMapForeachArray (am => Type[S_ItemType]) {
         server_print("║ %03d │ %-32s ║", __i__, Type[ItemType_Name]);
+    }
     server_print("╚═════╧══════════════════════════════════╝");
 }

@@ -32,9 +32,9 @@ echo /============ BUILD =============
 echo /
 
 cd ..\..
-mkdir .\.build\VipModular\amxmodx\
+mkdir .\.build\
 
-xcopy .\amxmodx\ .\.build\VipModular\amxmodx\ /s /e /y
+xcopy .\amxmodx\ .\.build\ /s /e /y
 
 if exist .\VipModular-debug.zip del .\VipModular-debug.zip
 cd .\.build

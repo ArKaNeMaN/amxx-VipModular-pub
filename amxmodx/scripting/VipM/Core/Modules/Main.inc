@@ -4,7 +4,7 @@
 #define _vipmodular_src_Modules_included
 
 #define NATIVE_CHECK_MODULE(%1) \
-    if(!MODULE_EXISTS(%1)){\
+    if (!MODULE_EXISTS(%1)) {\
         log_error(1, "[ERROR] Module '%s' not found.", %1);\
     }
 

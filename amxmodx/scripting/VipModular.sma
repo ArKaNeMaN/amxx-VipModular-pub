@@ -3,6 +3,7 @@
 #include "VipM/DebugMode"
 #include "VipM/ArrayTrieUtils"
 #include "VipM/Utils"
+#include "VipM/Forwards"
 
 #pragma semicolon 1
 #pragma compress 1
@@ -15,10 +16,11 @@ public stock const PluginDescription[] = "Modular vip system";
 new Array:Vips; // S_CfgUnit
 new Trie:gUserVip[MAX_PLAYERS + 1] = {Invalid_Trie, ...}; // ModuleName => Trie:Params
 
-#include "VipM/Core/Structs"
-#include "VipM/Core/Forwards"
 #include "VipM/Core/Utils"
-#include "VipM/Core/Limits"
+
+#include "VipM/Core/Structs"
+#include "VipM/Core/Modules/Main"
+#include "VipM/Core/Limits/Main"
 #include "VipM/Core/Vips"
 
 #include "VipM/Core/SrvCmds"
@@ -29,20 +31,28 @@ public plugin_precache(){
     register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
     register_library(VIPM_LIBRARY);
     CreateConstCvar("vipm_version", VIPM_VERSION);
-    
-    Fwds_Init();
+
+    RegisterForwards();
     SrvCmds_Init();
     Limits_Init();
     Modules_Init();
-    FwdExec(InitModules);
+    Forwards_RegAndCall("InitModules", ET_IGNORE);
 
     Cfg_LoadModulesConfig();
     Vips = Cfg_ReadVipConfigs();
 
     server_print("[%s v%s] Loaded %d config units.", PluginName, VIPM_VERSION, ArraySizeSafe(Vips));
-    FwdExec(Loaded);
+    Forwards_RegAndCall("Loaded", ET_IGNORE);
 
     Dbg_PrintServer("Vip Modular run in debug mode!");
+}
+
+RegisterForwards() {
+    Forwards_Init("VipM");
+    Forwards_Reg("UserUpdated", ET_IGNORE, FP_CELL);
+    Forwards_Reg("ReadUnit", ET_IGNORE, FP_CELL, FP_CELL);
+    Forwards_Reg("ReadModuleUnit", ET_IGNORE, FP_CELL, FP_CELL);
+    Forwards_Reg("ReadLimitUnit", ET_IGNORE, FP_CELL, FP_CELL);
 }
 
 public client_disconnected(UserId){
@@ -50,7 +60,7 @@ public client_disconnected(UserId){
 }
 
 public client_putinserver(UserId){
-    if(is_user_bot(UserId)) {
+    if (is_user_bot(UserId)) {
         return;
     }
 

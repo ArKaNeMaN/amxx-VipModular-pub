@@ -7,18 +7,13 @@
  * Vip Modular: Natives
  */
 
-#include amxmodx
-
-#define RegisterNative(%1) \
-    register_native(fmt(__NATIVE_NAME_TPL, %1), fmt(__NATIVE_FUNC_TPL, %1))
-
-new const __NATIVE_NAME_TPL[] = "VipM_%s";
-new const __NATIVE_FUNC_TPL[] = "@_%s";
+#include <amxmodx>
+#include "VipM/Natives"
 
 Array:Native_GetParamsList(const NullArg, const ParamsCount, Array:aParams = Invalid_Array) {
     const ARGS_NUM_PER_PARAM = 3;
 
-    if((ParamsCount - NullArg) % ARGS_NUM_PER_PARAM != 0){
+    if ((ParamsCount - NullArg) % ARGS_NUM_PER_PARAM != 0) {
         log_error(1, "[ERROR] Invalid parameters num.");
         return Invalid_Array;
     }
@@ -28,7 +23,7 @@ Array:Native_GetParamsList(const NullArg, const ParamsCount, Array:aParams = Inv
     }
 
     new Param[S_CfgParam];
-    for(new i = NullArg+1; i < ParamsCount; i += ARGS_NUM_PER_PARAM){
+    for (new i = NullArg+1; i < ParamsCount; i += ARGS_NUM_PER_PARAM) {
         get_string(i, Param[CfgParam_Name], charsmax(Param[CfgParam_Name]));
         Param[CfgParam_Type] = E_ParamType:get_param_byref(i+1);
         Param[CfgParam_Required] = bool:get_param_byref(i+2);
@@ -44,7 +39,9 @@ Array:Native_GetParamsList(const NullArg, const ParamsCount, Array:aParams = Inv
 #include "VipM/Core/Natives/Modules.inc"
 
 public plugin_natives() {
-    RegisterNative("UserUpdate");
+    Natives_Init("VipM");
+
+    Natives_Reg("UserUpdate");
 
     Natives_Modules_Init();
     Natives_Limits_Init();
@@ -54,8 +51,9 @@ public plugin_natives() {
     enum {Arg_UserId = 1}
 
     new UserId = get_param(Arg_UserId);
-    if(!is_user_connected(UserId))
+    if (!is_user_connected(UserId)) {
         return;
+    }
     
     Vips_UserUpdate(UserId);
 }

@@ -16,7 +16,7 @@ SrvCmds_Init(){
 }
 
 @SrvCmd_Info() {
-    server_print("╓───");
+    server_print("╓─────────");
     server_print("║ %s v%s by %s:", PluginName, VIPM_VERSION, PluginAuthor);
     server_print("║ │");
     server_print("║ ├─Contacts:");
@@ -27,16 +27,16 @@ SrvCmds_Init(){
     server_print("║ │");
     server_print("║ ├─Stats:");
     server_print("║ │ ├─Modules:");
-    server_print("║ │ │ ├ Modules count: %d", ArrayMapSize(Modules));
-    server_print("║ │ │ └ Module units count: %d", ArraySizeSafe(ModuleUnits));
+    server_print("║ │ │ ├─Modules count: %d", ArrayMapSize(Modules));
+    server_print("║ │ │ └─Module units count: %d", ArraySizeSafe(ModuleUnits));
     server_print("║ │ ├─Limits:");
-    server_print("║ │ │ ├ Types count: %d", ArrayMapSize(Limits));
-    server_print("║ │ │ └ Limit units count: %d", ArraySizeSafe(LimitUnits));
+    server_print("║ │ │ ├─Types count: %d", ArrayMapSize(Limits));
+    server_print("║ │ │ └─Limit units count: %d", ArraySizeSafe(LimitUnits));
     server_print("║ │ └─Vips:");
     server_print("║ │   └─Vips count: %d", ArraySizeSafe(Vips));
     server_print("║ │");
     server_print("║ └─GitHub repo: https://github.com/ArKaNeMaN/amxx-VipModular-pub");
-    server_print("╙───");
+    server_print("╙─────────");
 }
 
 @SrvCmd_Modules(){
@@ -47,7 +47,7 @@ SrvCmds_Init(){
     new Module[S_Module], ModuleName[32];
     read_argv(1, ModuleName, charsmax(ModuleName));
 
-    if(!MODULE_EXISTS(ModuleName)){
+    if (!MODULE_EXISTS(ModuleName)) {
         server_print("Module `%s` not found.", ModuleName);
         return;
     }
@@ -65,7 +65,7 @@ SrvCmds_Init(){
     new LimitType[S_Limit], LimitName[32];
     read_argv(1, LimitName, charsmax(LimitName));
 
-    if(!LIMIT_TYPE_EXISTS(LimitName)){
+    if (!LIMIT_TYPE_EXISTS(LimitName)) {
         server_print("Limit `%s` not found.", LimitName);
         return;
     }

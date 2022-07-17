@@ -48,6 +48,8 @@ enum E_LimitsExecType {
     Limit_Exec_XOR,
 }
 
+forward VipM_OnReadLimitUnit(const JSON:jUnit, const Trie:tParams);
+
 native VipM_Limits_RegisterType(const sName[], const bool:bForPlayer = true, const bool:bStatic = false);
 native VipM_Limits_AddTypeParams(const sName[], any:...);
 native VipM_Limits_RegisterTypeEvent(const sName[], const E_LimitEvent:iEvent, const sFunc[]);
