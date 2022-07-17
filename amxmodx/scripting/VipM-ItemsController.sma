@@ -7,7 +7,7 @@
 public stock const PluginName[] = "[VipM] Items Controller";
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = "https://arkanaplugins.ru/plugin/9";
-public stock const PluginDescription[] = "Vip modular`s items controller";
+public stock const PluginDescription[] = "Vip Modular`s items controller";
 
 #include "VipM/ArrayTrieUtils"
 #include "VipM/ArrayMap"
@@ -29,11 +29,7 @@ public VipM_OnInitModules() {
 }
 
 PluginInit() {
-    static bool:bIsInited;
-    if (bIsInited) {
-        return;
-    }
-    bIsInited = true;
+    CallOnce();
 
     register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
     CreateConstCvar("vipm_ic_version", VIPM_VERSION);
