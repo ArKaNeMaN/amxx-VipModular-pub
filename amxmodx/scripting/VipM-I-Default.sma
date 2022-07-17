@@ -19,16 +19,16 @@ public VipM_IC_OnInitTypes() {
     register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
 
     VipM_IC_RegisterType("Weapon");
-    VipM_IC_RegisterTypeEvent("Weapon", ItemType_OnGive, "@OnWeaponGive");
     VipM_IC_RegisterTypeEvent("Weapon", ItemType_OnRead, "@OnWeaponRead");
+    VipM_IC_RegisterTypeEvent("Weapon", ItemType_OnGive, "@OnWeaponGive");
 
     VipM_IC_RegisterType("ItemsList");
-    VipM_IC_RegisterTypeEvent("ItemsList", ItemType_OnGive, "@OnItemsListGive");
     VipM_IC_RegisterTypeEvent("ItemsList", ItemType_OnRead, "@OnItemsListRead");
+    VipM_IC_RegisterTypeEvent("ItemsList", ItemType_OnGive, "@OnItemsListGive");
 
     VipM_IC_RegisterType("Command");
-    VipM_IC_RegisterTypeEvent("Command", ItemType_OnGive, "@OnCommandGive");
     VipM_IC_RegisterTypeEvent("Command", ItemType_OnRead, "@OnCommandRead");
+    VipM_IC_RegisterTypeEvent("Command", ItemType_OnGive, "@OnCommandGive");
 
     VipM_IC_RegisterType("DefuseKit");
     VipM_IC_RegisterTypeEvent("DefuseKit", ItemType_OnGive, "@OnDefuseKitGive");
@@ -78,7 +78,7 @@ public VipM_IC_OnInitTypes() {
 
     replace_all(Command, charsmax(Command), "{UserId}", IntToStr(UserId));
 
-    if(ByServer) {
+    if (ByServer) {
         server_cmd(Command);
     } else {
         client_cmd(UserId, Command);
@@ -86,8 +86,10 @@ public VipM_IC_OnInitTypes() {
 }
 
 @OnDefuseKitGive(const UserId, const Trie:Params) {
-    if(get_member(UserId, m_iTeam) == TEAM_CT)
+    if (get_member(UserId, m_iTeam) == TEAM_CT) {
         rg_give_defusekit(UserId);
+    }
+
     return VIPM_CONTINUE;
 }
 

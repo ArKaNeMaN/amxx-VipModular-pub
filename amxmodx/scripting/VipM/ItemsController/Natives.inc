@@ -1,5 +1,6 @@
 #include amxmodx
 #include json
+#include "VipM/Utils"
 
 #define RegisterNative(%1) \
     register_native(fmt(__NATIVE_NAME_TPL, %1), fmt(__NATIVE_FUNC_TPL, %1))
@@ -12,24 +13,26 @@ enum {
     ERROR_ITEM_NOT_FOUND,
 }
 
-#define NATIVE_CHECK_ITEM(%1) \
-    if(!ITEM_EXISTS(%1)){\
-        log_error(ERROR_ITEM_NOT_FOUND, "[ERROR] Item #%d not found.", %1);\
-    }
+#define NATIVE_CHECK_ITEM(%1) CompositeMacros( \
+    if (!ITEM_EXISTS(%1)) { \
+        log_error(ERROR_ITEM_NOT_FOUND, "[ERROR] Item #%d not found.", %1); \
+    } \
+)
 
-#define NATIVE_CHECK_TYPE(%1) \
-    if(!TYPE_EXISTS(%1)){\
+#define NATIVE_CHECK_TYPE(%1) CompositeMacros( \
+    if (!TYPE_EXISTS(%1)) { \
         log_error(ERROR_TYPE_NOT_FOUND, "[ERROR] Item type '%s' not found.", %1);\
-    }
+    } \
+)
 
-public plugin_natives(){
+public plugin_natives() {
     RegisterNative("RegisterType");
     RegisterNative("RegisterTypeEvent");
     RegisterNative("JsonGetItem");
     RegisterNative("GiveItem");
 }
 
-@_RegisterType(const PluginId){
+@_RegisterType(const PluginId) {
     enum {Arg_Type = 1}
 
     new Type[S_ItemType];
@@ -41,13 +44,13 @@ public plugin_natives(){
     return ADD_TYPE(Type);
 }
 
-@_RegisterTypeEvent(const PluginId){
+@_RegisterTypeEvent(const PluginId) {
     enum {Arg_Type = 1, Arg_Event, Arg_Func}
     
     new TypeName[32], Type[S_ItemType];
     get_string(Arg_Type, TypeName, charsmax(TypeName));
 
-    NATIVE_CHECK_TYPE(TypeName)
+    NATIVE_CHECK_TYPE(TypeName);
     GET_TYPE(TypeName, Type);
 
     new E_ItemTypeEvent:Event = E_ItemTypeEvent:get_param(Arg_Event);
@@ -56,7 +59,7 @@ public plugin_natives(){
     get_string(Arg_Func, FuncName, charsmax(FuncName));
 
     new FwdId = -1;
-    switch(Event){
+    switch (Event) {
         case ItemType_OnRead: // VipM_FwdReturn:(const JSON:jItem, Trie:Params)
             FwdId = CreateOneForward(PluginId, FuncName, FP_CELL, FP_CELL);
 
@@ -64,8 +67,9 @@ public plugin_natives(){
             FwdId = CreateOneForward(PluginId, FuncName, FP_CELL, FP_CELL);
     }
 
-    if(FwdId < 0)
+    if (FwdId < 0) {
         return false;
+    }
 
     SET_TYPE_EVENT(Type, Event, FwdId);
     SET_TYPE(Type);
@@ -88,7 +92,7 @@ bool:@_GiveItem(){
     new UserId = get_param(Arg_UserId);
     new ItemId = get_param(Arg_ItemId);
 
-    NATIVE_CHECK_ITEM(ItemId)
+    NATIVE_CHECK_ITEM(ItemId);
     new Item[S_Item];
     GET_ITEM(ItemId, Item);
 
@@ -97,13 +101,13 @@ bool:@_GiveItem(){
 
     FwdRetInit(VIPM_CONTINUE);
     FwdExecP(GiveItem, [UserId, Item[Item_Params]]);
-    if(FwdRet() == VIPM_STOP){
+    if (FwdRet() == VIPM_STOP) {
         return false;
     }
 
     new Ret = VIPM_CONTINUE;
     EMIT_TYPE_EVENT(Type, ItemType_OnGive, Ret, UserId, Item[Item_Params])
-    if(Ret == VIPM_STOP){
+    if (Ret == VIPM_STOP) {
         return false;
     }
 

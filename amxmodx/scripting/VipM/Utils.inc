@@ -259,20 +259,18 @@ stock CreateConstCvar(const sCvarName[], const sCvarValue[]) {
     set_pcvar_string(create_cvar(sCvarName, sCvarValue), sCvarValue);
 }
 
-#define CallOnce() \
-    CompositeMacros( \
-        static bool:__CallOnce_bCalled; \
-        if (__CallOnce_bCalled) { \
-            return; \
-        } \
-        __CallOnce_bCalled = true; \
-    )
+#define CallOnce() CompositeMacros( \
+    static bool:__CallOnce_bCalled; \
+    if (__CallOnce_bCalled) { \
+        return; \
+    } \
+    __CallOnce_bCalled = true; \
+)
 
-#define CallOnceR(%1) \
-    CompositeMacros( \
-        static bool:__CallOnce_bCalled; \
-        if (__CallOnce_bCalled) { \
-            return %1; \
-        } \
-        __CallOnce_bCalled = true; \
-    )
+#define CallOnceR(%1) CompositeMacros( \
+    static bool:__CallOnce_bCalled; \
+    if (__CallOnce_bCalled) { \
+        return %1; \
+    } \
+    __CallOnce_bCalled = true; \
+)
