@@ -20,7 +20,7 @@
             "File:SpawnHealth/Test",
             "File:Vampire/Test",
             // "File:SpawnItems/Test",
-            "File:VipInTab/Test",
+            "File:VipInTab/Override",
             "File:WeaponMenus/Test"
         ]
     },
@@ -41,10 +41,7 @@
             "Flags": "t"
         },
         "Modules": [
-            {
-                "Module": "VipInTab",
-                "Enabled": true
-            },
+            "File:VipInTab/Default",
             {
                 "Module": "SpawnHealth",
                 

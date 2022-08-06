@@ -21,13 +21,13 @@ new Trie:gUserVip[MAX_PLAYERS + 1] = {Invalid_Trie, ...}; // ModuleName => Trie:
 #include "VipM/Core/Structs"
 #include "VipM/Core/Modules/Main"
 #include "VipM/Core/Limits/Main"
+#include "VipM/Core/Configs/Main"
 #include "VipM/Core/Vips"
 
 #include "VipM/Core/SrvCmds"
-#include "VipM/Core/Configs"
 #include "VipM/Core/Natives"
 
-public plugin_precache(){
+public plugin_precache() {
     register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
     register_library(VIPM_LIBRARY);
     CreateConstCvar("vipm_version", VIPM_VERSION);
@@ -39,7 +39,11 @@ public plugin_precache(){
     Forwards_RegAndCall("InitModules", ET_IGNORE);
 
     Cfg_LoadModulesConfig();
-    Vips = Cfg_ReadVipConfigs();
+    Vips = Cfg_LoadVipsConfigs();
+
+    if (!ArraySizeSafe(Vips)) {
+        set_fail_state("Vips configs not found.");
+    }
 
     server_print("[%s v%s] Loaded %d config units.", PluginName, VIPM_VERSION, ArraySizeSafe(Vips));
     Forwards_RegAndCall("Loaded", ET_IGNORE);
@@ -51,15 +55,16 @@ RegisterForwards() {
     Forwards_Init("VipM");
     Forwards_Reg("UserUpdated", ET_IGNORE, FP_CELL);
     Forwards_Reg("ReadUnit", ET_IGNORE, FP_CELL, FP_CELL);
+    Forwards_Reg("ActivateModule", ET_STOP, FP_CELL);
     Forwards_Reg("ReadModuleUnit", ET_IGNORE, FP_CELL, FP_CELL);
     Forwards_Reg("ReadLimitUnit", ET_IGNORE, FP_CELL, FP_CELL);
 }
 
-public client_disconnected(UserId){
+public client_disconnected(UserId) {
     Vips_Reset(UserId);
 }
 
-public client_putinserver(UserId){
+public client_putinserver(UserId) {
     if (is_user_bot(UserId)) {
         return;
     }

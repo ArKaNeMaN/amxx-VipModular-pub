@@ -32,8 +32,9 @@ SrvCmds_Init(){
     server_print("║ │ ├─Limits:");
     server_print("║ │ │ ├─Types count: %d", ArrayMapSize(Limits));
     server_print("║ │ │ └─Limit units count: %d", ArraySizeSafe(LimitUnits));
-    server_print("║ │ └─Vips:");
-    server_print("║ │   └─Vips count: %d", ArraySizeSafe(Vips));
+    server_print("║ │ ├─Vips:");
+    server_print("║ │ │ └─Vips count: %d", ArraySizeSafe(Vips));
+    server_print("║ │ └─Compiled by AmxModX v%s:", AMXX_VERSION_STR);
     server_print("║ │");
     server_print("║ └─GitHub repo: https://github.com/ArKaNeMaN/amxx-VipModular-pub");
     server_print("╙─────────");
