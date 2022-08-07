@@ -196,7 +196,10 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
         // Общий лимит
         gUserLeftItems[UserId] < 1
         // Лимит на конкретном меню
-        || KeyValueCounter_Get(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId)) >= Menu[WeaponMenu_Count]
+        || (
+            Menu[WeaponMenu_Count]
+            && KeyValueCounter_Get(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId))
+        )
     ) {
         if (!bSilent) {
             ChatPrintL(UserId, "MSG_NO_LEFT_ITEMS");
