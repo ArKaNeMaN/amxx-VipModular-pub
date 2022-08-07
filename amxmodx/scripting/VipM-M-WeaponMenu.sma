@@ -96,7 +96,7 @@ public VipM_OnInitModules() {
         return;
     }
 
-    CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU);
+    CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU_SILENT);
 }
 
 @Cmd_SwitchAutoOpen(const UserId) {
