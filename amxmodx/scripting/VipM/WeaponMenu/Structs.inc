@@ -4,6 +4,7 @@ enum _:S_WeaponMenu{
     WeaponMenu_Title[128],
     Array:WeaponMenu_Items,
     Array:WeaponMenu_Limits,
+    WeaponMenu_Count,
 }
 
 enum MenuItemType{

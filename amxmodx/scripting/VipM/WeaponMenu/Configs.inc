@@ -6,23 +6,25 @@ Array:Cfg_ReadMenus(&JSON:jMenus){
     new Array:aMenus = Invalid_Array;
     new Menu[S_WeaponMenu];
 
+    // TODO: Заменить на Json_IsRef
     jMenus = JSON_GET_FILE_OR_OBJECT(jMenus);
 
-    switch(json_get_type(jMenus)){
+    switch (json_get_type(jMenus)) {
         case JSONArray: {
             new cMenus = json_array_get_count(jMenus);
             aMenus = ArrayCreate(S_WeaponMenu, cMenus);
 
-            for(new i = 0; i < cMenus; i++){
+            for (new i = 0; i < cMenus; i++) {
                 new JSON:jMenu = json_array_get_value(jMenus, i);
-                if(Cfg_ReadMenu(jMenu, Menu))
+                if (Cfg_ReadMenu(jMenu, Menu)) {
                     ArrayPushArray(aMenus, Menu);
+                }
             }
             json_free(jMenus);
         }
 
         case JSONObject, JSONString: {
-            if(Cfg_ReadMenu(jMenus, Menu)){
+            if (Cfg_ReadMenu(jMenus, Menu)) {
                 aMenus = ArrayCreate(S_WeaponMenu, 1);
                 ArrayPushArray(aMenus, Menu);
             }
@@ -35,15 +37,18 @@ Array:Cfg_ReadMenus(&JSON:jMenus){
 
 bool:Cfg_ReadMenu(&JSON:jMenu, Menu[S_WeaponMenu]){
     static Trie:_FileCache;
-    if(_FileCache == Invalid_Trie)
+    if (_FileCache == Invalid_Trie) {
         _FileCache = TrieCreate();
+    }
 
     jMenu = JSON_GET_FILE_OR_OBJECT(jMenu);
-    if(jMenu == Invalid_JSON)
+    if (jMenu == Invalid_JSON) {
         return false;
+    }
 
     json_object_get_string(jMenu, "Name", Menu[WeaponMenu_Name], charsmax(Menu[WeaponMenu_Name]));
     json_object_get_string(jMenu, "Title", Menu[WeaponMenu_Title], charsmax(Menu[WeaponMenu_Title]));
+    Menu[WeaponMenu_Count] = json_object_get_number(jMenu, "Count");
     Menu[WeaponMenu_Limits] = VipM_Limits_ReadListFromJson(json_object_get_value(jMenu, "Limits"));
 
     new JSON:jMenuItems = JsonObjectGetItemsValue(jMenu);
@@ -51,7 +56,7 @@ bool:Cfg_ReadMenu(&JSON:jMenu, Menu[S_WeaponMenu]){
 
     json_free(jMenu);
 
-    if(Menu[WeaponMenu_Items] == Invalid_Array){
+    if (Menu[WeaponMenu_Items] == Invalid_Array) {
         log_amx("[WARNING] Menu items are not specified.");
         return false;
     }
@@ -65,12 +70,12 @@ Array:Cfg_ReadMenuItems(&JSON:jMenuItems){
 
     jMenuItems = JSON_GET_FILE_OR_OBJECT(jMenuItems);
 
-    switch(json_get_type(jMenuItems)){
+    switch (json_get_type(jMenuItems)) {
         case JSONArray: {
             new cMenuItems = json_array_get_count(jMenuItems);
             aMenuItems = ArrayCreate(S_MenuItem, cMenuItems);
 
-            for(new i = 0; i < cMenuItems; i++){
+            for (new i = 0; i < cMenuItems; i++) {
                 new JSON:jMenuItem = json_array_get_value(jMenuItems, i);
                 if(Cfg_ReadMenuItem(jMenuItem, MenuItem))
                     ArrayPushArray(aMenuItems, MenuItem);
@@ -79,7 +84,7 @@ Array:Cfg_ReadMenuItems(&JSON:jMenuItems){
         }
 
         case JSONObject: {
-            if(Cfg_ReadMenuItem(jMenuItems, MenuItem)){
+            if (Cfg_ReadMenuItem(jMenuItems, MenuItem)) {
                 aMenuItems = ArrayCreate(S_MenuItem, 1);
                 ArrayPushArray(aMenuItems, MenuItem);
             }

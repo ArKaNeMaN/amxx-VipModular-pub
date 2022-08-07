@@ -21,9 +21,12 @@ new const CMD_SWITCH_AUTOOPEN[] = "vipmenu_autoopen";
 #include "VipM/CommandAliases"
 
 new gUserLeftItems[MAX_PLAYERS + 1] = {0, ...};
+new Trie:g_tUserMenuItemsCounter[MAX_PLAYERS + 1] = {Invalid_Trie, ...};
+
 new bool:gUserAutoOpen[MAX_PLAYERS + 1] = {true, ...};
 new bool:gUserExecutedAutoOpen[MAX_PLAYERS + 1] = {false, ...};
 
+#include "VipM/WeaponMenu/KeyValueCounter"
 #include "VipM/WeaponMenu/Structs"
 #include "VipM/WeaponMenu/Configs"
 #include "VipM/WeaponMenu/Menus"
@@ -80,6 +83,7 @@ public VipM_OnInitModules() {
 
     new Trie:Params = VipM_Modules_GetParams(MODULE_NAME, UserId);
     gUserLeftItems[UserId] = VipM_Params_GetInt(Params, "Count", 0);
+    g_tUserMenuItemsCounter[UserId] = KeyValueCounter_Reset(g_tUserMenuItemsCounter[UserId]);
 
     if (!gUserAutoOpen[UserId]) {
         return;
@@ -190,7 +194,12 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
     static MenuItem[S_MenuItem];
     ArrayGetArray(Menu[WeaponMenu_Items], ItemId, MenuItem);
 
-    if (gUserLeftItems[UserId] < 1) {
+    if (
+        // Общий лимит
+        gUserLeftItems[UserId] < 1
+        // Лимит на конкретном меню
+        || KeyValueCounter_Get(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId)) >= Menu[WeaponMenu_Count]
+    ) {
         if (!bSilent) {
             ChatPrintL(UserId, "MSG_NO_LEFT_ITEMS");
         }
@@ -208,5 +217,9 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
     
     if (VipM_IC_GiveItems(UserId, MenuItem[MenuItem_Items])) {
         gUserLeftItems[UserId]--;
+
+        if (Menu[WeaponMenu_Count]) {
+            KeyValueCounter_Inc(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId));
+        }
     }
 }

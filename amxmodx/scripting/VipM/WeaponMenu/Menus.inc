@@ -12,11 +12,17 @@ Menu_MainMenu(const UserId, const MainMenuTitle[], const Array:aMenus){
     menu_display(UserId, iMenu);
 }
 
-Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]){
-    new iMenu = menu_create(fmt("%s^n\w%L", Menu[WeaponMenu_Title], UserId, "MENU_MAIN_LEFT", gUserLeftItems[UserId]), "@MenuHandler_Command");
+Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
+    new iItemsLeft = gUserLeftItems[UserId];
+    if (Menu[WeaponMenu_Count]) {
+        iItemsLeft = min(iItemsLeft, Menu[WeaponMenu_Count] - KeyValueCounter_Get(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId)));
+    }
+    // Или лучше будет показывать оба лимита отдельно?
+
+    new iMenu = menu_create(fmt("%s^n\w%L", Menu[WeaponMenu_Title], UserId, "MENU_MAIN_LEFT", iItemsLeft), "@MenuHandler_Command");
 
     ArrayForeachArray(Menu[WeaponMenu_Items] => MenuItem[S_MenuItem]){
-        switch(MenuItem[MenuItem_Type]){
+        switch (MenuItem[MenuItem_Type]) {
             case MenuItemType_Default: {
                 static Cmd[128];
                 CommandAliases_GetMainCmd(CMD_WEAPON_MENU, Cmd, charsmax(Cmd));
@@ -36,7 +42,7 @@ Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]){
 }
 
 @MenuHandler_Command(const UserId, const MenuId, const ItemId){
-    if(ItemId == MENU_EXIT){
+    if (ItemId == MENU_EXIT) {
         menu_destroy(MenuId);
         return;
     }
