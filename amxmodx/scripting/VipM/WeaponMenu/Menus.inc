@@ -30,8 +30,8 @@ Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
     new iMenu = menu_create(
         fmt("%s^n\w%L", Menu[WeaponMenu_Title], UserId, "VIPM_M_WM_MENU_MAIN_ITEMS_LEFT", iItemsLeft),
         Menu[WeaponMenu_BackOnExit] && iMenusCount > 1
-            ? "@MenuHandler_Command"
-            : "@MenuHandler_Weapons"
+            ? "@MenuHandler_Weapons"
+            : "@MenuHandler_Command"
     );
 
     if (Menu[WeaponMenu_BackOnExit] && iMenusCount > 1) {
