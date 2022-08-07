@@ -49,6 +49,7 @@ bool:Cfg_ReadMenu(&JSON:jMenu, Menu[S_WeaponMenu]){
     json_object_get_string(jMenu, "Name", Menu[WeaponMenu_Name], charsmax(Menu[WeaponMenu_Name]));
     json_object_get_string(jMenu, "Title", Menu[WeaponMenu_Title], charsmax(Menu[WeaponMenu_Title]));
     Menu[WeaponMenu_Count] = json_object_get_number(jMenu, "Count");
+    Menu[WeaponMenu_BackOnExit] = json_object_get_bool(jMenu, "BackOnExit");
     Menu[WeaponMenu_Limits] = VipM_Limits_ReadListFromJson(json_object_get_value(jMenu, "Limits"));
 
     new JSON:jMenuItems = JsonObjectGetItemsValue(jMenu);

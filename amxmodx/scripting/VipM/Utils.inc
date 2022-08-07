@@ -42,6 +42,9 @@ stock const __USER_NAME_TEMPLATE_STR[] = "%n";
 #define Lang(%1) \
     fmt(__SLANG_TEMPLATE_STR, %1)
 
+#define uLang(%1) \
+    fmt(__CLANG_TEMPLATE_STR, %1)
+
 #define ChatPrint(%1,%2) \
     client_print_color(%1, print_team_default, __CLANG_TEMPLATE_STR, IsUserIdValid(%1) ? %1 : -1, "MSG_LAYOUT", fmt(%2))
 

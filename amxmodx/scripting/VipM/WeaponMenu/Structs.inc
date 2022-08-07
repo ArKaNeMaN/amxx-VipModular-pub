@@ -5,6 +5,7 @@ enum _:S_WeaponMenu{
     Array:WeaponMenu_Items,
     Array:WeaponMenu_Limits,
     WeaponMenu_Count,
+    bool:WeaponMenu_BackOnExit,
 }
 
 enum MenuItemType{

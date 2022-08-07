@@ -1,5 +1,11 @@
 #include amxmodx
 #include VipModular
+#include "VipM/Utils"
+#include "VipM/ArrayTrieUtils"
+
+Menu_GetUserMenusCount(const UserId) {
+    return ArraySizeSafe(VipM_Params_GetArr(VipM_Modules_GetParams(MODULE_NAME, UserId), "Menus"));
+}
 
 Menu_MainMenu(const UserId, const MainMenuTitle[], const Array:aMenus){
     new iMenu = menu_create(MainMenuTitle, "@MenuHandler_Command");
@@ -19,7 +25,18 @@ Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
     }
     // Или лучше будет показывать оба лимита отдельно?
 
-    new iMenu = menu_create(fmt("%s^n\w%L", Menu[WeaponMenu_Title], UserId, "MENU_MAIN_LEFT", iItemsLeft), "@MenuHandler_Command");
+    new iMenusCount = Menu_GetUserMenusCount(UserId);
+
+    new iMenu = menu_create(
+        fmt("%s^n\w%L", Menu[WeaponMenu_Title], UserId, "VIPM_M_WM_MENU_MAIN_ITEMS_LEFT", iItemsLeft),
+        Menu[WeaponMenu_BackOnExit] && iMenusCount > 1
+            ? "@MenuHandler_Command"
+            : "@MenuHandler_Weapons"
+    );
+
+    if (Menu[WeaponMenu_BackOnExit] && iMenusCount > 1) {
+        menu_setprop(iMenu, MPROP_EXITNAME, uLang(UserId, "VIPM_M_WM_MENU_WEAPONS_BACK_TO_MAIN_TEXT"));
+    }
 
     ArrayForeachArray(Menu[WeaponMenu_Items] => MenuItem[S_MenuItem]){
         switch (MenuItem[MenuItem_Type]) {
@@ -39,6 +56,14 @@ Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
         }
     }
     menu_display(UserId, iMenu);
+}
+
+@MenuHandler_Weapons(const UserId, const MenuId, const ItemId) {
+    @MenuHandler_Command(UserId, MenuId, ItemId);
+    
+    if (ItemId == MENU_EXIT) {
+        CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU);
+    }
 }
 
 @MenuHandler_Command(const UserId, const MenuId, const ItemId){
