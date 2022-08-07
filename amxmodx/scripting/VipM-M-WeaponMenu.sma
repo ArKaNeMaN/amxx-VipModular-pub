@@ -24,7 +24,6 @@ new gUserLeftItems[MAX_PLAYERS + 1] = {0, ...};
 new Trie:g_tUserMenuItemsCounter[MAX_PLAYERS + 1] = {Invalid_Trie, ...};
 
 new bool:gUserAutoOpen[MAX_PLAYERS + 1] = {true, ...};
-new bool:gUserExecutedAutoOpen[MAX_PLAYERS + 1] = {false, ...};
 
 #include "VipM/WeaponMenu/KeyValueCounter"
 #include "VipM/WeaponMenu/Structs"
@@ -97,7 +96,6 @@ public VipM_OnInitModules() {
         return;
     }
 
-    gUserExecutedAutoOpen[UserId] = true;
     CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU);
 }
 
