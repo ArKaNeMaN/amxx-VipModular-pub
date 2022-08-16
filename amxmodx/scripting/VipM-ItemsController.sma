@@ -1,18 +1,18 @@
 #include <amxmodx>
 #include <VipModular>
+#include "VipM/ArrayTrieUtils"
+#include "VipM/ArrayMap"
+#include "VipM/Utils"
+#include "VipM/Forwards"
 
 #pragma semicolon 1
 #pragma compress 1
 
 public stock const PluginName[] = "[VipM] Items Controller";
+public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = "https://arkanaplugins.ru/plugin/9";
 public stock const PluginDescription[] = "Vip Modular`s items controller";
-
-#include "VipM/ArrayTrieUtils"
-#include "VipM/ArrayMap"
-#include "VipM/Utils"
-#include "VipM/Forwards"
 
 #include "VipM/ItemsController/Structs"
 #include "VipM/ItemsController/Utils"
@@ -31,8 +31,8 @@ public VipM_OnInitModules() {
 PluginInit() {
     CallOnce();
 
-    register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
-    CreateConstCvar("vipm_ic_version", VIPM_VERSION);
+    RegisterPluginByVars();
+    CreateConstCvar("vipm_ic_version", PluginVersion);
     SrvCmds_Init();
 
     Forwards_Init("VipM_IC");

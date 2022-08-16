@@ -1,14 +1,12 @@
-{/* Пока не используется. На релизе будет заменой файла Maps.json. */
-    "TestModule": {
-        "Enabled": true,
+[
+    {
+        "Modules": [
+            "SpawnItems",
+            "WeaponMenu"
+        ],
         "Limits": {
-            "Maps": ["*35hp", "*$"]
-        }
-    },
-    "WeaponMenu": {
-        "Enabled": true,
-        "Limits": {
-            "TimeOfDay": ["Night"]
+            "Limit": "Logic-NOT",
+            "Limits": []
         }
     }
-}
+]

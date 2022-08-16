@@ -7,6 +7,8 @@
  * Vip Modular: Modules
 */
 
+#define VIPM_MODULE_MAX_NAME 32
+
 enum E_ModuleEvent{
 
     /*

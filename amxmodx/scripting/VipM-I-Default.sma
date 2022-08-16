@@ -2,21 +2,19 @@
 #include <reapi>
 #include <json>
 #include <VipModular>
-
-stock const __NUM_STR[] = "%d";
-#define IntToStr(%1) \
-    fmt(__NUM_STR, %1)
+#include "VipM/Utils"
 
 #pragma semicolon 1
 #pragma compress 1
 
 public stock const PluginName[] = "[VipM][I] Default";
+public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = "https://arkanaplugins.ru/plugin/9";
 public stock const PluginDescription[] = "[VipModular][Item] Default items.";
 
 public VipM_IC_OnInitTypes() {
-    register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
+    RegisterPluginByVars();
 
     VipM_IC_RegisterType("Weapon");
     VipM_IC_RegisterTypeEvent("Weapon", ItemType_OnRead, "@OnWeaponRead");
@@ -38,7 +36,7 @@ public VipM_IC_OnInitTypes() {
     TrieDeleteKey(Params, "Name");
 
     if (!json_object_has_value(jItem, "Items", JSONArray)) {
-        log_amx("[WARNING] Param `Items` required for item `ItemsList`.");
+        Json_LogForFile(jItem, "WARNING", "Param `Items` required for item `ItemsList`.");
         return VIPM_STOP;
     }
 
@@ -58,7 +56,7 @@ public VipM_IC_OnInitTypes() {
     TrieDeleteKey(Params, "Name");
 
     if (!json_object_has_value(jItem, "Command")) {
-        log_amx("[WARNING] Param `Command` required for item `Command`.");
+        Json_LogForFile(jItem, "WARNING", "Param `Command` required for item `Command`.");
         return VIPM_STOP;
     }
     

@@ -7,7 +7,8 @@
 #include json
 
 stock const VIPM_LIBRARY[] = "VipModular";
-stock const VIPM_VERSION[] = "5.0.0-beta";
+#define _VIPM_VERSION "5.0.0-beta"
+stock const VIPM_VERSION[] = _VIPM_VERSION;
 stock const VIPM_CFG_PATH[] = "plugins/VipModular";
 
 /**

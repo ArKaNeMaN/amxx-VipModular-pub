@@ -139,10 +139,16 @@ bool:ModuleUnits_ReadFromJson(const JSON:jMUnit, sMUnit[S_ModuleUnit]){
         return false;
     }
 
+    new iModule = GET_MODULE_ID(ModuleName);
+    Modules_Enable(iModule);
+
     new sModule[S_Module];
-    GET_MODULE(ModuleName, sModule);
+    GET_MODULE_BY_ID(iModule, sModule);
+
+    // Пусть юниты модулей читаются вне зависимости от состояния модуля
+    // Чтобы позже можно было на лету перключать состояние
     
-    sMUnit[ModuleUnit_ModuleId] = GET_MODULE_ID(ModuleName);
+    sMUnit[ModuleUnit_ModuleId] = iModule;
     sMUnit[ModuleUnit_Params] = TrieCreate();
     
     new ErrParam[32];
@@ -224,6 +230,7 @@ Array:ModuleUnits_LoadListFromJson(const JSON:jModules, Array:aModules = Invalid
             if (iMUnit != Invalid_ModuleUnit) {
                 ArrayPushCell(aModules, iMUnit);
             }
+            json_free(jModule);
         }
     }
 

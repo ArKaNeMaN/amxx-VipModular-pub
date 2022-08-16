@@ -1,15 +1,17 @@
-#include amxmodx
-#include VipModular
+#include <amxmodx>
+#include <VipModular>
+#include "VipM/Utils"
 
 #pragma semicolon 1
 #pragma compress 1
 
 public stock const PluginName[] = "[VipM][L] Logic";
+public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = "https://arkanaplugins.ru/plugin/9";
 
 public VipM_OnInitModules(){
-    register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
+    RegisterPluginByVars();
 
     VipM_Limits_RegisterType("Logic-OR", false, false);
     VipM_Limits_AddTypeParams("Logic-OR",

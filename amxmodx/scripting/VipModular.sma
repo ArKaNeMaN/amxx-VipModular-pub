@@ -9,6 +9,7 @@
 #pragma compress 1
 
 public stock const PluginName[] = "Vip Modular";
+public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = "t.me/arkaneman";
 public stock const PluginDescription[] = "Modular vip system";
@@ -28,7 +29,7 @@ new Trie:gUserVip[MAX_PLAYERS + 1] = {Invalid_Trie, ...}; // ModuleName => Trie:
 #include "VipM/Core/Natives"
 
 public plugin_precache() {
-    register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
+    RegisterPluginByVars();
     register_library(VIPM_LIBRARY);
     CreateConstCvar("vipm_version", VIPM_VERSION);
 
@@ -55,7 +56,7 @@ RegisterForwards() {
     Forwards_Init("VipM");
     Forwards_Reg("UserUpdated", ET_IGNORE, FP_CELL);
     Forwards_Reg("ReadUnit", ET_IGNORE, FP_CELL, FP_CELL);
-    Forwards_Reg("ActivateModule", ET_STOP, FP_CELL);
+    Forwards_Reg("ActivateModule", ET_STOP, FP_STRING);
     Forwards_Reg("ReadModuleUnit", ET_IGNORE, FP_CELL, FP_CELL);
     Forwards_Reg("ReadLimitUnit", ET_IGNORE, FP_CELL, FP_CELL);
 }

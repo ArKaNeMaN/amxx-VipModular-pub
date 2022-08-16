@@ -136,8 +136,10 @@ Array:Limits_LoadUnitListFromJson(const JSON:jLimits, Array:aLimits = Invalid_Ar
 
         json_array_foreach_value(jLimits: i => jLimit){
             iLimit = Limits_LoadUnitFromJson(jLimit);
-            if(iLimit != Invalid_LimitUnit)
+            if (iLimit != Invalid_LimitUnit) {
                 ArrayPushCell(aLimits, iLimit);
+            }
+            json_free(jLimit);
         }
     }
 

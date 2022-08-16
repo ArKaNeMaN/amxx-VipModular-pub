@@ -1,11 +1,13 @@
 #include <amxmodx>
 #include <reapi>
 #include <VipModular>
+#include "VipM/Utils"
 
 #pragma semicolon 1
 #pragma compress 1
 
 public stock const PluginName[] = "[VipM][M] Vampire";
+public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = "https://arkanaplugins.ru/plugin/9";
 public stock const PluginDescription[] = "Vip modular`s module - Vampire";
@@ -13,7 +15,7 @@ public stock const PluginDescription[] = "Vip modular`s module - Vampire";
 new const MODULE_NAME[] = "Vampire";
 
 public VipM_OnInitModules(){
-    register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
+    RegisterPluginByVars();
     register_dictionary("VipM-Vampire.ini");
 
     VipM_Modules_Register(MODULE_NAME, true);

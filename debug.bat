@@ -4,7 +4,6 @@ echo /============ PREPARE =============
 echo /
 
 xcopy .\amxmodx\scripting\include C:\AmxModX\1.9.0\include /s /e /y
-xcopy .\amxmodx\scripting\include C:\AmxModX\1.10.0\include /s /e /y
 
 if exist .\amxmodx\plugins rd /S /q .\amxmodx\plugins
 mkdir .\amxmodx\plugins
@@ -22,7 +21,7 @@ for /R ..\scripting\ %%F in (*.sma) do (
     echo / /
     echo / / Compile %%~nF:
     echo / /
-    amxx1100 DEBUG=1 %%F
+    amxx190 DEBUG=1 %%F
     echo %%~nF.amxx debug>>%PLUGINS_LIST%
 )
 

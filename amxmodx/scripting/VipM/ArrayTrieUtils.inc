@@ -32,6 +32,11 @@ stock TrieDestroySafe(Trie:t)
         for(new %2[%3], %4 = 0; %4 < ArraySizeSafe(%1); %4++) \
             if(ArrayGetArray(%1, %4, %2))
 
+#define ArrayForeachString(%1:%4=>%2[%3]) \
+    if(%1 != Invalid_Array) \
+        for(new %2[%3], %4 = 0; %4 < ArraySizeSafe(%1); %4++) \
+            if(ArrayGetString(%1, %4, %2, charsmax(%2)))
+
 #define ArrayCreateIfNotCreated(%1,%2) \
     %1 = (%1 == Invalid_Array) \
         ? ArrayCreate(%2) \

@@ -1,5 +1,6 @@
 #include <amxmodx>
 #include <VipModular>
+#include "VipM/Utils"
 
 #pragma semicolon 1
 #pragma compress 1
@@ -10,6 +11,7 @@ enum _:E_PARAMS{
 }
 
 public stock const PluginName[] = "[VipM][M] Vip in TAB";
+public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = "https://arkanaplugins.ru/plugin/9";
 public stock const PluginDescription[] = "Vip modular`s module - VipInTab";
@@ -19,7 +21,7 @@ new const MODULE_NAME[] = "VipInTab";
 new bool:gHasTag[MAX_PLAYERS + 1][E_PARAMS];
 
 public VipM_OnInitModules(){
-    register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
+    RegisterPluginByVars();
 
     VipM_Modules_Register(MODULE_NAME, true);
     VipM_SetModuleParams(MODULE_NAME,

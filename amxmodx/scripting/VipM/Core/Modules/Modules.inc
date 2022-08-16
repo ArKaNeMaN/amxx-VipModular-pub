@@ -1,8 +1,9 @@
 #include <amxmodx>
-#include "VipM/ArrayMap.inc"
-#include "VipM/Utils.inc"
+#include "VipM/ArrayMap"
+#include "VipM/Utils"
+#include "VipM/Forwards"
 
-enum _:S_Module{
+enum _:S_Module {
     Module_PluginId,
     Module_Name[32],
     bool:Module_Once,
@@ -51,6 +52,29 @@ enum _:S_Module{
 )
 
 new ArrayMap(Modules); // S_Module
+
+Modules_Enable(const iModule) {
+    new Module[S_Module];
+    GET_MODULE_BY_ID(iModule, Module);
+
+    Forwards_DefaultReturn(VIPM_CONTINUE);
+    new ret = VIPM_CONTINUE;
+
+    if ((ret = Forwards_CallP("ActivateModule", Module[Module_Name])) != VIPM_STOP) {
+        EMIT_MODULE_EVENT(Module, Module_OnActivated, ret);
+    }
+    
+    Module[Module_Enabled] = (ret == VIPM_CONTINUE);
+    SET_MODULE(Module);
+}
+
+// TODO: Надо бы как-то помечать модули, которые хоть раз встречаются в кфг
+// ... и тут только для них вызывать активацию.
+// Modules_EnableAll() {
+//     ArrayMapForeach (Modules, iModule) {
+//         Modules_Enable(iModule);
+//     }
+// }
 
 Modules_InitModules(){
     InitArrayMap(Modules, S_Module, 8);

@@ -3,6 +3,9 @@
 #endif
 #define _vipmodular_src_glUtils_included
 
+// Надо наверное как-то их обьединить)
+#include "VipM/ArrayTrieUtils"
+
 #include amxmodx
 #include json
 #include reapi
@@ -12,7 +15,6 @@ stock const __INT_TEMPLATE_STR[] = "%d";
 stock const __SLANG_TEMPLATE_STR[] = "%l";
 stock const __CLANG_TEMPLATE_STR[] = "%L";
 stock const __JSON_FILE_TEMPLATE_STR[] = "%s.json";
-stock const __CMD_LANG_TEMPLATE_STR[] = "%s%d";
 stock const __USER_NAME_TEMPLATE_STR[] = "%n";
 
 #define CompositeMacros(%1) \
@@ -122,6 +124,22 @@ stock Json_GetFilePath(const JSON:jValue, Out[], const OutLen) {
     return json_object_get_string(jRoot, __JSON_WRAPPER_FIELD_FILE, Out, OutLen);
 }
 
+new stock const __Json_LogForFile_templateFile[] = "[JSON][%s] File: %s";
+new stock const __Json_LogForFile_templateMessage[] = "[JSON][%s] Message: %s";
+stock Json_LogForFile(const JSON:jValue, const sPrefix[], const sMessage[], any:...) {
+    static sFilePath[PLATFORM_MAX_PATH];
+    Json_GetFilePath(jValue, sFilePath, charsmax(sFilePath));
+    log_amx(__Json_LogForFile_templateFile, __Json_LogForFile_templateFile, sPrefix, sFilePath);
+
+    static sFormattedMessage[1024];
+    if (numargs() >= 4) {
+        vformat(sFormattedMessage, charsmax(sFormattedMessage), sMessage, 4);
+        log_amx(__Json_LogForFile_templateMessage, sPrefix, sFormattedMessage);
+    } else {
+        log_amx(__Json_LogForFile_templateMessage, sPrefix, sMessage);
+    }
+}
+
 stock __CMD_NULL_ARG = 0;
 stock CMD_INIT_PARAMS() {
     __CMD_NULL_ARG = 0;
@@ -208,6 +226,33 @@ stock bool:Json_IsRef(const JSON:jValue, FileName[] = NULL_STRING, const Len = 0
 #define json_get_count(%1) \
     (json_is_array(%1) ? json_array_get_count(%1) : 1)
 
+stock Array:json_get_strings_list(const JSON:jValue, const iStringsLen = MAX_FMT_LENGTH, Array:aList = Invalid_Array) {
+    static sBuffer[MAX_FMT_LENGTH];
+    ArrayCreateIfNotCreated(aList, iStringsLen, json_get_count(jValue));
+    
+    if (json_is_string(jValue)) {
+        json_get_string(jValue, sBuffer, iStringsLen - 1);
+    } else if (json_is_array(jValue)) {
+        for (new i = 0, len = json_array_get_count(jValue); i < len; i++) {
+            json_array_get_string(jValue, i, sBuffer, iStringsLen - 1);
+        }
+    }
+
+    return aList;
+}
+
+stock Array:json_object_get_strings_list(
+    const JSON:jObj,
+    const sKey[],
+    const iStringLen = MAX_FMT_LENGTH,
+    Array:aList = Invalid_Array,
+    const bool:bDotNot = false
+) {
+    new JSON:jValue = json_object_get_value(jObj, sKey, bDotNot);
+    aList = json_get_strings_list(jValue, iStringLen, aList);
+    json_free(jValue);
+    return aList;
+}
 
 #define BitSet(%1,%2) \
     %1 |= (1 << (%2 - 1))
@@ -276,3 +321,57 @@ stock CreateConstCvar(const sCvarName[], const sCvarValue[]) {
     if (__CallOnce_bCalled) return %1; \
     __CallOnce_bCalled = true; \
 )
+
+// https://github.com/Nord1cWarr1or/Universal-AFK-Manager/blob/6272afbb8c27f8b7ad770e3036b5960042001e6b/scripting/UAFKManager.sma#L298-L321
+stock GetAmxxVersionNum() {
+    static iRes;
+    if (iRes) {
+        return iRes;
+    }
+
+    new sAmxxVer[16];
+    get_amxx_verstring(sAmxxVer, charsmax(sAmxxVer));
+
+    if (strfind(sAmxxVer, "1.10.0") != -1) {
+        iRes = 1100;
+    } else if (strfind(sAmxxVer, "1.9.0") != -1) {
+        iRes = 190;
+    } else if (strfind(sAmxxVer, "1.8.3") != -1) {
+        iRes = 183;
+    } else if (strfind(sAmxxVer, "1.8.2") != -1) {
+        iRes = 182;
+    } else {
+        iRes = 1;
+    }
+
+    return iRes;
+}
+
+stock RegisterPlugin(
+    const sName[],
+    const sVersion[],
+    const sAuthor[],
+    const sUrl[] = "",
+    const sDescription[] = ""
+) {
+    #if AMXX_VERSION_NUM >= 1100
+    if (GetAmxxVersionNum() >= 1100) {
+        register_plugin(sName, sVersion, sAuthor, sUrl, sDescription);
+        return;
+    }
+    #endif
+    register_plugin(sName, sVersion, sAuthor);
+}
+
+#define RegisterPluginByVars() CompositeMacros( \
+    if (GetAmxxVersionNum() < 1100) { \
+        register_plugin(PluginName, PluginVersion, PluginAuthor); \
+    } \
+)
+
+// Надо чтобы переменные были определены раньше, что может быть неудобно:)
+// stock RegisterPluginByVars() {
+//     if (GetAmxxVersionNum() < 1100) {
+//         register_plugin(PluginName, PluginVersion, PluginAuthor);
+//     }
+// }

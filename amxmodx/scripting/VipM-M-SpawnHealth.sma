@@ -1,6 +1,7 @@
 #include <amxmodx>
 #include <reapi>
 #include <VipModular>
+#include "VipM/Utils"
 #include "VipM/DebugMode"
 #include "VipM/ArrayTrieUtils"
 
@@ -8,6 +9,7 @@
 #pragma compress 1
 
 public stock const PluginName[] = "[VipM][M] Spawn Health";
+public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = "https://arkanaplugins.ru/plugin/9";
 public stock const PluginDescription[] = "Vip modular`s module - SpawnHealth";
@@ -15,7 +17,7 @@ public stock const PluginDescription[] = "Vip modular`s module - SpawnHealth";
 new const MODULE_NAME[] = "SpawnHealth";
 
 public VipM_OnInitModules(){
-    register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
+    RegisterPluginByVars();
 
     VipM_Modules_Register(MODULE_NAME, true);
     VipM_Modules_AddParams(MODULE_NAME,

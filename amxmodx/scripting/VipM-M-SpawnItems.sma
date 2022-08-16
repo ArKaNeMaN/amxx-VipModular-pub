@@ -2,6 +2,7 @@
 #include <json>
 #include <reapi>
 #include <VipModular>
+#include "VipM/Utils"
 
 #include "VipM/Utils"
 #include "VipM/ArrayTrieUtils"
@@ -10,6 +11,7 @@
 #pragma compress 1
 
 public stock const PluginName[] = "[VipM][M] Spawn Items";
+public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = "https://arkanaplugins.ru/plugin/9";
 public stock const PluginDescription[] = "Vip modular`s module - Spawn Items";
@@ -17,7 +19,7 @@ public stock const PluginDescription[] = "Vip modular`s module - Spawn Items";
 new const MODULE_NAME[] = "SpawnItems";
 
 public VipM_OnInitModules(){
-    register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
+    RegisterPluginByVars();
     
     VipM_Modules_Register(MODULE_NAME, true);
     VipM_Modules_AddParams(MODULE_NAME,

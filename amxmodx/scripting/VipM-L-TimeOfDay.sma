@@ -1,12 +1,14 @@
 #include <amxmodx>
 #include <VipModular>
 #include <TimeOfDay>
+#include "VipM/Utils"
 #include "VipM/DebugMode"
 
 #pragma semicolon 1
 #pragma compress 1
 
 public stock const PluginName[] = "[VipM][L] Time Of Day";
+public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = "https://arkanaplugins.ru/plugin/9";
 public stock const PluginDescription[] = "[VipModular] Access by day time.";
@@ -15,7 +17,7 @@ new const LIMIT_TYPE_NAME[] = "ToD-DayTime";
 new const DAYTIME_PARAM_NAME[] = "DayTime";
 
 public VipM_OnInitModules(){
-    register_plugin(PluginName, VIPM_VERSION, PluginAuthor);
+    RegisterPluginByVars();
 
     VipM_Limits_RegisterType(LIMIT_TYPE_NAME, false, false);
     VipM_Limits_AddTypeParams(LIMIT_TYPE_NAME,

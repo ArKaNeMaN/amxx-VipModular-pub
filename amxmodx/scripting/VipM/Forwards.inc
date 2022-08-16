@@ -45,11 +45,11 @@ stock __Forwards_Call_ret;
 
 // Forwards_CallP(const sName[], ...param_values);
 #define Forwards_CallP(%1,%2) \
-    (ExecuteForward(Forwards_GetHandler(%1), __Forwards_Call_ret, %2) ? __Forwards_Call_ret : 0)
+    (ExecuteForward(Forwards_GetHandler(%1), __Forwards_Call_ret, %2) ? __Forwards_Call_ret : __Forwards_Call_ret)
 
 // Forwards_Call(const sName[]);
 #define Forwards_Call(%1) \
-    (ExecuteForward(Forwards_GetHandler(%1), __Forwards_Call_ret) ? __Forwards_Call_ret : 0)
+    (ExecuteForward(Forwards_GetHandler(%1), __Forwards_Call_ret) ? __Forwards_Call_ret : __Forwards_Call_ret)
 
 stock Forwards_GetHandler(const sName[]) {
     new iHandler;
