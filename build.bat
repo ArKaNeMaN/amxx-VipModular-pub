@@ -1,53 +1,45 @@
 @echo off
 
-echo /============ PREPARE =============
-echo /
+echo Copy includes to compiler...
+powershell Copy-Item -Path ".\amxmodx\scripting\include\*" -Destination "C:\AmxModX\1.9.0\include" -Recurse -Force
 
-xcopy .\amxmodx\scripting\include C:\AmxModX\1.9.0\include /s /e /y
-
+echo Prepare for compiling plugins...
 if exist .\amxmodx\plugins rd /S /q .\amxmodx\plugins
+
 mkdir .\amxmodx\plugins
 cd .\amxmodx\plugins
 
 set PLUGINS_LIST=..\configs\plugins-vipm.ini
 echo. 2>%PLUGINS_LIST%
 
-echo /
-echo /
-echo /============ COMPILE =============
-echo /
+echo Compile plugins...
 
 for /R ..\scripting\ %%F in (*.sma) do (
-    echo / /
-    echo / / Compile %%~nF:
-    echo / /
+    echo.
+    echo Compile %%~nF:
     amxx190 %%F
+
+    if errorlevel 1 (
+        echo.
+        echo Plugin %%~nF compiled with error.
+        set /p q=
+        exit /b %errorlevel%
+    )
     echo %%~nF.amxx>>%PLUGINS_LIST%
 )
 
-echo /
-echo /
-echo /============ BUILD =============
-echo /
 
 cd ..\..
-mkdir .\.build\VipModular\amxmodx\scripting\
 
-xcopy .\amxmodx\scripting\include\ .\.build\VipModular\amxmodx\scripting\include\ /s /e /y
-xcopy .\amxmodx\data\ .\.build\VipModular\amxmodx\data\ /s /e /y
-xcopy .\amxmodx\configs\ .\.build\VipModular\amxmodx\configs\ /s /e /y
-xcopy .\amxmodx\plugins\ .\.build\VipModular\amxmodx\plugins\ /s /e /y
-copy .\README.md .\.build\
+echo Prepare files...
+powershell Copy-Item -Path ".\amxmodx" -Destination ".\.build\VipModular" -Recurse
+powershell Copy-Item -Path ".\README.md" -Destination ".\.build" -Recurse
 
+echo Move prepared files to ZIP archive...
 if exist .\VipModular.zip del .\VipModular.zip
 cd .\.build
-zip -r .\..\VipModular.zip .
+powershell Compress-Archive ./* .\..\VipModular.zip
 cd ..
 rmdir .\.build /s /q
 
-echo /
-echo /
-echo /============ END =============
-echo /
-
-set /p q=
+echo Build finished.
