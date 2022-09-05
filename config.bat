@@ -1,0 +1,39 @@
+@echo off
+
+echo Read build config:
+set PACKAGE_NAME=Unnamed
+set PACKAGE_README_USE=0
+set PACKAGE_WITH_COMPILED_PLUGINS=1
+set PACKAGE_PLUINGS_LIST_USE=0
+set PACKAGE_PLUINGS_LIST_POSTFIX=unnamed
+
+if not defined AMXX_COMPILER_DIR (
+    set AMXX_COMPILER_DIR=C:\AmxModX\1.9.0
+)
+if not defined AMXX_COMPILER_EXECUTABLE (
+    set AMXX_COMPILER_EXECUTABLE=amxx190
+)
+if not defined PACKAGE_DEBUG (
+    set PACKAGE_DEBUG=0
+)
+
+for /f "delims== tokens=1,2" %%G in (.build-config) do set %%G=%%H
+if exist (local.build-config) (
+    for /f "delims== tokens=1,2" %%G in (local.build-config) do set %%G=%%H
+)
+
+if "%PACKAGE_DEBUG%" == "1" (
+    set PACKAGE_NAME=%PACKAGE_NAME%-debug
+)
+set AMXX_COMPILER_EXECUTABLE_PATH=%AMXX_COMPILER_DIR%\%AMXX_COMPILER_EXECUTABLE%
+
+echo - PACKAGE_NAME = %PACKAGE_NAME%
+echo - PACKAGE_README_USE = %PACKAGE_PLUINGS_LIST_USE%
+echo - PACKAGE_PLUINGS_LIST_USE = %PACKAGE_PLUINGS_LIST_USE%
+echo - PACKAGE_PLUINGS_LIST_POSTFIX = %PACKAGE_PLUINGS_LIST_POSTFIX%
+echo - PACKAGE_WITH_COMPILED_PLUGINS = %PACKAGE_WITH_COMPILED_PLUGINS%
+echo - AMXX_COMPILER_DIR = %AMXX_COMPILER_DIR%
+echo - AMXX_COMPILER_EXECUTABLE = %AMXX_COMPILER_EXECUTABLE%
+echo.
+echo - PACKAGE_DEBUG = %PACKAGE_DEBUG%
+echo.

@@ -1,23 +1,38 @@
 @echo off
 
-echo Copy includes to compiler...
-powershell Copy-Item -Path ".\amxmodx\scripting\include\*" -Destination "C:\AmxModX\1.9.0\include" -Recurse -Force
+call config
+call copy-includes
+
+echo Cleanup old compiled plugins...
+
+if exist amxmodx\plugins rd /S /q amxmodx\plugins
+
+set PLUGINS_LIST=amxmodx\configs\plugins-%PACKAGE_PLUINGS_LIST_POSTFIX%.ini
+if exist %PLUGINS_LIST% del %PLUGINS_LIST%
+
+if not "%PACKAGE_WITH_COMPILED_PLUGINS%" == "1" goto after-compile
 
 echo Prepare for compiling plugins...
-if exist .\amxmodx\plugins rd /S /q .\amxmodx\plugins
 
-mkdir .\amxmodx\plugins
-cd .\amxmodx\plugins
+mkdir amxmodx\plugins
+cd amxmodx\plugins
 
-set PLUGINS_LIST=..\configs\plugins-vipm.ini
-echo. 2>%PLUGINS_LIST%
+set PLUGINS_LIST=..\configs\plugins-%PACKAGE_PLUINGS_LIST_POSTFIX%.ini
+if "%PACKAGE_PLUINGS_LIST_USE%" == "1" (
+    echo. 2>%PLUGINS_LIST%
+)
 
 echo Compile plugins...
 
 for /R ..\scripting\ %%F in (*.sma) do (
     echo.
     echo Compile %%~nF:
-    amxx190 %%F
+    
+    if "%PACKAGE_DEBUG%" == "1" (
+       %AMXX_COMPILER_EXECUTABLE_PATH% DEBUG=1 %%F
+    ) else (
+       %AMXX_COMPILER_EXECUTABLE_PATH% %%F
+    )
 
     if errorlevel 1 (
         echo.
@@ -25,20 +40,27 @@ for /R ..\scripting\ %%F in (*.sma) do (
         set /p q=
         exit /b %errorlevel%
     )
-    echo %%~nF.amxx>>%PLUGINS_LIST%
-)
 
+    if "%PACKAGE_PLUINGS_LIST_USE%"=="1" (
+       echo %%~nF.amxx>>%PLUGINS_LIST%
+    )
+)
 
 cd ..\..
 
+:after-compile
+
 echo Prepare files...
-powershell Copy-Item -Path ".\amxmodx" -Destination ".\.build\VipModular" -Recurse
-powershell Copy-Item -Path ".\README.md" -Destination ".\.build" -Recurse
+powershell Copy-Item -Path ".\amxmodx" -Destination ".\.build\%PACKAGE_NAME%" -Recurse
+
+if "%PACKAGE_README_USE%" == "1" (
+    powershell Copy-Item -Path ".\README.md" -Destination ".\.build" -Recurse
+)
 
 echo Move prepared files to ZIP archive...
-if exist .\VipModular.zip del .\VipModular.zip
+if exist .\%PACKAGE_NAME%.zip del .\%PACKAGE_NAME%.zip
 cd .\.build
-powershell Compress-Archive ./* .\..\VipModular.zip
+powershell Compress-Archive ./* .\..\%PACKAGE_NAME%.zip
 cd ..
 rmdir .\.build /s /q
 
