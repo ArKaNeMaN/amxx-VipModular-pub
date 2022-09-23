@@ -1,30 +1,31 @@
 @echo off
 
 call config
-call copy-includes
+
+echo Copy includes to compiler...
+if exist "%INCLUDES_PATH%" (
+    call :copy %INCLUDES_PATH%\*, %AMXX_COMPILER_INCLUDES_PATH%
+)
 
 echo Cleanup old compiled plugins...
+call :deldir %COMPILER_OUTPUT_PATH%
+call :deldir %AMXMODX_PATH%\plugins
 
-if exist amxmodx\plugins rd /S /q amxmodx\plugins
-
-set PLUGINS_LIST=amxmodx\configs\plugins-%PACKAGE_PLUINGS_LIST_POSTFIX%.ini
-if exist %PLUGINS_LIST% del %PLUGINS_LIST%
-
-if not "%PACKAGE_WITH_COMPILED_PLUGINS%" == "1" goto after-compile
+if not "%PACKAGE_COMPILED_PLUGINS_USE%" == "1" goto after-compile
 
 echo Prepare for compiling plugins...
 
-mkdir amxmodx\plugins
-cd amxmodx\plugins
-
-set PLUGINS_LIST=..\configs\plugins-%PACKAGE_PLUINGS_LIST_POSTFIX%.ini
+call :makedir %PLUGINS_LIST_PATH%
+call :del %PLUGINS_LIST%
 if "%PACKAGE_PLUINGS_LIST_USE%" == "1" (
     echo. 2>%PLUGINS_LIST%
 )
 
 echo Compile plugins...
 
-for /R ..\scripting\ %%F in (*.sma) do (
+call :makedir %COMPILER_OUTPUT_PATH%
+cd %COMPILER_OUTPUT_PATH%
+for /R %AMXMODX_PATH%\scripting %%F in (*.sma) do (
     echo.
     echo Compile %%~nF:
     
@@ -41,27 +42,53 @@ for /R ..\scripting\ %%F in (*.sma) do (
         exit /b %errorlevel%
     )
 
-    if "%PACKAGE_PLUINGS_LIST_USE%"=="1" (
+    if "%PACKAGE_PLUINGS_LIST_USE%" == "1" (
        echo %%~nF.amxx>>%PLUGINS_LIST%
     )
 )
-
-cd ..\..
-
+cd %ROOT_PATH%
 :after-compile
 
 echo Prepare files...
-powershell Copy-Item -Path ".\amxmodx" -Destination ".\.build\%PACKAGE_NAME%" -Recurse
+call :makedir %BUILD_AMXMODX_PATH%
+call :copy "%AMXMODX_PATH%\*", "%BUILD_AMXMODX_PATH%"
 
 if "%PACKAGE_README_USE%" == "1" (
-    powershell Copy-Item -Path ".\README.md" -Destination ".\.build" -Recurse
+    call :copy "%README_FILE%", "%BUILD_ROOT_PATH%"
 )
 
-echo Move prepared files to ZIP archive...
-if exist .\%PACKAGE_NAME%.zip del .\%PACKAGE_NAME%.zip
-cd .\.build
-powershell Compress-Archive ./* .\..\%PACKAGE_NAME%.zip
-cd ..
-rmdir .\.build /s /q
+if "%PACKAGE_ASSETS_USE%" == "1" (
+    call :makedir %BUILD_ASSETS_PATH%
+    call :copy %ASSETS_PATH%\* %BUILD_ASSETS_PATH%
+)
+
+echo Compress files to ZIP archive...
+call :del %ZIP_FILE%
+call :zip %BUILD_ROOT_PATH%/*, %ZIP_FILE%
+
+echo Cleanup temp files...
+call :deldir %BUILD_ROOT_PATH%
 
 echo Build finished.
+
+exit 0
+
+:makedir
+    if not exist %~1 mkdir %~1
+exit /b
+
+:deldir
+    if exist %~1 rd /S /q %~1
+exit /b
+
+:del
+    if exist %~1 del %~1
+exit /b
+
+:copy
+    powershell Copy-Item -Path %~1 -Destination %~2 -Recurse -Force
+exit /b
+
+:zip
+    powershell Compress-Archive %~1 %~2 -Force
+exit /b
