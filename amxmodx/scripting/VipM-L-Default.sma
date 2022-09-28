@@ -85,6 +85,19 @@ public VipM_OnInitModules(){
     );
     VipM_Limits_RegisterTypeEvent("WeekDay", Limit_OnRead, "@OnWeekDayRead");
     VipM_Limits_RegisterTypeEvent("WeekDay", Limit_OnCheck, "@OnWeekDayCheck");
+
+    VipM_Limits_RegisterType("RoundTime", false, false);
+    VipM_Limits_AddTypeParams("RoundTime",
+        "Min", ptInteger, false,
+        "Max", ptInteger, false
+    );
+    VipM_Limits_RegisterTypeEvent("RoundTime", Limit_OnCheck, "@OnRoundTimeCheck");
+
+    VipM_Limits_RegisterType("InFreezyTime", false, false);
+    VipM_Limits_AddTypeParams("InFreezyTime",
+        "Reverse", ptBoolean, false
+    );
+    VipM_Limits_RegisterTypeEvent("InFreezyTime", Limit_OnCheck, "@OnInFreezyTimeCheck");
 }
 
 public client_authorized(UserId, const AuthId[]){
@@ -93,6 +106,22 @@ public client_authorized(UserId, const AuthId[]){
 
     copy(g_sSteamIds[UserId], charsmax(g_sSteamIds[]), AuthId);
     get_user_ip(UserId, g_sIps[UserId], charsmax(g_sIps[]), true);
+}
+
+@OnInFreezyTimeCheck(const Trie:Params) {
+    new bool:bFreezyPeriod = get_member_game(m_bFreezePeriod);
+    return VipM_Params_GetBool(Params, "Reverse", false) ? !bFreezyPeriod : bFreezyPeriod;
+}
+
+@OnRoundTimeCheck(const Trie:Params) {
+    new iMin = VipM_Params_GetInt(Params, "Min", 0);
+    new iMax = VipM_Params_GetInt(Params, "Max", 0);
+    new iRoundTime = floatround(get_member_game(m_iRoundTime), floatround_floor);
+
+    return (
+        (!iMin || iRoundTime >= iMin)
+        && (!iMax || iRoundTime <= iMax)
+    );
 }
 
 @OnWeekDayRead(const JSON:jCfg, const Trie:Params) {
