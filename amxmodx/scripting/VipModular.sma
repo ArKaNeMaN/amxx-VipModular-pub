@@ -39,7 +39,7 @@ public plugin_precache() {
     Modules_Init();
     Forwards_RegAndCall("InitModules", ET_IGNORE);
 
-    Cfg_LoadModulesConfig();
+    // Cfg_LoadModulesConfig();
     Vips = Cfg_LoadVipsConfigs();
 
     if (!ArraySizeSafe(Vips)) {
@@ -48,6 +48,8 @@ public plugin_precache() {
 
     server_print("[%s v%s] Loaded %d config units.", PluginName, VIPM_VERSION, ArraySizeSafe(Vips));
     Forwards_RegAndCall("Loaded", ET_IGNORE);
+
+    Modules_EnableAllUsed();
 
     Dbg_PrintServer("Vip Modular run in debug mode!");
 }

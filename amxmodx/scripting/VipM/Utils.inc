@@ -82,7 +82,7 @@ stock JSON:Json_ParseFromFileEx(const Path[]) {
     
     if (jFile == Invalid_JSON) {
         log_amx("[ERROR] Can't read JSON from file '%s'.", Path);
-        return jFile;
+        return Invalid_JSON;
     }
 
     new JSON:jWrapper = json_init_object();
@@ -102,6 +102,10 @@ stock JSON:Json_DeepFree(&JSON:jValue) {
 }
 
 stock JSON:Json_GetRoot(const JSON:jValue) {
+    if (jValue == Invalid_JSON) {
+        return Invalid_JSON;
+    }
+
     new JSON:jParent;
     new JSON:jIterator = json_get_parent(jValue);
     while (jIterator != Invalid_JSON) {
@@ -129,7 +133,7 @@ new stock const __Json_LogForFile_templateMessage[] = "[JSON][%s] Message: %s";
 stock Json_LogForFile(const JSON:jValue, const sPrefix[], const sMessage[], any:...) {
     static sFilePath[PLATFORM_MAX_PATH];
     Json_GetFilePath(jValue, sFilePath, charsmax(sFilePath));
-    log_amx(__Json_LogForFile_templateFile, __Json_LogForFile_templateFile, sPrefix, sFilePath);
+    log_amx(__Json_LogForFile_templateFile, sPrefix, sFilePath);
 
     static sFormattedMessage[1024];
     if (numargs() >= 4) {
@@ -232,9 +236,11 @@ stock Array:json_get_strings_list(const JSON:jValue, const iStringsLen = MAX_FMT
     
     if (json_is_string(jValue)) {
         json_get_string(jValue, sBuffer, iStringsLen - 1);
+        ArrayPushString(aList, sBuffer);
     } else if (json_is_array(jValue)) {
         for (new i = 0, len = json_array_get_count(jValue); i < len; i++) {
             json_array_get_string(jValue, i, sBuffer, iStringsLen - 1);
+            ArrayPushString(aList, sBuffer);
         }
     }
 

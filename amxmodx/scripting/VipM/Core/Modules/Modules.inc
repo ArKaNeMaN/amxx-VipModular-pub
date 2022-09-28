@@ -11,6 +11,8 @@ enum _:S_Module {
 
     Array:Module_Params, // S_CfgParam
     Trie:Module_Events,
+
+    bool:Module_Used,
 }
 
 #define MODULE_EXISTS(%1) \
@@ -66,15 +68,17 @@ Modules_Enable(const iModule) {
     
     Module[Module_Enabled] = (ret == VIPM_CONTINUE);
     SET_MODULE(Module);
+
+    // Dbg_Log("Modules_Enable(%d): Module_Enabled = %d", iModule, Module[Module_Enabled]);
 }
 
-// TODO: Надо бы как-то помечать модули, которые хоть раз встречаются в кфг
-// ... и тут только для них вызывать активацию.
-// Modules_EnableAll() {
-//     ArrayMapForeach (Modules, iModule) {
-//         Modules_Enable(iModule);
-//     }
-// }
+Modules_EnableAllUsed() {
+    ArrayMapForeachArray2 (Modules: iModule => Module[S_Module]) {
+        if (Module[Module_Used]) {
+            Modules_Enable(iModule);
+        }
+    }
+}
 
 Modules_InitModules(){
     InitArrayMap(Modules, S_Module, 8);

@@ -1,12 +1,28 @@
 [
     {
+        /* Понимать так: Модули SpawnItems и WeaponMenu будут активны, если текущая карта не $2000$ или aim_deagle */
         "Modules": [
             "SpawnItems",
             "WeaponMenu"
         ],
         "Limits": {
             "Limit": "Logic-NOT",
-            "Limits": []
+            "Limits": {
+                "Limit": "Logic-OR",
+                "Limits": [
+                    {
+                        "Limit": "Map",
+                        "Map": "$2000$",
+                        "Real": true
+                    },
+                    {
+                        "Limit": "Map",
+                        "Map": "aim_deagle",
+                        "Real": true
+                    }
+                ]
+            }
         }
     }
+    // {...} Таких обьектов может быть сколько угодно
 ]

@@ -15,7 +15,6 @@ enum _:S_CfgUnit{
     Array:CfgUnit_ModuleUnits, // S_ModuleUnit
 }
 
-#include "VipM/Core/Configs/Modules"
 #include "VipM/Core/Configs/Vips"
 
 // Utils

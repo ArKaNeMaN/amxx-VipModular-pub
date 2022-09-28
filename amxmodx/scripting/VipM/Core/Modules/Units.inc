@@ -135,12 +135,12 @@ bool:ModuleUnits_ReadFromJson(const JSON:jMUnit, sMUnit[S_ModuleUnit]){
     json_object_remove(jMUnit, "Module");
 
     if (!MODULE_EXISTS(ModuleName)) {
-        log_amx("[WARNING] Module `%s` not found.", ModuleName);
+        Json_LogForFile(jMUnit, "WARNING", "Module `%s` not found.", ModuleName);
         return false;
     }
 
     new iModule = GET_MODULE_ID(ModuleName);
-    Modules_Enable(iModule);
+    // Modules_Enable(iModule);
 
     new sModule[S_Module];
     GET_MODULE_BY_ID(iModule, sModule);
@@ -153,7 +153,7 @@ bool:ModuleUnits_ReadFromJson(const JSON:jMUnit, sMUnit[S_ModuleUnit]){
     
     new ErrParam[32];
     if (!Cfg_ReadParams(jMUnit, sMUnit[ModuleUnit_Params], sModule[Module_Params], ErrParam, charsmax(ErrParam))) {
-        log_amx("[WARNING] Param `%s` required for module `%s`, but not found.", ErrParam, sModule[Module_Name]);
+        Json_LogForFile(jMUnit, "WARNING", "Param `%s` required for module `%s`, but not found.", ErrParam, sModule[Module_Name]);
         return false;
     }
 
@@ -172,6 +172,12 @@ bool:ModuleUnits_ReadFromJson(const JSON:jMUnit, sMUnit[S_ModuleUnit]){
     if (ret == VIPM_STOP) {
         TrieDestroySafe(sMUnit[ModuleUnit_Params]);
         return false;
+    }
+
+    if (!sModule[Module_Used]) {
+        sModule[Module_Used] = true;
+        SET_MODULE(sModule);
+        Dbg_Log("Module `%s` marked as used.", ModuleName);
     }
 
     return true;

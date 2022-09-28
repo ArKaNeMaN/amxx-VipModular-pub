@@ -56,14 +56,12 @@ Array:Cfg_LoadVipsConfigFromFile(const sFileName[], Array:aList = Invalid_Array)
         json_free(jCfgUnit);
     }
     
-    json_free(jVips);
+    Json_DeepFree(jVips);
     return aList;
 }
 
 bool:Cfg_ReadVipConfig(const JSON:jCfgUnit, CfgUnit[S_CfgUnit]) {
     new JSON:jAccess = json_object_get_value(jCfgUnit, "Access");
-    // Наверное оно тут лишнее)
-    // jAccess = JSON_GET_FILE_OR_OBJECT(jAccess); // TODO: Use Json_IsRef instead JSON_GET_FILE_OR_OBJECT
     if (jAccess == Invalid_JSON) {
         return false;
     }
@@ -76,7 +74,6 @@ bool:Cfg_ReadVipConfig(const JSON:jCfgUnit, CfgUnit[S_CfgUnit]) {
     }
         
     new JSON:jModules = json_object_get_value(jCfgUnit, "Modules");
-    // jModules = JSON_GET_FILE_OR_OBJECT(jModules);
     if (jModules == Invalid_JSON) {
         ArrayDestroy(CfgUnit[CfgUnit_LimitUnits]);
         return false;

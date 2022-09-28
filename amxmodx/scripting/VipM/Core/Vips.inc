@@ -15,7 +15,7 @@
 #define Vips_Reset(%1) \
     ModuleUnits_ResetUser(%1)
 
-Vips_UserUpdate(const UserId){
+Vips_UserUpdate(const UserId) {
     Vips_Reset(UserId);
     Vips_CheckAndAdd(UserId);
 
@@ -28,7 +28,7 @@ Vips_UserUpdate(const UserId){
 #define CfgUnit_AddToUser(%1,%2) \
     ModuleUnits_AddListToUser(%1, %2[CfgUnit_ModuleUnits])
 
-CfgUnits_CheckAndAdd(const UserId, const Array:aUnits){
+CfgUnits_CheckAndAdd(const UserId, const Array:aUnits) {
     if (aUnits == Invalid_Array) {
         return;
     }
@@ -41,7 +41,7 @@ CfgUnits_CheckAndAdd(const UserId, const Array:aUnits){
     }
 }
 
-bool:CfgUnit_CheckAndAdd(const UserId, const Unit[S_CfgUnit]){
+bool:CfgUnit_CheckAndAdd(const UserId, const Unit[S_CfgUnit]) {
     if (!CfgUnit_CheckAccess(UserId, Unit)) {
         return false;
     }

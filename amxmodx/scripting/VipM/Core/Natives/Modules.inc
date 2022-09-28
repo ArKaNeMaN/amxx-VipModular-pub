@@ -23,6 +23,8 @@ Natives_Modules_Init(){
     Module[Module_Params] = Invalid_Array;
     Module[Module_Events] = Invalid_Trie;
 
+    Module[Module_Used] = false;
+
     ArrayMapPushArray(Modules, Module, Module[Module_Name]);
 }
 
@@ -96,19 +98,27 @@ bool:@_Modules_RegisterEvent(const PluginId) {
 }
 
 Trie:@_Modules_GetParams() {
-    enum {Arg_Module = 1, Arg_UserId}
+    enum {Arg_Module = 1, Arg_UserId, Arg_Forced}
     
     static ModuleName[32];
     get_string(Arg_Module, ModuleName, charsmax(ModuleName));
     NATIVE_CHECK_MODULE(ModuleName)
 
     new UserId = get_param(Arg_UserId);
+
+    new bool:bCanGetParams = true;
+    if (!get_param(Arg_Forced)) {
+        static Module[S_Module];
+        GET_MODULE(ModuleName, Module);
+        bCanGetParams = Module[Module_Enabled];
+    }
     
     new Trie:Params = Invalid_Trie;
     if (
         !is_user_connected(UserId)
         || gUserVip[UserId] == Invalid_Trie
         || !TrieGetCell(gUserVip[UserId], ModuleName, Params)
+        || !bCanGetParams
     ) {
         return Invalid_Trie;
     }
