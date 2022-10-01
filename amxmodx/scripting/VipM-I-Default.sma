@@ -13,8 +13,14 @@ public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = "https://arkanaplugins.ru/plugin/9";
 public stock const PluginDescription[] = "[VipModular][Item] Default items.";
 
+new Float:g_fSpeedMult[MAX_PLAYERS + 1] = {1.0, ...};
+
 public VipM_IC_OnInitTypes() {
     RegisterPluginByVars();
+
+    VipM_IC_RegisterType("Speed");
+    VipM_IC_RegisterTypeEvent("Speed", ItemType_OnRead, "@OnSpeedRead");
+    VipM_IC_RegisterTypeEvent("Speed", ItemType_OnGive, "@OnSpeedGive");
 
     VipM_IC_RegisterType("Money");
     VipM_IC_RegisterTypeEvent("Money", ItemType_OnRead, "@OnMoneyRead");
@@ -34,6 +40,46 @@ public VipM_IC_OnInitTypes() {
 
     VipM_IC_RegisterType("DefuseKit");
     VipM_IC_RegisterTypeEvent("DefuseKit", ItemType_OnGive, "@OnDefuseKitGive");
+}
+
+MultUserSpeed(const UserId, const Float:fMultiplier) {
+    set_entvar(UserId, var_maxspeed, Float:get_entvar(UserId, var_maxspeed) * fMultiplier);
+}
+
+@OnPlayerSpawnPre(const UserId) {
+    g_fSpeedMult[UserId] = 1.0;
+}
+
+@OnPlayerResetSpeedPost(const UserId) {
+    if (g_fSpeedMult[UserId] != 1.0) {
+        MultUserSpeed(UserId, g_fSpeedMult[UserId]);
+    }
+}
+
+@OnSpeedRead(const JSON:jItem, const Trie:Params) {
+    TrieDeleteKey(Params, "Name");
+
+    if (!json_object_has_value(jItem, "Multiplier", JSONNumber)) {
+        Json_LogForFile(jItem, "ERROR", "Param `Multiplier` required for item `Speed`.");
+        return VIPM_STOP;
+    }
+    TrieSetCell(Params, "Multiplier", json_object_get_real(jItem, "Multiplier"));
+
+    static bIsUsed;
+    if (!bIsUsed) {
+        bIsUsed = true;
+        RegisterHookChain(RG_CBasePlayer_Spawn, "@OnPlayerSpawnPre", false);
+        RegisterHookChain(RG_CBasePlayer_ResetMaxSpeed, "@OnPlayerResetSpeedPost", true);
+    }
+
+    return VIPM_CONTINUE;
+}
+
+@OnSpeedGive(const UserId, const Trie:Params) {
+    g_fSpeedMult[UserId] = VipM_Params_GetFloat(Params, "Multiplier", 1.0);
+    MultUserSpeed(UserId, g_fSpeedMult[UserId]);
+
+    return VIPM_CONTINUE;
 }
 
 @OnMoneyRead(const JSON:jItem, const Trie:Params) {
