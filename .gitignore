@@ -1,4 +1,4 @@
 *.amxx
 *.zip
-dec/
+.build
 plugins-*.ini

@@ -16,6 +16,10 @@ public stock const PluginDescription[] = "[VipModular][Item] Default items.";
 public VipM_IC_OnInitTypes() {
     RegisterPluginByVars();
 
+    VipM_IC_RegisterType("Money");
+    VipM_IC_RegisterTypeEvent("Money", ItemType_OnRead, "@OnMoneyRead");
+    VipM_IC_RegisterTypeEvent("Money", ItemType_OnGive, "@OnMoneyGive");
+
     VipM_IC_RegisterType("Weapon");
     VipM_IC_RegisterTypeEvent("Weapon", ItemType_OnRead, "@OnWeaponRead");
     VipM_IC_RegisterTypeEvent("Weapon", ItemType_OnGive, "@OnWeaponGive");
@@ -32,16 +36,52 @@ public VipM_IC_OnInitTypes() {
     VipM_IC_RegisterTypeEvent("DefuseKit", ItemType_OnGive, "@OnDefuseKitGive");
 }
 
+@OnMoneyRead(const JSON:jItem, const Trie:Params) {
+    TrieDeleteKey(Params, "Name");
+
+    if (!json_object_has_value(jItem, "Amount", JSONNumber)) {
+        Json_LogForFile(jItem, "ERROR", "Param `Amount` required for item `Money`.");
+        return VIPM_STOP;
+    }
+    TrieSetCell(Params, "Amount", json_object_get_number(jItem, "Amount"));
+
+    if (json_object_has_value(jItem, "GiveType", JSONString)) {
+        new sBuffer[32];
+        json_object_get_string(jItem, "GiveType", sBuffer, charsmax(sBuffer));
+        new accountSet = StrToAccountSet(sBuffer);
+        if (accountSet < 0) {
+            Json_LogForFile(jItem, "ERROR", "Invalid `GiveType` value (%s). Expected `Set` or `Add`.", sBuffer);
+        } else {
+            TrieSetCell(Params, "GiveType", accountSet);
+        }
+    }
+
+    if (json_object_has_value(jItem, "TrackChange", JSONBoolean)) {
+        TrieSetCell(Params, "TrackChange", json_object_get_bool(jItem, "TrackChange"));
+    }
+
+    return VIPM_CONTINUE;
+}
+
+@OnMoneyGive(const UserId, const Trie:Params) {
+    rg_add_account(
+        UserId,
+        VipM_Params_GetInt(Params, "Amount"),
+        VipM_Params_GetCell(Params, "GiveType", AS_ADD),
+        VipM_Params_GetBool(Params, "TrackChanges", true)
+    );
+    return VIPM_CONTINUE;
+}
+
 @OnItemsListRead(const JSON:jItem, const Trie:Params) {
     TrieDeleteKey(Params, "Name");
 
     if (!json_object_has_value(jItem, "Items", JSONArray)) {
-        Json_LogForFile(jItem, "WARNING", "Param `Items` required for item `ItemsList`.");
+        Json_LogForFile(jItem, "ERROR", "Param `Items` required for item `ItemsList`.");
         return VIPM_STOP;
     }
 
-    new JSON:jItems = json_object_get_value(jItem, "Items");
-    TrieSetCell(Params, "Items", VipM_IC_JsonGetItems(jItems));
+    TrieSetCell(Params, "Items", VipM_IC_JsonGetItems(json_object_get_value(jItem, "Items")));
 
     return VIPM_CONTINUE;
 }
@@ -55,8 +95,8 @@ public VipM_IC_OnInitTypes() {
 @OnCommandRead(const JSON:jItem, const Trie:Params) {
     TrieDeleteKey(Params, "Name");
 
-    if (!json_object_has_value(jItem, "Command")) {
-        Json_LogForFile(jItem, "WARNING", "Param `Command` required for item `Command`.");
+    if (!json_object_has_value(jItem, "Command", JSONString)) {
+        Json_LogForFile(jItem, "ERROR", "Param `Command` required for item `Command`.");
         return VIPM_STOP;
     }
     
@@ -64,7 +104,9 @@ public VipM_IC_OnInitTypes() {
     json_object_get_string(jItem, "Command", Command, charsmax(Command));
     TrieSetString(Params, "Command", Command);
 
-    TrieSetCell(Params, "ByServer", json_object_get_bool(jItem, "ByServer"));
+    if (json_object_has_value(jItem, "ByServer", JSONBoolean)) {
+        TrieSetCell(Params, "ByServer", json_object_get_bool(jItem, "ByServer"));
+    }
 
     return VIPM_CONTINUE;
 }
@@ -95,7 +137,7 @@ public VipM_IC_OnInitTypes() {
     new Name[32];
     json_object_get_string(jItem, "Name", Name, charsmax(Name));
 
-    // if(get_weaponid(Name)  == 0){
+    // if(get_weaponid(Name) == 0){
     //     log_amx("[WARNING] Weapon `%s` not found.", Name);
     //     return VIPM_STOP;
     // }
@@ -165,5 +207,15 @@ GiveType:StrToGiveType(const Str[]) {
         return GT_DROP_AND_REPLACE;
     } else {
         return GT_DROP_AND_REPLACE;
+    }
+}
+
+StrToAccountSet(const Str[]) {
+    if (equali(Str, "Set")) {
+        return _:AS_SET;
+    } else if (equali(Str, "Add")) {
+        return _:AS_ADD;
+    } else {
+        return -1;
     }
 }

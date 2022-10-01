@@ -114,7 +114,7 @@ native bool:VipM_IC_GiveItem(const UserId, const VipM_IC_T_Item:ItemId);
 
 stock Array:VipM_IC_JsonGetItems(JSON:jItems){
     new Array:aItems = Invalid_Array;
-    switch(json_get_type(jItems)){
+    switch (json_get_type(jItems)) {
         case JSONArray: {
             new cItems = json_array_get_count(jItems);
             if (cItems < 1) {
@@ -122,7 +122,7 @@ stock Array:VipM_IC_JsonGetItems(JSON:jItems){
             }
 
             aItems = ArrayCreate(1, cItems);
-            for(new i = 0; i < cItems; i++){
+            for (new i = 0; i < cItems; i++) {
                 new JSON:jItem = json_array_get_value(jItems, i);
                 new VipM_IC_T_Item:ItemId = VipM_IC_JsonGetItem(jItem);
                 if (ItemId != VipM_IC_Invalid_Item) {
@@ -150,9 +150,12 @@ stock bool:VipM_IC_GiveItems(const UserId, const Array:aItems){
         return false;
     }
 
+    new bool:bRes = false;
     for (new i = 0; i < ArraySize(aItems); i++) {
-        VipM_IC_GiveItem(UserId, VipM_IC_T_Item:ArrayGetCell(aItems, i));
+        if (VipM_IC_GiveItem(UserId, VipM_IC_T_Item:ArrayGetCell(aItems, i))) {
+            bRes = true;
+        }
     }
 
-    return true;
+    return bRes;
 }
