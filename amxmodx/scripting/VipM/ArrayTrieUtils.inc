@@ -11,13 +11,17 @@
 #define TrieSizeSafe(%1) \
     (%1 == Invalid_Trie ? 0 : TrieGetSize(%1))
 
-stock ArrayDestroySafe(Array:a)
-    if(a != Invalid_Array)
+stock ArrayDestroySafe(Array:a) {
+    if (a != Invalid_Array) {
         ArrayDestroy(a);
+    }
+}
 
-stock TrieDestroySafe(Trie:t)
-    if(t != Invalid_Trie)
+stock TrieDestroySafe(Trie:t) {
+    if (t != Invalid_Trie) {
         TrieDestroy(t);
+    }
+}
 
 #define ArrayForeachArray(%1=>%2[%3]) \
     ArrayForeachArrayEx(%1 => %2[%3], __i__)
@@ -52,3 +56,18 @@ stock TrieDestroySafe(Trie:t)
         if(!ArraySizeSafe(%1)) \
             ArrayDestroy(%1); \
     )
+
+stock Array:ArrayMergeCells(const Array:a1, const Array:a2) {
+    new Array:aMerged = ArrayClone(a1);
+    ArrayResize(aMerged, ArraySizeSafe(a1) + ArraySizeSafe(a2));
+
+    if (a2 == Invalid_Array) {
+        return aMerged;
+    }
+    
+    for (mew i = 0; iSize = ArraySizeSafe(a2); i < iSize; i++) {
+        ArrayPushCell(aMerged, ArrayGetCell(a2, i));
+    }
+
+    return aMerged;
+}

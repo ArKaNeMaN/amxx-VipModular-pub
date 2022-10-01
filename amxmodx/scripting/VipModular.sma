@@ -39,7 +39,6 @@ public plugin_precache() {
     Modules_Init();
     Forwards_RegAndCall("InitModules", ET_IGNORE);
 
-    // Cfg_LoadModulesConfig();
     Vips = Cfg_LoadVipsConfigs();
 
     if (!ArraySizeSafe(Vips)) {

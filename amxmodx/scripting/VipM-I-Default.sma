@@ -3,6 +3,7 @@
 #include <json>
 #include <VipModular>
 #include "VipM/Utils"
+#include "VipM/DebugMode"
 
 #pragma semicolon 1
 #pragma compress 1
@@ -18,9 +19,14 @@ new Float:g_fSpeedMult[MAX_PLAYERS + 1] = {1.0, ...};
 public VipM_IC_OnInitTypes() {
     RegisterPluginByVars();
 
-    VipM_IC_RegisterType("Speed");
-    VipM_IC_RegisterTypeEvent("Speed", ItemType_OnRead, "@OnSpeedRead");
-    VipM_IC_RegisterTypeEvent("Speed", ItemType_OnGive, "@OnSpeedGive");
+    VipM_IC_RegisterType("InstantReloadAllWeapons");
+    VipM_IC_RegisterTypeEvent("InstantReloadAllWeapons", ItemType_OnGive, "@OnInstantReloadAllWeaponsGive");
+
+    VipM_IC_RegisterType("InstantReload");
+    VipM_IC_RegisterTypeEvent("InstantReload", ItemType_OnGive, "@OnInstantReloadGive");
+
+    VipM_IC_RegisterType("RefillBpAmmo");
+    VipM_IC_RegisterTypeEvent("RefillBpAmmo", ItemType_OnGive, "@OnRefillBpAmmoGive");
 
     VipM_IC_RegisterType("Money");
     VipM_IC_RegisterTypeEvent("Money", ItemType_OnRead, "@OnMoneyRead");
@@ -42,10 +48,6 @@ public VipM_IC_OnInitTypes() {
     VipM_IC_RegisterTypeEvent("DefuseKit", ItemType_OnGive, "@OnDefuseKitGive");
 }
 
-MultUserSpeed(const UserId, const Float:fMultiplier) {
-    set_entvar(UserId, var_maxspeed, Float:get_entvar(UserId, var_maxspeed) * fMultiplier);
-}
-
 @OnPlayerSpawnPre(const UserId) {
     g_fSpeedMult[UserId] = 1.0;
 }
@@ -54,6 +56,45 @@ MultUserSpeed(const UserId, const Float:fMultiplier) {
     if (g_fSpeedMult[UserId] != 1.0) {
         MultUserSpeed(UserId, g_fSpeedMult[UserId]);
     }
+}
+
+@OnInstantReloadGive(const UserId, const Trie:Params) {
+    InstantReloadActiveWeapon(UserId);
+
+    return VIPM_CONTINUE;
+}
+
+@OnInstantReloadAllWeaponsGive(const UserId, const Trie:Params) {
+    InstantReloadAllWeapons(UserId);
+
+    return VIPM_CONTINUE;
+}
+
+@OnRefillBpAmmoGive(const UserId, const Trie:Params) {
+    new iMaxAmmos[32] = {-1, ...};
+
+    for (new WeaponIdType:iWpnId = WEAPON_P228; iWpnId < WEAPON_P90; iWpnId++) {
+        iMaxAmmos[rg_get_weapon_info(iWpnId, WI_AMMO_TYPE)] = rg_get_weapon_info(iWpnId, WI_MAX_ROUNDS);
+    }
+
+    for (new InventorySlotType:iSlot = PRIMARY_WEAPON_SLOT; iSlot <= PISTOL_SLOT; iSlot++) {
+        new ItemId = get_member(UserId, m_rgpPlayerItems, iSlot);
+        while (!is_nullent(ItemId)) {
+            new iAmmoType = get_member(ItemId, m_Weapon_iPrimaryAmmoType);
+            if (iAmmoType >= 0) {
+                iMaxAmmos[iAmmoType] = max(iMaxAmmos[iAmmoType], rg_get_iteminfo(ItemId, ItemInfo_iMaxAmmo1));
+            }
+            ItemId = get_member(ItemId, m_pNext);
+        }
+    }
+
+    for (new iAmmoType = 0; iAmmoType < 32; iAmmoType++) {
+        if (iMaxAmmos[iAmmoType] >= 0) {
+            set_member(UserId, m_rgAmmo, iMaxAmmos[iAmmoType], iAmmoType);
+        }
+    }
+
+    return VIPM_CONTINUE;
 }
 
 @OnSpeedRead(const JSON:jItem, const Trie:Params) {
@@ -264,4 +305,8 @@ StrToAccountSet(const Str[]) {
     } else {
         return -1;
     }
+}
+
+MultUserSpeed(const UserId, const Float:fMultiplier) {
+    set_entvar(UserId, var_maxspeed, Float:get_entvar(UserId, var_maxspeed) * fMultiplier);
 }

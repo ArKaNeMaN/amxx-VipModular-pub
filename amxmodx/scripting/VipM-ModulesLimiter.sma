@@ -22,8 +22,6 @@ public VipM_OnInitModules() {
 }
 
 public VipM_OnActivateModule(const sModuleName[]) {
-    // Dbg_Log("VipM_OnActivateModule(%s)", sModuleName);
-
     if (!TrieKeyExists(g_tModulesLimits, sModuleName)) {
         Dbg_Log("Module `%s` activated. (!TrieKeyExists)", sModuleName);
         return VIPM_CONTINUE;

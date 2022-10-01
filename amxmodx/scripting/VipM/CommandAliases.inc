@@ -5,7 +5,6 @@
 
 #include <amxmodx>
 #include <json>
-// #include "VipM/DebugMode"
 
 #define COMMAND_ALIASES_COMMAND_MAX_LENGTH 64
 static const DEFAULT_TEMPLATE_PLACEHOLDER[] = "<cmd>";
@@ -108,17 +107,14 @@ stock CommandAliases_Register(const sCmdKey[], const sCallback[], const bitCmdTy
         
         if (bitCmdTypes & CommandAliases_CmdType_Client) {
             register_clcmd(sCmd, sCallback);
-            // Dbg_PrintServer("[CommandAliases][Register] %s: Client - %s [%s]", sCmdKey, sCmd, sCallback);
         }
         
         if (bitCmdTypes & CommandAliases_CmdType_Console) {
             register_concmd(sCmd, sCallback);
-            // Dbg_PrintServer("[CommandAliases][Register] %s: Console - %s [%s]", sCmdKey, sCmd, sCallback);
         }
         
         if (bitCmdTypes & CommandAliases_CmdType_Server) {
             register_srvcmd(sCmd, sCallback);
-            // Dbg_PrintServer("[CommandAliases][Register] %s: Server - %s [%s]", sCmdKey, sCmd, sCallback);
         }
     }
     ArrayDestroy(aCmds);
