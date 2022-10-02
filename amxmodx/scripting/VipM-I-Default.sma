@@ -28,6 +28,10 @@ public VipM_IC_OnInitTypes() {
     VipM_IC_RegisterType("RefillBpAmmo");
     VipM_IC_RegisterTypeEvent("RefillBpAmmo", ItemType_OnGive, "@OnRefillBpAmmoGive");
 
+    VipM_IC_RegisterType("Speed");
+    VipM_IC_RegisterTypeEvent("Speed", ItemType_OnRead, "@OnSpeedRead");
+    VipM_IC_RegisterTypeEvent("Speed", ItemType_OnGive, "@OnSpeedGive");
+
     VipM_IC_RegisterType("Money");
     VipM_IC_RegisterTypeEvent("Money", ItemType_OnRead, "@OnMoneyRead");
     VipM_IC_RegisterTypeEvent("Money", ItemType_OnGive, "@OnMoneyGive");
