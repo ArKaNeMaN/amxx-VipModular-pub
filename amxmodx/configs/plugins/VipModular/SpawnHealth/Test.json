@@ -2,10 +2,7 @@
     "Module": "SpawnHealth",
     
     "Limits": [
-        {
-            "Limit": "Round",
-            "Min": 2
-        }
+        "File:Limits/MinRound-2"
     ],
 
     "Health": 110,

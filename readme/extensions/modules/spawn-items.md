@@ -10,9 +10,12 @@ _Данный модуль использует контроллер предм�
 {
     "Module": "SpawnItems",
 
-    "MinRound": 2,
+    "Limits": {
+        "Limit": "Round",
+        "Min": 2
+    },
+
     "Items": [
-        "File:Items/TestAk",
         {
             "Type": "Weapon",
             "Name": "weapon_deagle",
@@ -22,9 +25,7 @@ _Данный модуль использует контроллер предм�
             "Type": "Weapon",
             "Name": "weapon_hegrenade"
         },
-        {
-            "Type": "DefuseKit"
-        }
+        "File:Items/DefuseKit"
     ]
 }
 ```

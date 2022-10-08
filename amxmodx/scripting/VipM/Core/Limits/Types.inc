@@ -39,10 +39,10 @@ new ArrayMap(Limits);
 
 new const __CHECK_LIMIT_FOR_PLAYER_errmsg[] = "[ERROR] Limit `%s` must used for player.";
 #define CHECK_LIMIT_FOR_PLAYER(%1,%2,%3) CompositeMacros( \
-    if( \
+    if ( \
         !IsUserIdValid(%2) \
         && %1[Limit_ForPlayer] \
-    ){ \
+    ) { \
         log_error(1, __CHECK_LIMIT_FOR_PLAYER_errmsg, %1[Limit_Name]); \
         return %3; \
     } \
@@ -50,30 +50,29 @@ new const __CHECK_LIMIT_FOR_PLAYER_errmsg[] = "[ERROR] Limit `%s` must used for 
 
 new const __CHECK_LIMIT_STATIC_errmsg[] = "[ERROR] Limit type `%s` isn`t static.";
 #define CHECK_LIMIT_STATIC(%1,%2) \
-    if(!%1[Limit_Static]){ \
+    if (!%1[Limit_Static]) { \
         log_error(1, __CHECK_LIMIT_STATIC_errmsg, %1[Limit_Name]); \
         return %2; \
     }
 
 // EMIT_LIMIT_TYPE_EVENT(LimitType, E_LimitEvent:Event, Return, ...Params)
 #define EMIT_LIMIT_TYPE_EVENT(%1,%2,%3) \
-    if(\
-        %1[Limit_Events] != Invalid_Trie\
-        && TrieKeyExists(%1[Limit_Events], IntToStr(%2))\
-    ){\
-        new ___EVENT_FWD;\
-        TrieGetCell(%1[Limit_Events], IntToStr(%2), ___EVENT_FWD);\
-        ExecuteForward(___EVENT_FWD, %3);\
+    if ( \
+        %1[Limit_Events] != Invalid_Trie \
+        && TrieKeyExists(%1[Limit_Events], IntToStr(%2)) \
+    ) { \
+        new ___EVENT_FWD; \
+        TrieGetCell(%1[Limit_Events], IntToStr(%2), ___EVENT_FWD); \
+        ExecuteForward(___EVENT_FWD, %3); \
     }
 
 // SET_LIMIT_TYPE_EVENT(AccessMode, E_LimitEvent:Event, FwdId)
 #define SET_LIMIT_TYPE_EVENT(%1,%2,%3) \
-    if(%3 >= 0){\
-        if(%1[Limit_Events] == Invalid_Trie)\
-            %1[Limit_Events] = TrieCreate();\
-        TrieSetCell(%1[Limit_Events], IntToStr(%2), %3);\
-    }\
-    else TrieDeleteKey(%1[Limit_Events], IntToStr(%2))
+    if (%3 >= 0) { \
+        if(%1[Limit_Events] == Invalid_Trie) \
+            %1[Limit_Events] = TrieCreate(); \
+        TrieSetCell(%1[Limit_Events], IntToStr(%2), %3); \
+    } else TrieDeleteKey(%1[Limit_Events], IntToStr(%2))
 
 
 T_Limit:Limits_AddType(const sName[], const bool:bForPlayer, const bool:bStatic = false, const iPluginId = -1){
@@ -93,7 +92,7 @@ Limits_RegisterEvent(const PluginId, const sLimitName[], const E_LimitEvent:Even
     LIMIT_TYPE_GET(sLimitName, LimitType);
 
     new FwdId = -1;
-    switch(Event){
+    switch (Event) {
         case Limit_OnRead: // (const JSON:Cfg, Trie:Params)
             FwdId = CreateOneForward(PluginId, Func, FP_CELL, FP_CELL);
 
@@ -101,8 +100,9 @@ Limits_RegisterEvent(const PluginId, const sLimitName[], const E_LimitEvent:Even
             FwdId = CreateOneForward(PluginId, Func, FP_CELL, FP_CELL);
     }
 
-    if(FwdId < 0)
+    if (FwdId < 0) {
         return false;
+    }
 
     SET_LIMIT_TYPE_EVENT(LimitType, Event, FwdId);
     SET_LIMIT_TYPE(LimitType);

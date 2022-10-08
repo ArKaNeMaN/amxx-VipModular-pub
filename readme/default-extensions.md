@@ -6,6 +6,7 @@
 - [SpawnItems](extensions/modules/spawn-items.md) - Выдача предметов при спавне
 - [WeaponMenu](extensions/modules/weapon-menu.md) - Оружейное меню
 - [VipInTab](extensions/modules/vip-in-tab.md) - Надпись VIP в таблице счёта игроков
+- Vampire - Вампиризм
 
 ## Ограничения
 

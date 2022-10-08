@@ -17,7 +17,8 @@
                     },
                     {
                         "Limit": "Map",
-                        "Map": "aim_deagle",
+                        "Map": "aim_",
+                        "Prefix": true,
                         "Real": true
                     }
                 ]
