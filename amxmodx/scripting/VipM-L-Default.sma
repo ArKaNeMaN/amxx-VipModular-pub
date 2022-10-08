@@ -61,7 +61,8 @@ public VipM_OnInitModules(){
     VipM_Limits_RegisterType("Map", false, false);
     VipM_Limits_AddTypeParams("Map",
         "Map", ptString, true,
-        "Real", ptBoolean, false
+        "Real", ptBoolean, false,
+        "Prefix", ptBoolean, false
     );
     VipM_Limits_RegisterTypeEvent("Map", Limit_OnCheck, "@OnMapCheck");
     rh_get_mapname(g_sRealMapName, charsmax(g_sRealMapName), MNT_TRUE);
@@ -165,26 +166,28 @@ bool:@OnFlagsCheck(const Trie:Params, const UserId) {
     static sSteamId[64];
     VipM_Params_GetStr(Params, "SteamId", sSteamId, charsmax(sSteamId));
 
-    return equal(g_sSteamIds[UserId], sSteamId);
+    return equali(g_sSteamIds[UserId], sSteamId);
 }
 
 @OnIpCheck(const Trie:Params, const UserId) {
     static sIp[32];
     VipM_Params_GetStr(Params, "SteamId", sIp, charsmax(sIp));
 
-    return equal(g_sIps[UserId], sIp);
+    return equali(g_sIps[UserId], sIp);
 }
 
 @OnMapCheck(const Trie:Params) {
     static sMap[32];
     VipM_Params_GetStr(Params, "Map", sMap, charsmax(sMap));
 
+    new iCount = VipM_Params_GetBool(Params, "Prefix", false) ? strlen(sMap) : 0;
+
     if (VipM_Params_GetBool(Params, "Real", false)) {
-        return equali(sMap, g_sRealMapName);
+        return equali(sMap, g_sRealMapName, iCount);
     } else {
         static sSetMapName[32];
         rh_get_mapname(sSetMapName, charsmax(sSetMapName), MNT_SET);
-        return equali(sMap, sSetMapName);
+        return equali(sMap, sSetMapName, iCount);
     }
 }
 
