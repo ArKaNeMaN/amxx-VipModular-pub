@@ -8,7 +8,9 @@
 ## Ограничения
 
 - [VipTest](https://github.com/ArKaNeMaN/VipM-L-VipTest) - Позволяет игрокам временно получить доступ к привилегиям
+- [RWW-InProgress](https://github.com/ArKaNeMaN/VipM-L-RandomWeaponsWarmUPs) - Добавляет условие, которое верно во время разминки из плагина [[fork] Random Weapons WarmUP](https://dev-cs.ru/resources/384/)
 
 ## Типы предметов
 
 - [AUW-Weapon](https://github.com/ArKaNeMaN/VipM-I-AdvancedUltimateWeapons) - Позволяет выдавать кастомное оружие из плагина [Advanced Ultimate Weapons](https://dev-cs.ru/resources/945/)
+- [HealthNade](https://github.com/ArKaNeMaN/VipM-I-HealthNade) - Позволяет выдавать лечащую гранату из плагина [[fork] Healthnade](https://dev-cs.ru/resources/1271/)
