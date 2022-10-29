@@ -25,8 +25,9 @@ stock const VIPM_CFG_PATH[] = "plugins/VipModular";
  */
 stock VipM_GetCfgPath(const Path[], Out[], const Len){
     static __amxx_configsdir[PLATFORM_MAX_PATH];
-    if(!__amxx_configsdir[0])
+    if (!__amxx_configsdir[0]) {
         get_localinfo("amxx_configsdir", __amxx_configsdir, charsmax(__amxx_configsdir));
+    }
     
     return (Path[0] == '/')
         ? formatex(Out, Len, "%s%s", __amxx_configsdir, Path)

@@ -7,6 +7,8 @@
  * Vip Modular: Items Controller
 */
 
+enum VipM_IC_T_Item {VipM_IC_Invalid_Item = -1}
+
 enum E_ItemTypeEvent{
 
     /*
@@ -82,8 +84,6 @@ native VipM_IC_RegisterType(const Type[]);
  */
 native VipM_IC_RegisterTypeEvent(const Type[], const E_ItemTypeEvent:Event, const Func[]);
 
-enum VipM_IC_T_Item {VipM_IC_Invalid_Item = -1}
-
 /**
  * Загрузка предмета из JSON-обьекта.
  *
@@ -98,7 +98,7 @@ enum VipM_IC_T_Item {VipM_IC_Invalid_Item = -1}
  *                  ...
  *              }
  *
- * @return  Индекс загруженного предмета. -1, если что-то пошло не так.
+ * @return  Индекс загруженного предмета. VipM_IC_Invalid_Item, если что-то пошло не так.
  */
 native VipM_IC_T_Item:VipM_IC_JsonGetItem(&JSON:jItem);
 
@@ -112,7 +112,7 @@ native VipM_IC_T_Item:VipM_IC_JsonGetItem(&JSON:jItem);
  */
 native bool:VipM_IC_GiveItem(const UserId, const VipM_IC_T_Item:ItemId);
 
-stock Array:VipM_IC_JsonGetItems(JSON:jItems){
+stock Array:VipM_IC_JsonGetItems(JSON:jItems) {
     new Array:aItems = Invalid_Array;
     switch (json_get_type(jItems)) {
         case JSONArray: {
@@ -145,7 +145,7 @@ stock Array:VipM_IC_JsonGetItems(JSON:jItems){
     return aItems;
 }
 
-stock bool:VipM_IC_GiveItems(const UserId, const Array:aItems){
+stock bool:VipM_IC_GiveItems(const UserId, const Array:aItems) {
     if (aItems == Invalid_Array) {
         return false;
     }

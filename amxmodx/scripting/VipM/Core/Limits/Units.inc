@@ -129,8 +129,9 @@ Array:Limits_LoadUnitListFromJson(const JSON:jLimits, Array:aLimits = Invalid_Ar
         ArrayCreateIfNotCreated(aLimits, 1, 1);
 
         iLimit = Limits_LoadUnitFromJson(jLimits);
-        if(iLimit != Invalid_LimitUnit)
+        if (iLimit != Invalid_LimitUnit) {
             ArrayPushCell(aLimits, iLimit);
+        }
     } else {
         ArrayCreateIfNotCreated(aLimits, 1, json_array_get_count(jLimits));
 
