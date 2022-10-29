@@ -123,12 +123,12 @@ ModuleUnits_AddToUser(const UserId, const T_ModuleUnit:iMUnit){
     } else {
         TrieSetCell(gUserVip[UserId], Module[Module_Name], Unit[ModuleUnit_Params], false);
 
-        DebugMode_OnlyInDebugMode(
+        if (IS_DEBUG) {
             // А то мешает когда в консоль срёт такими сообщениями для каждого бота
             if (!is_user_bot(UserId)) {
                 Dbg_Log("ModuleUnits_AddToUser(#%d, '%s'): First add", UserId, Module[Module_Name]);
             }
-        );
+        }
     }
 }
 
