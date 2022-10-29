@@ -122,7 +122,13 @@ ModuleUnits_AddToUser(const UserId, const T_ModuleUnit:iMUnit){
         Dbg_Log("ModuleUnits_AddToUser(#%d, '%s'): Compared", UserId, Module[Module_Name]);
     } else {
         TrieSetCell(gUserVip[UserId], Module[Module_Name], Unit[ModuleUnit_Params], false);
-        Dbg_Log("ModuleUnits_AddToUser(#%d, '%s'): First add", UserId, Module[Module_Name]);
+
+        DebugMode_OnlyInDebugMode(
+            // А то мешает когда в консоль срёт такими сообщениями для каждого бота
+            if (!is_user_bot(UserId)) {
+                Dbg_Log("ModuleUnits_AddToUser(#%d, '%s'): First add", UserId, Module[Module_Name]);
+            }
+        );
     }
 }
 
