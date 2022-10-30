@@ -12,5 +12,6 @@
 
 ## Типы предметов
 
+- [Cwapi](https://github.com/ArKaNeMaN/VipM-I-Cwapi) - Кастомное оружие из плагина [Custom Weapons API](https://github.com/ArKaNeMaN/amxx-CustomWeaponsAPI).
 - [AUW-Weapon](https://github.com/ArKaNeMaN/VipM-I-AdvancedUltimateWeapons) - Позволяет выдавать кастомное оружие из плагина [Advanced Ultimate Weapons](https://dev-cs.ru/resources/945/)
 - [HealthNade](https://github.com/ArKaNeMaN/VipM-I-HealthNade) - Позволяет выдавать лечащую гранату из плагина [[fork] Healthnade](https://dev-cs.ru/resources/1271/)
