@@ -9,7 +9,7 @@
 public stock const PluginName[] = "[VipM][M] Vampire";
 public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
-public stock const PluginURL[] = "https://arkanaplugins.ru/plugin/9";
+public stock const PluginURL[] = _VIPM_PLUGIN_URL;
 public stock const PluginDescription[] = "Vip modular`s module - Vampire";
 
 new const MODULE_NAME[] = "Vampire";

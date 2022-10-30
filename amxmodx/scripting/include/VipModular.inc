@@ -10,6 +10,7 @@ stock const VIPM_LIBRARY[] = "VipModular";
 #define _VIPM_VERSION "5.0.0-beta.4"
 stock const VIPM_VERSION[] = _VIPM_VERSION;
 stock const VIPM_CFG_PATH[] = "plugins/VipModular";
+#define _VIPM_PLUGIN_URL "https://github.com/ArKaNeMaN/amxx-VipModular-pub"
 
 /**
  * Получение пути, относительно папки с конфигами вип-системы или AmxModX.

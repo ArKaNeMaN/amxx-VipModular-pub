@@ -9,7 +9,7 @@
 public stock const PluginName[] = "[VipM][L] Default";
 public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
-public stock const PluginURL[] = "https://arkanaplugins.ru/plugin/9";
+public stock const PluginURL[] = _VIPM_PLUGIN_URL;
 
 new g_sSteamIds[MAX_PLAYERS + 1][64];
 new g_sIps[MAX_PLAYERS + 1][32];
