@@ -9,6 +9,7 @@
 
 #include <amxmodx>
 #include "VipM/Natives"
+#include "VipM/Utils"
 
 Array:Native_GetParamsList(const NullArg, const ParamsCount, Array:aParams = Invalid_Array) {
     const ARGS_NUM_PER_PARAM = 3;
@@ -42,12 +43,24 @@ public plugin_natives() {
     Natives_Init("VipM");
 
     Natives_Reg("UserUpdate");
+    Natives_Reg("Json_LogForFile");
 
     Natives_Modules_Init();
     Natives_Limits_Init();
 }
 
-@_UserUpdate(const PluginId) {
+// native VipM_Json_LogForFile(const JSON:jValue, const sPrefix[], const sMessage[], any:...);
+@_Json_LogForFile() {
+    enum {Arg_jValue = 1, Arg_sPrefix, Arg_sMessage, Arg_fmtArgs}
+
+    static sMessage[512], sPrefix[32];
+    vdformat(sMessage, charsmax(sMessage), Arg_sMessage, Arg_fmtArgs);
+    get_string(Arg_sPrefix, sPrefix, charsmax(sPrefix));
+
+    Json_LogForFile(JSON:get_param(Arg_jValue), sPrefix, sMessage);
+}
+
+@_UserUpdate() {
     enum {Arg_UserId = 1}
 
     new UserId = get_param(Arg_UserId);

@@ -111,6 +111,18 @@ forward VipM_OnUserUpdated(const UserId);
  */
 native VipM_UserUpdate(const UserId);
 
+/**
+ * Выводит лог с указанием JSON-файла, из которого было прочитано указанное значене.
+ *
+ * @param jValue    Значение, для которого надо вывести лог.
+ * @param sPrefix   Префикс лога. Например: ERROR, WARNING, INFO
+ * @param sMessage  Текст сообщения.
+ * @param any:...   Параметры форматирования сообщения.
+ *
+ * @noreturn
+ */
+native VipM_Json_LogForFile(const JSON:jValue, const sPrefix[], const sMessage[], any:...);
+
 #include <VipM/Modules>
 #include <VipM/Limits>
 #include <VipM/ItemsController>
