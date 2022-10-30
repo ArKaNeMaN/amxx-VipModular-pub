@@ -1,20 +1,23 @@
 {
-    // Выдаёт все гранаты (1 разрывную, 2 дымовую, 2 световые)
+    // Выдаёт все гранаты (1 разрывную, 1 дымовую, 2 световые)
     "Type": "ItemsList",
 
     "Items": [
         {
             "Type": "Weapon",
-            "Name": "weapon_hegrenade"
+            "Name": "weapon_hegrenade",
+            "GiveType": "Add"
         },
         {
             "Type": "Weapon",
-            "Name": "weapon_smokegrenade"
+            "Name": "weapon_smokegrenade",
+            "GiveType": "Add"
         },
         {
             "Type": "Weapon",
             "Name": "weapon_flashbang",
-            "BpAmmo": 2
+            "BpAmmo": 2,
+            "GiveType": "Add"
         }
     ]
 }

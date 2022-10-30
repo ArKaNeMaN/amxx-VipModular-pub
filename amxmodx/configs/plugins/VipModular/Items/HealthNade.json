@@ -1,8 +1,0 @@
-{
-    /* Название типа предмета */
-    "Type": "Command",
-
-    /* Параметры предмета */
-    "Command": "HealthNade_Give {UserId}",
-    "ByServer": true
-}
