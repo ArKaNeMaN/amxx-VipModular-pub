@@ -1,4 +1,4 @@
-# Сторонние модули
+# Сторонние расширения
 
 ## Модули
 
@@ -8,7 +8,7 @@
 ## Ограничения
 
 - [VipTest](https://github.com/ArKaNeMaN/VipM-L-VipTest) - Позволяет игрокам временно получить доступ к привилегиям
-- [RWW-InProgress](https://github.com/ArKaNeMaN/VipM-L-RandomWeaponsWarmUPs) - Добавляет условие, которое верно во время разминки из плагина [[fork] Random Weapons WarmUP](https://dev-cs.ru/resources/384/)
+- [RWW-InProgress](https://github.com/ArKaNeMaN/VipM-L-RandomWeaponsWarmUP) - Добавляет условие, которое верно во время разминки из плагина [[fork] Random Weapons WarmUP](https://dev-cs.ru/resources/384/)
 
 ## Типы предметов
 
