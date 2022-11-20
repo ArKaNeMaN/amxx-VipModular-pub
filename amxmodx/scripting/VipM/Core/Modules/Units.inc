@@ -8,7 +8,7 @@ new const MODULE_PARAMS_ISTEMP_KEY[] = "__IsTemp";
 
 enum T_ModuleUnit { Invalid_ModuleUnit = -1 }
 
-enum _:S_ModuleUnit{
+enum _:S_ModuleUnit {
     ModuleUnit_ModuleId,
     Trie:ModuleUnit_Params,
 }
@@ -26,7 +26,7 @@ new Array:ModuleUnits;
 
 new Trie:__cache_ModuleUnits;
 
-T_ModuleUnit:ModuleUnits_AddToCache(const T_ModuleUnit:iMUnit, const CacheKey[] = ""){
+T_ModuleUnit:ModuleUnits_AddToCache(const T_ModuleUnit:iMUnit, const CacheKey[] = "") {
     if (CacheKey[0]) {
         TrieSetCell(__cache_ModuleUnits, CacheKey, iMUnit);
     }
@@ -47,7 +47,7 @@ T_ModuleUnit:ModuleUnits_GetFromCache(const CacheKey[]){
 
 // Init
 
-Modules_InitUnits(){
+Modules_InitUnits() {
     ModuleUnits = ArrayCreate(S_ModuleUnit, MODULE_UNITS_PRESERVED_SIZE);
     __cache_ModuleUnits = TrieCreate();
 }
@@ -55,7 +55,7 @@ Modules_InitUnits(){
 
 // Actions
 
-ModuleUnits_ResetUser(const UserId){
+ModuleUnits_ResetUser(const UserId) {
     if (gUserVip[UserId] == Invalid_Trie) {
         return;
     }
@@ -78,7 +78,7 @@ ModuleUnits_ResetUser(const UserId){
     TrieDestroy(gUserVip[UserId]);
 }
 
-ModuleUnits_AddListToUser(const UserId, const Array:aUnits){
+ModuleUnits_AddListToUser(const UserId, const Array:aUnits) {
     if (aUnits == Invalid_Array) {
         return;
     }
@@ -88,7 +88,7 @@ ModuleUnits_AddListToUser(const UserId, const Array:aUnits){
     }
 }
 
-ModuleUnits_AddToUser(const UserId, const T_ModuleUnit:iMUnit){
+ModuleUnits_AddToUser(const UserId, const T_ModuleUnit:iMUnit) {
     if (gUserVip[UserId] == Invalid_Trie) {
         gUserVip[UserId] = TrieCreate();
     }
@@ -135,7 +135,7 @@ ModuleUnits_AddToUser(const UserId, const T_ModuleUnit:iMUnit){
 
 // Readers
 
-bool:ModuleUnits_ReadFromJson(const JSON:jMUnit, sMUnit[S_ModuleUnit]){
+bool:ModuleUnits_ReadFromJson(const JSON:jMUnit, sMUnit[S_ModuleUnit]) {
     new ModuleName[32];
     json_object_get_string(jMUnit, "Module", ModuleName, charsmax(ModuleName));
     json_object_remove(jMUnit, "Module");
@@ -152,7 +152,7 @@ bool:ModuleUnits_ReadFromJson(const JSON:jMUnit, sMUnit[S_ModuleUnit]){
     GET_MODULE_BY_ID(iModule, sModule);
 
     // Пусть юниты модулей читаются вне зависимости от состояния модуля
-    // Чтобы позже можно было на лету перключать состояние
+    // Чтобы позже можно было на лету переключать состояние
     
     sMUnit[ModuleUnit_ModuleId] = iModule;
     sMUnit[ModuleUnit_Params] = TrieCreate();
@@ -192,7 +192,7 @@ bool:ModuleUnits_ReadFromJson(const JSON:jMUnit, sMUnit[S_ModuleUnit]){
 
 // Loaders
 
-T_ModuleUnit:ModuleUnits_LoadFromFile(const FileName[]){
+T_ModuleUnit:ModuleUnits_LoadFromFile(const FileName[]) {
     if (ModuleUnits_CacheExists(FileName)) {
         return ModuleUnits_GetFromCache(FileName);
     }
@@ -209,7 +209,7 @@ T_ModuleUnit:ModuleUnits_LoadFromFile(const FileName[]){
     return ModuleUnits_AddToCache(iModuleUnit, FileName);
 }
 
-T_ModuleUnit:ModuleUnits_LoadFromJson(const JSON:jModuleUnit){
+T_ModuleUnit:ModuleUnits_LoadFromJson(const JSON:jModuleUnit) {
     if (jModuleUnit == Invalid_JSON) {
         return Invalid_ModuleUnit;
     }
@@ -227,7 +227,7 @@ T_ModuleUnit:ModuleUnits_LoadFromJson(const JSON:jModuleUnit){
     return Invalid_ModuleUnit;
 }
 
-Array:ModuleUnits_LoadListFromJson(const JSON:jModules, Array:aModules = Invalid_Array){
+Array:ModuleUnits_LoadListFromJson(const JSON:jModules, Array:aModules = Invalid_Array) {
     new T_ModuleUnit:iMUnit;
     ArrayCreateIfNotCreated(aModules, 1, json_get_count(jModules));
 
