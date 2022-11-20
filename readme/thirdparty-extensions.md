@@ -7,6 +7,7 @@
 
 ## Ограничения
 
+- [ToD-DayTime](https://github.com/ArKaNeMaN/VipM-L-TimeOfDay) - Добавляет условие `ToD-DayTime`, которое срабатывает в указанное время суток из [Time Of Day](https://arkanaplugins.ru/plugin/11).
 - [VipTest](https://github.com/ArKaNeMaN/VipM-L-VipTest) - Позволяет игрокам временно получить доступ к привилегиям
 - [RWW-InProgress](https://github.com/ArKaNeMaN/VipM-L-RandomWeaponsWarmUP) - Добавляет условие, которое верно во время разминки из плагина [[fork] Random Weapons WarmUP](https://dev-cs.ru/resources/384/)
 
