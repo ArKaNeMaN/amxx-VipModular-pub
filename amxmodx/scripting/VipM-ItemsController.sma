@@ -1,5 +1,4 @@
 #include <amxmodx>
-#include <VipModular>
 #include "VipM/ArrayTrieUtils"
 #include "VipM/ArrayMap"
 #include "VipM/Utils"
