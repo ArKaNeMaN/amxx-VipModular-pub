@@ -104,14 +104,17 @@ public VipM_OnInitModules() {
 @Cmd_SwitchAutoOpen(const UserId) {
     gUserAutoOpen[UserId] = !gUserAutoOpen[UserId];
     ChatPrintL(UserId, gUserAutoOpen[UserId] ? "MSG_AUTOOPEN_TURNED_ON" : "MSG_AUTOOPEN_TURNED_OFF");
+    return PLUGIN_HANDLED;
 }
 
 @Cmd_Menu(const UserId) {
     _Cmd_Menu(UserId);
+    return PLUGIN_HANDLED;
 }
 
 @Cmd_MenuSilent(const UserId) {
     _Cmd_Menu(UserId, true);
+    return PLUGIN_HANDLED;
 }
 
 _Cmd_Menu(const UserId, const bool:bSilent = false) {
