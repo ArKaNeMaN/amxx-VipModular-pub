@@ -16,3 +16,5 @@
 - [Cwapi](https://github.com/ArKaNeMaN/VipM-I-Cwapi) - Кастомное оружие из плагина [Custom Weapons API](https://github.com/ArKaNeMaN/amxx-CustomWeaponsAPI).
 - [AUW-Weapon](https://github.com/ArKaNeMaN/VipM-I-AdvancedUltimateWeapons) - Позволяет выдавать кастомное оружие из плагина [Advanced Ultimate Weapons](https://dev-cs.ru/resources/945/)
 - [HealthNade](https://github.com/ArKaNeMaN/VipM-I-HealthNade) - Позволяет выдавать лечащую гранату из плагина [[fork] Healthnade](https://dev-cs.ru/resources/1271/)
+- [BlackSignature-Molotov](https://github.com/ArKaNeMaN/VipM-I-BlackSignature-Molotov) - Позволяет выдавать [коктейль молотова от BlackSignature](https://shorturl.at/jtzGZ).
+- [DecoyGrenade & HolyGrenade](https://github.com/ArKaNeMaN/VipM-I-Chel74Nades) - Позволяет выдавать [ложную](https://c-s.net.ua/forum/topic91919.html) и [святую](https://c-s.net.ua/forum/topic92517.html) гранаты от CHEL74.
