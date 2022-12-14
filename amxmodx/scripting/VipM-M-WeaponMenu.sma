@@ -44,7 +44,8 @@ public VipM_OnInitModules() {
     );
     VipM_Modules_AddParams(MODULE_NAME,
         "Limits", ptLimits, false,
-        "AutoopenLimits", ptLimits, false
+        "AutoopenLimits", ptLimits, false,
+        "AutoopenDelay", ptFloat, false
     );
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnActivated, "@OnModuleActivate");
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnRead, "@OnReadConfig");
@@ -98,6 +99,10 @@ public VipM_OnInitModules() {
         return;
     }
 
+    set_task(VipM_Params_GetFloat(Params, "AutoopenDelay", 0.0), "@Task_AutoOpen", UserId);
+}
+
+@Task_AutoOpen(const UserId) {
     CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU_SILENT);
 }
 
