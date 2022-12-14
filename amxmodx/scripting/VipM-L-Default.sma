@@ -99,6 +99,13 @@ public VipM_OnInitModules(){
         "Reverse", ptBoolean, false
     );
     VipM_Limits_RegisterTypeEvent("InFreezyTime", Limit_OnCheck, "@OnInFreezyTimeCheck");
+
+    // thx for idea: https://dev-cs.ru/members/7658/
+    VipM_Limits_RegisterType("InBuyZone", true, false);
+    VipM_Limits_AddTypeParams("InBuyZone",
+        "Reverse", ptBoolean, false
+    );
+    VipM_Limits_RegisterTypeEvent("InBuyZone", Limit_OnCheck, "@OnInBuyZoneCheck");
 }
 
 public client_authorized(UserId, const AuthId[]){
@@ -107,6 +114,11 @@ public client_authorized(UserId, const AuthId[]){
 
     copy(g_sSteamIds[UserId], charsmax(g_sSteamIds[]), AuthId);
     get_user_ip(UserId, g_sIps[UserId], charsmax(g_sIps[]), true);
+}
+
+@OnInBuyZoneCheck(const Trie:Params, const UserId) {
+    new bool:bInBuyZone = IsUserInBuyZone(UserId);
+    return VipM_Params_GetBool(Params, "Reverse", false) ? !bInBuyZone : bInBuyZone;
 }
 
 @OnInFreezyTimeCheck(const Trie:Params) {

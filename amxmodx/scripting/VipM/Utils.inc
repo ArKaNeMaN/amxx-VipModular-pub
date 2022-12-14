@@ -402,3 +402,9 @@ stock bool:StrEqualEx(const sA[], const sB[], const iCount = 0, const bool:bIgno
         ? equali(sA, sB, iCount)
         : equal(sA, sB, iCount);
 }
+
+stock bool:IsUserInBuyZone(const UserId) {
+    new Signal[UnifiedSignals];
+    get_member(UserId, m_signals, Signal);
+    return ((SignalState:Signal[US_State] & SIGNAL_BUY) == SIGNAL_BUY);
+}
