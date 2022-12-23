@@ -129,7 +129,7 @@ public client_authorized(UserId, const AuthId[]){
 @OnRoundTimeCheck(const Trie:Params) {
     new iMin = VipM_Params_GetInt(Params, "Min", 0);
     new iMax = VipM_Params_GetInt(Params, "Max", 0);
-    new iRoundTime = get_member_game(m_iRoundTime);
+    new iRoundTime = floatround(get_gametime() - Float:get_member_game(m_fRoundStartTime));
 
     return (
         (!iMin || iRoundTime >= iMin)
