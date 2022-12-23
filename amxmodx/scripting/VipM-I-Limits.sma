@@ -34,6 +34,7 @@ public VipM_IC_OnInitTypes() {
     }
     
     TrieSetCell(tParams, "Items", VipM_IC_JsonGetItems(json_object_get_value(jItem, "Items")));
+    TrieSetCell(tParams, "ElseItems", VipM_IC_JsonGetItems(json_object_get_value(jItem, "ElseItems")));
     TrieSetCell(tParams, "Limits", VipM_Limits_ReadListFromJson(json_object_get_value(jItem, "Limits")));
 
     return VIPM_CONTINUE;
@@ -44,5 +45,12 @@ public VipM_IC_OnInitTypes() {
         VipM_IC_GiveItems(UserId, VipM_Params_GetArr(tParams, "Items"));
         return VIPM_CONTINUE;
     }
+
+    new Array:aElseItems = VipM_Params_GetArr(tParams, "ElseItems");
+    if (ArraySizeSafe(aElseItems)) {
+        VipM_IC_GiveItems(UserId, aElseItems);
+        return VIPM_CONTINUE;
+    }
+
     return VIPM_STOP;
 }
