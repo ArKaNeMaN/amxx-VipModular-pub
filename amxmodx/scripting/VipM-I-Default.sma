@@ -19,6 +19,10 @@ new Float:g_fSpeedMult[MAX_PLAYERS + 1] = {1.0, ...};
 public VipM_IC_OnInitTypes() {
     RegisterPluginByVars();
 
+    VipM_IC_RegisterType("Random");
+    VipM_IC_RegisterTypeEvent("Random", ItemType_OnRead, "@OnRandomRead");
+    VipM_IC_RegisterTypeEvent("Random", ItemType_OnGive, "@OnRandomGive");
+
     VipM_IC_RegisterType("InstantReloadAllWeapons");
     VipM_IC_RegisterTypeEvent("InstantReloadAllWeapons", ItemType_OnGive, "@OnInstantReloadAllWeaponsGive");
 
@@ -60,6 +64,35 @@ public VipM_IC_OnInitTypes() {
     if (g_fSpeedMult[UserId] != 1.0) {
         MultUserSpeed(UserId, g_fSpeedMult[UserId]);
     }
+}
+
+@OnRandomRead(const JSON:jItem, const Trie:tParams) {
+    TrieDeleteKey(tParams, "Name");
+
+    // TODO: Сделать как-то разные шансы
+    if (!json_object_has_value(jItem, "Items")) {
+        Json_LogForFile(jItem, "ERROR", "Param `Items` required for item `Random`.");
+        return VIPM_STOP;
+    }
+    
+    new Array:aItems = VipM_IC_JsonGetItems(json_object_get_value(jItem, "Items"));
+    if (ArraySizeSafe(aItems) <= 1) {
+        Json_LogForFile(jItem, "ERROR", "Param `Items` must have >1 items.");
+        ArrayDestroy(aItems);
+        return VIPM_STOP;
+    }
+
+    TrieSetCell(tParams, "Items", aItems);
+
+    return VIPM_CONTINUE;
+}
+
+@OnRandomGive(const UserId, const Trie:tParams) {
+    new Array:aItems = VipM_Params_GetArr(tParams, "Items");
+    new iRandomIndex = random_num(0, ArraySizeSafe(aItems) - 1);
+    new VipM_IC_T_Item:iRandomItem = ArrayGetCell(aItems, iRandomIndex);
+
+    return VipM_IC_GiveItem(UserId, iRandomItem) ? VIPM_CONTINUE : VIPM_STOP;
 }
 
 @OnInstantReloadGive(const UserId, const Trie:Params) {
@@ -167,7 +200,7 @@ public VipM_IC_OnInitTypes() {
 @OnItemsListRead(const JSON:jItem, const Trie:Params) {
     TrieDeleteKey(Params, "Name");
 
-    if (!json_object_has_value(jItem, "Items", JSONArray)) {
+    if (!json_object_has_value(jItem, "Items")) {
         Json_LogForFile(jItem, "ERROR", "Param `Items` required for item `ItemsList`.");
         return VIPM_STOP;
     }
