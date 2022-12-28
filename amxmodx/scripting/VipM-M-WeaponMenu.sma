@@ -203,12 +203,15 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
     ArrayGetArray(Menu[WeaponMenu_Items], ItemId, MenuItem);
 
     if (
-        // Общий лимит
-        gUserLeftItems[UserId] < 1
-        // Лимит на конкретном меню
-        || (
-            Menu[WeaponMenu_Count]
-            && KeyValueCounter_Get(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId))
+        MenuItem[MenuItem_UseCounter]
+        && (
+            // Общий лимит
+            gUserLeftItems[UserId] < 1
+            // Лимит на конкретном меню
+            || (
+                Menu[WeaponMenu_Count]
+                && KeyValueCounter_Get(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId))
+            )
         )
     ) {
         if (!bSilent) {
@@ -226,7 +229,10 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
         return;
     }
     
-    if (VipM_IC_GiveItems(UserId, MenuItem[MenuItem_Items])) {
+    if (
+        VipM_IC_GiveItems(UserId, MenuItem[MenuItem_Items])
+        && MenuItem[MenuItem_UseCounter]
+    ) {
         gUserLeftItems[UserId]--;
 
         if (Menu[WeaponMenu_Count]) {

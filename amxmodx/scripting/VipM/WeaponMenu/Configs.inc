@@ -123,6 +123,11 @@ bool:Cfg_ReadMenuItem(&JSON:jMenuItem, MenuItem[S_MenuItem]){
         return false;
     }
 
+    MenuItem[MenuItem_UseCounter] = true;
+    if (json_object_has_value(jMenuItem, "UseCounter", JSONBoolean)) {
+        MenuItem[MenuItem_UseCounter] = json_object_get_bool(jMenuItem, "UseCounter");
+    }
+
     return true;
 }
 

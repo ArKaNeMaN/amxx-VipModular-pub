@@ -18,6 +18,7 @@ enum _:S_MenuItem{
     MenuItem_Title[64],
     Array:MenuItem_Items,
     Array:MenuItem_Limits,
+    bool:MenuItem_UseCounter,
     
     MenuItemType:MenuItem_Type,
 }
