@@ -281,7 +281,7 @@ stock bool:HasBits(const bits, const bitSearch, const bool:bStrict = false) {
     new bitRes = bits & bitSearch;
     return bStrict
         ? bitRes == bitSearch
-        : bitRes > 0
+        : bitRes != 0
 }
 
 // []GetUserName(const UserId)
