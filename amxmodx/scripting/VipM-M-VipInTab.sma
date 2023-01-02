@@ -5,12 +5,12 @@
 #pragma semicolon 1
 #pragma compress 1
 
-enum _:E_PARAMS{
-    P_ENABLED = 0,
-    P_OVERRIDE,
+enum E_ModuleParams {
+    Param_Enabled = 0,
+    Param_Override,
 }
 
-public stock const PluginName[] = "[VipM][M] Vip in TAB";
+public stock const PluginName[] = "[VipM-M] Vip in TAB";
 public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = _VIPM_PLUGIN_URL;
@@ -18,9 +18,9 @@ public stock const PluginDescription[] = "Vip modular`s module - VipInTab";
 
 new const MODULE_NAME[] = "VipInTab";
 
-new bool:gHasTag[MAX_PLAYERS + 1][E_PARAMS];
+new bool:gHasTag[MAX_PLAYERS + 1][E_ModuleParams];
 
-public VipM_OnInitModules(){
+public VipM_OnInitModules() {
     RegisterPluginByVars();
 
     VipM_Modules_Register(MODULE_NAME, true);
@@ -31,26 +31,29 @@ public VipM_OnInitModules(){
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnActivated, "@OnModuleActivate");
 }
 
-public VipM_OnUserUpdated(const UserId){
+public VipM_OnUserUpdated(const UserId) {
     new Trie:Params = VipM_Modules_GetParams(MODULE_NAME, UserId);
 
-    gHasTag[UserId][P_ENABLED] = VipM_Params_GetBool(Params, "Enabled", false);
-    gHasTag[UserId][P_OVERRIDE] = VipM_Params_GetBool(Params, "Override", false);
+    gHasTag[UserId][Param_Enabled] = VipM_Params_GetBool(Params, "Enabled", false);
+    gHasTag[UserId][Param_Override] = VipM_Params_GetBool(Params, "Override", false);
 }
 
-@OnModuleActivate(){
+@OnModuleActivate() {
     register_message(get_user_msgid("ScoreAttrib"), "@OnMsgScoreAttrib");
 }
 
-@OnMsgScoreAttrib(const MsgId, const MsgType, const MsgDest){
+@OnMsgScoreAttrib(const MsgId, const MsgType, const MsgDest) {
     new UserId = get_msg_arg_int(1);
-    if(!gHasTag[UserId][P_ENABLED])
+    if (!gHasTag[UserId][Param_Enabled]) {
         return;
+    }
 
-    if(
-        !gHasTag[UserId][P_OVERRIDE]
+    if (
+        !gHasTag[UserId][Param_Override]
         && get_msg_arg_int(2) != 0
-    ) return;
+    ) {
+        return;
+    }
 
     set_msg_arg_int(2, ARG_BYTE, (1<<2));
 }
