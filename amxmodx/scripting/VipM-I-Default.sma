@@ -116,7 +116,7 @@ public VipM_IC_OnInitTypes() {
 
     for (new InventorySlotType:iSlot = PRIMARY_WEAPON_SLOT; iSlot <= PISTOL_SLOT; iSlot++) {
         new ItemId = get_member(UserId, m_rgpPlayerItems, iSlot);
-        while (!is_nullent(ItemId)) {
+        while (ItemId > 0 && !is_nullent(ItemId)) {
             new iAmmoType = get_member(ItemId, m_Weapon_iPrimaryAmmoType);
             if (iAmmoType >= 0) {
                 iMaxAmmos[iAmmoType] = max(iMaxAmmos[iAmmoType], rg_get_iteminfo(ItemId, ItemInfo_iMaxAmmo1));
