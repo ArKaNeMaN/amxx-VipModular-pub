@@ -394,7 +394,9 @@ stock InstantReloadAllWeapons(const UserId) {
 
 stock InstantReloadActiveWeapon(const UserId) {
     new ItemId = get_member(UserId, m_pActiveItem);
-    set_member(ItemId, m_Weapon_iClip, rg_get_iteminfo(ItemId, ItemInfo_iMaxClip));
+    if (!is_nullent(ItemId)) {
+        set_member(ItemId, m_Weapon_iClip, rg_get_iteminfo(ItemId, ItemInfo_iMaxClip));
+    }
 }
 
 stock bool:StrEqualEx(const sA[], const sB[], const iCount = 0, const bool:bIgnoreCase = false) {
