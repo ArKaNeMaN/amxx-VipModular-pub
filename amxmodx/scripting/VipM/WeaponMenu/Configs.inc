@@ -1,13 +1,13 @@
-#include amxmodx
-#include json
-#include VipModular
+#include <amxmodx>
+#include <json>
+#include <VipModular>
+#include "VipM/JsonUtils"
 
-Array:Cfg_ReadMenus(&JSON:jMenus){
+Array:Cfg_ReadMenus(&JSON:jMenus) {
     new Array:aMenus = Invalid_Array;
     new Menu[S_WeaponMenu];
 
-    // TODO: Заменить на Json_IsRef
-    jMenus = JSON_GET_FILE_OR_OBJECT(jMenus);
+    jMenus = Json_GetRefValue(jMenus);
 
     switch (json_get_type(jMenus)) {
         case JSONArray: {
@@ -19,19 +19,20 @@ Array:Cfg_ReadMenus(&JSON:jMenus){
                 if (Cfg_ReadMenu(jMenu, Menu)) {
                     ArrayPushArray(aMenus, Menu);
                 }
+                json_free(jMenu);
             }
-            json_free(jMenus);
         }
 
-        case JSONObject, JSONString: {
+        case JSONObject: {
             if (Cfg_ReadMenu(jMenus, Menu)) {
                 aMenus = ArrayCreate(S_WeaponMenu, 1);
                 ArrayPushArray(aMenus, Menu);
             }
         }
-        default:
-            json_free(jMenus);
     }
+
+    Json_FreeRefedValue(jMenus);
+
     return aMenus;
 }
 
@@ -41,7 +42,7 @@ bool:Cfg_ReadMenu(&JSON:jMenu, Menu[S_WeaponMenu]){
         _FileCache = TrieCreate();
     }
 
-    jMenu = JSON_GET_FILE_OR_OBJECT(jMenu);
+    jMenu = Json_GetRefValue(jMenu);
     if (jMenu == Invalid_JSON) {
         return false;
     }
@@ -92,7 +93,7 @@ bool:Cfg_ReadMenu(&JSON:jMenu, Menu[S_WeaponMenu]){
     new JSON:jMenuItems = JsonObjectGetItemsValue(jMenu);
     Menu[WeaponMenu_Items] = Cfg_ReadMenuItems(jMenuItems);
 
-    json_free(jMenu);
+    Json_FreeRefedValue(jMenu);
 
     if (Menu[WeaponMenu_Items] == Invalid_Array) {
         log_amx("[WARNING] Menu items are not specified.");

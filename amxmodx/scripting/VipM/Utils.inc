@@ -5,6 +5,7 @@
 
 // Надо наверное как-то их обьединить)
 #include "VipM/ArrayTrieUtils"
+#include "VipM/JsonUtils"
 
 #include amxmodx
 #include json
@@ -16,12 +17,13 @@ stock const __SLANG_TEMPLATE_STR[] = "%l";
 stock const __CLANG_TEMPLATE_STR[] = "%L";
 stock const __JSON_FILE_TEMPLATE_STR[] = "%s.json";
 stock const __USER_NAME_TEMPLATE_STR[] = "%n";
+stock const __LANG_MSG_LAYOUT_KEY[] = "MSG_LAYOUT";
 
 #define CompositeMacros(%1) \
     do { %1 } while(is_linux_server() == 0xDEADBEEF)
 
 #define GetRound() \
-    get_member_game(m_iTotalRoundsPlayed)+1
+    (get_member_game(m_iTotalRoundsPlayed) + 1)
 
 #define IntToStr(%1) \
     fmt(__INT_TEMPLATE_STR, %1)
@@ -48,7 +50,7 @@ stock const __USER_NAME_TEMPLATE_STR[] = "%n";
     fmt(__CLANG_TEMPLATE_STR, %1)
 
 #define ChatPrint(%1,%2) \
-    client_print_color(%1, print_team_default, __CLANG_TEMPLATE_STR, IsUserIdValid(%1) ? %1 : -1, "MSG_LAYOUT", fmt(%2))
+    client_print_color(%1, print_team_default, __CLANG_TEMPLATE_STR, IsUserIdValid(%1) ? %1 : -1, __LANG_MSG_LAYOUT_KEY, fmt(%2))
 
 #define ChatPrintL(%1,%2) \
     ChatPrint(%1, __CLANG_TEMPLATE_STR, %1, %2)
@@ -60,89 +62,11 @@ stock const __USER_NAME_TEMPLATE_STR[] = "%n";
     GET_FILE(fmt(__JSON_FILE_TEMPLATE_STR, %1))
 
 #define GET_FILE_JSON(%1) \
-    Json_ParseFromFileEx(GET_FILE_JSON_PATH(%1))
+    Json_ParseFromFileEx(GET_FILE_JSON_PATH(%1), GET_FILE(NULL_STRING))
 
 #define JSON_FILE_EXTSTS(%1) \
     file_exists(GET_FILE_JSON_PATH(%1))
 
-
-stock const __JSON_WRAPPER_FIELD_FILE[] = "_file";
-stock const __JSON_WRAPPER_FIELD_VALUE[] = "_value";
-
-#define Json_IsWrapper(%1) \
-    ( \
-        %1 != Invalid_JSON \
-        && json_object_has_value(%1, __JSON_WRAPPER_FIELD_FILE, JSONString) \
-        && json_object_has_value(%1, __JSON_WRAPPER_FIELD_VALUE) \
-        && json_get_parent(%1) == Invalid_JSON \
-    )
-
-stock JSON:Json_ParseFromFileEx(const Path[]) {
-    new JSON:jFile = json_parse(Path, true, true);
-    
-    if (jFile == Invalid_JSON) {
-        log_amx("[ERROR] Can't read JSON from file '%s'.", Path);
-        return Invalid_JSON;
-    }
-
-    new JSON:jWrapper = json_init_object();
-    json_object_set_string(jWrapper, __JSON_WRAPPER_FIELD_FILE, Path);
-    json_object_set_value(jWrapper, __JSON_WRAPPER_FIELD_VALUE, jFile);
-    return jFile;
-}
-
-stock JSON:Json_DeepFree(&JSON:jValue) {
-    new JSON:jParent;
-    while (jValue != Invalid_JSON) {
-        jParent = json_get_parent(jValue);
-        json_free(jValue);
-        jValue = jParent;
-    }
-    return jValue;
-}
-
-stock JSON:Json_GetRoot(const JSON:jValue) {
-    if (jValue == Invalid_JSON) {
-        return Invalid_JSON;
-    }
-
-    new JSON:jParent;
-    new JSON:jIterator = json_get_parent(jValue);
-    while (jIterator != Invalid_JSON) {
-        jParent = json_get_parent(jIterator);
-        if (jParent == Invalid_JSON) {
-            break;
-        }
-        json_free(jIterator);
-        jIterator = jParent;
-    }
-    return jIterator;
-}
-
-stock Json_GetFilePath(const JSON:jValue, Out[], const OutLen) {
-    new JSON:jRoot = Json_GetRoot(jValue);
-    if (!Json_IsWrapper(jRoot)) {
-        return formatex(Out, OutLen, "unknown_file");
-    }
-
-    return json_object_get_string(jRoot, __JSON_WRAPPER_FIELD_FILE, Out, OutLen);
-}
-
-new stock const __Json_LogForFile_templateFile[] = "[JSON][%s] File: %s";
-new stock const __Json_LogForFile_templateMessage[] = "[JSON][%s] Message: %s";
-stock Json_LogForFile(const JSON:jValue, const sPrefix[], const sMessage[], any:...) {
-    static sFilePath[PLATFORM_MAX_PATH];
-    Json_GetFilePath(jValue, sFilePath, charsmax(sFilePath));
-    log_amx(__Json_LogForFile_templateFile, sPrefix, sFilePath);
-
-    static sFormattedMessage[1024];
-    if (numargs() >= 4) {
-        vformat(sFormattedMessage, charsmax(sFormattedMessage), sMessage, 4);
-        log_amx(__Json_LogForFile_templateMessage, sPrefix, sFormattedMessage);
-    } else {
-        log_amx(__Json_LogForFile_templateMessage, sPrefix, sMessage);
-    }
-}
 
 stock __CMD_NULL_ARG = 0;
 stock CMD_INIT_PARAMS() {
@@ -199,25 +123,6 @@ stock JSON:JSON_GET_FILE_OR_OBJECT(JSON:Value) {
 
 #define SaveLastJsonObjectFile(%1) \
     new %1[PLATFORM_MAX_PATH];copy(%1, charsmax(%1), GetLastJsonObjectFile())
-
-stock bool:Json_IsRef(const JSON:jValue, FileName[] = NULL_STRING, const Len = 0) {
-    if (!json_is_string(jValue)) {
-        return false;
-    }
-
-    new Str[128];
-    json_get_string(jValue, Str, charsmax(Str));
-    if (!equali(JSON_FILE_VALUE_PREFIX, Str, charsmax(JSON_FILE_VALUE_PREFIX))) {
-        return false;
-    }
-
-    if (Len > 0) {
-        copy(FileName, Len, Str[charsmax(JSON_FILE_VALUE_PREFIX)]);
-    }
-    
-    return true;
-}
-
 
 #define json_array_foreach(%1:%2) \
     if(json_is_array(%1)) \
