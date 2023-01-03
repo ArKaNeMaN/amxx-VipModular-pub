@@ -1,6 +1,7 @@
 #include <amxmodx>
 #include <reapi>
 #include <json>
+#include <hamsandwich>
 #include <VipModular>
 #include "VipM/Utils"
 #include "VipM/DebugMode"
@@ -54,6 +55,10 @@ public VipM_IC_OnInitTypes() {
 
     VipM_IC_RegisterType("DefuseKit");
     VipM_IC_RegisterTypeEvent("DefuseKit", ItemType_OnGive, "@OnDefuseKitGive");
+
+    VipM_IC_RegisterType("Health");
+    VipM_IC_RegisterTypeEvent("Health", ItemType_OnRead, "@OnHealthRead");
+    VipM_IC_RegisterTypeEvent("Health", ItemType_OnGive, "@OnHealthGive");
 }
 
 @OnPlayerSpawnPre(const UserId) {
@@ -63,6 +68,29 @@ public VipM_IC_OnInitTypes() {
 @OnPlayerResetSpeedPost(const UserId) {
     if (g_fSpeedMult[UserId] != 1.0) {
         MultUserSpeed(UserId, g_fSpeedMult[UserId]);
+    }
+}
+
+@OnHealthRead(const JSON:jItem, const Trie:tParams) {
+    TrieDeleteKey(tParams, "Name");
+
+    if (!json_object_has_value(jItem, "Health", JSONNumber)) {
+        Json_LogForFile(jItem, "ERROR", "Param `Health` required for `Health` item.");
+        return VIPM_STOP;
+    }
+    TrieSetCell(tParams, "Health", json_object_get_real(jItem, "Health"));
+
+    if (json_object_has_value(jItem, "MaxHealth", JSONNumber)) {
+        TrieSetCell(tParams, "MaxHealth", json_object_get_real(jItem, "MaxHealth"));
+    }
+
+    return VIPM_CONTINUE;
+}
+
+@OnHealthGive(const UserId, const Trie:tParams) {
+    new Float:fAddHealth = VipM_Params_GetFloat(tParams, "MaxHealth", 100.0) - (VipM_Params_GetFloat(tParams, "Health") + Float:get_entvar(UserId, var_health));
+    if (fAddHealth >= 0.0) {
+        ExecuteHamB(Ham_TakeHealth, UserId, fAddHealth, DMG_GENERIC);
     }
 }
 
