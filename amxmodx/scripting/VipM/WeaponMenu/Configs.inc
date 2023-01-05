@@ -115,17 +115,18 @@ bool:Cfg_ReadMenuItem(&JSON:jMenuItem, MenuItem[S_MenuItem]){
     
     MenuItem[MenuItem_Type] = MenuItemType_Default;
     MenuItem[MenuItem_Limits] = VipM_Limits_ReadListFromJson(json_object_get_value(jMenuItem, "Limits"));
+
+    MenuItem[MenuItem_UseCounter] = true;
+    if (json_object_has_value(jMenuItem, "UseCounter", JSONBoolean)) {
+        MenuItem[MenuItem_UseCounter] = json_object_get_bool(jMenuItem, "UseCounter");
+    }
+    
     json_free(jMenuItem);
 
     MenuItem[MenuItem_Items] = VipM_IC_JsonGetItems(jItems);
     if (MenuItem[MenuItem_Items] == Invalid_Array) {
         log_amx("[WARNING] Invalid weapon menu item format. Empty items list.");
         return false;
-    }
-
-    MenuItem[MenuItem_UseCounter] = true;
-    if (json_object_has_value(jMenuItem, "UseCounter", JSONBoolean)) {
-        MenuItem[MenuItem_UseCounter] = json_object_get_bool(jMenuItem, "UseCounter");
     }
 
     return true;
