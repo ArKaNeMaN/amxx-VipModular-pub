@@ -2,6 +2,7 @@
 #include VipModular
 #include "VipM/Utils"
 #include "VipM/ArrayTrieUtils"
+#include "VipM/DebugMode"
 
 Menu_GetUserMenusCount(const UserId) {
     return ArraySizeSafe(VipM_Params_GetArr(VipM_Modules_GetParams(MODULE_NAME, UserId), "Menus"));
@@ -19,16 +20,15 @@ Menu_MainMenu(const UserId, const MainMenuTitle[], const Array:aMenus){
 }
 
 Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
-    new iItemsLeft = gUserLeftItems[UserId];
-    if (Menu[WeaponMenu_Count]) {
-        iItemsLeft = min(iItemsLeft, Menu[WeaponMenu_Count] - KeyValueCounter_Get(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId)));
-    }
-    // Или лучше будет показывать оба лимита отдельно?
-
+    new iItemsLeft = GetUserLeftItems(UserId, MenuId, Menu);
     new iMenusCount = Menu_GetUserMenusCount(UserId);
 
+    Dbg_Log("Menu_WeaponsMenu(%n, %d, ...):", UserId, MenuId);
+    Dbg_Log("    Menu[WeaponMenu_Count] = %d", Menu[WeaponMenu_Count]);
+    Dbg_Log("    iItemsLeft = %d", iItemsLeft);
+
     new iMenu = menu_create(
-        fmt("%s^n\w%L", Menu[WeaponMenu_Title], UserId, "VIPM_M_WM_MENU_MAIN_ITEMS_LEFT", iItemsLeft),
+        fmt("%s^n\w%L^n", Menu[WeaponMenu_Title], UserId, "VIPM_M_WM_MENU_MAIN_ITEMS_LEFT", iItemsLeft),
         Menu[WeaponMenu_BackOnExit] && iMenusCount > 1
             ? "@MenuHandler_Weapons"
             : "@MenuHandler_Command"
