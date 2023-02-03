@@ -7,25 +7,26 @@
 #include <json>
 
 // Путь до директории, откуда начинать считать ссылки
-stock const __JSON_WRAPPER_FIELD_WORKDIR[] = "_work_dir";
+stock static const __JSON_WRAPPER_FIELD_WORKDIR[] = "_work_dir";
 
 // Файл, из которого было прочитано значение
-stock const __JSON_WRAPPER_FIELD_FILE[] = "_file";
+stock static const __JSON_WRAPPER_FIELD_FILE[] = "_file";
 
 // Само значение
-stock const __JSON_WRAPPER_FIELD_VALUE[] = "_value";
+stock static const __JSON_WRAPPER_FIELD_VALUE[] = "_value";
 
 // Префикс ссылки на файл
 stock static const __JSON_WRAPPER_REF_FILE_PREFIX[] = "File:";
 
-#define Json_IsWrapper(%1) \
-    ( \
-        %1 != Invalid_JSON \
-        && json_object_has_value(%1, __JSON_WRAPPER_FIELD_FILE, JSONString) \
-        && json_object_has_value(%1, __JSON_WRAPPER_FIELD_WORKDIR, JSONString) \
-        && json_object_has_value(%1, __JSON_WRAPPER_FIELD_VALUE) \
-        && json_get_parent(%1) == Invalid_JSON \
-    )
+static stock Json__IsWrapper(const JSON:jValue) {
+    return (
+        jValue != Invalid_JSON
+        && json_object_has_value(jValue, __JSON_WRAPPER_FIELD_FILE, JSONString)
+        && json_object_has_value(jValue, __JSON_WRAPPER_FIELD_WORKDIR, JSONString)
+        && json_object_has_value(jValue, __JSON_WRAPPER_FIELD_VALUE)
+        && json_get_parent(jValue) == Invalid_JSON
+    );
+}   
 
 static stock Json__GetFileDir(const sFile[]) {
     new sDir[PLATFORM_MAX_PATH];
@@ -45,6 +46,17 @@ static stock Json__GetFileDir(const sFile[]) {
     return sDir;
 }
 
+/**
+ * Парсит JSON-значение из файла, добавляя обёртку для расширения функционала.
+ *
+ * @param sPath     Путь до файла.
+ * @param sWorkDir  Корневая директория для ссылок. По умолчанию будет директория, в которой лежит читаемый файл.
+ *
+ * @note            Полуечнные из этой функции хендлеры обязательно должны освобождаться при помощи Json_DeepFree.
+ *                  Иначе, из-за обёртки, данные останутся в памяти.
+ *
+ * @return          Хендлер прочитанного из файла значения.
+ */
 stock JSON:Json_ParseFromFileEx(const sPath[], const sWorkDir[] = NULL_STRING) {
     new JSON:jFile = json_parse(sPath, true, true);
     
@@ -66,6 +78,16 @@ stock JSON:Json_ParseFromFileEx(const sPath[], const sWorkDir[] = NULL_STRING) {
     return jFile;
 }
 
+/**
+ * Удаляет JSON-значение вместе с обёрткой.
+ *
+ * @param jValue    Корневой (полученный из Json_ParseFromFileEx) JSON-хендлер.
+ *
+ * @note            Обязательно использовать для очищения хендлеров из Json_ParseFromFileEx.
+ *                  Иначе, из-за обёртки, данные останутся в памяти.
+ *
+ * @return          Invalid_JSON
+ */
 stock JSON:Json_DeepFree(&JSON:jValue) {
     new JSON:jParent;
     while (jValue != Invalid_JSON) {
@@ -76,16 +98,28 @@ stock JSON:Json_DeepFree(&JSON:jValue) {
     return jValue;
 }
 
+/**
+ * Удаляет JSON-значение, которое могло быть получено по ссылке.
+ *
+ * @param jValue    JSON-хендлер.
+ *
+ * @note            Если значение было получено по ссылке, полностью его удаляет из памяти.
+ *                  Для обычных значений работает как json_free.
+ *
+ * @note            Должно использоваться для всех значений, полученных из Json_GetRefValue.
+ *
+ * @return          Invalid_JSON
+ */
 stock JSON:Json_FreeRefedValue(&JSON:jValue) {
     /*
-     * Если значение поулчено по ссылке, его родителем будет обёртка,
+     * Если значение получено по ссылке, его родителем будет обёртка,
      * удаление которой полностью удалит все данные.
      * 
      * А если значение было получено не по ссылке, его родителем будет обычное значение,
      * удаление которого гарантированно НЕ удалит сами данные,
      * т.к. у значения останется родитилем как минимум обёртка.
      *
-     * Обёртка гарантированно будет, т.к. иначе ссылки не в принципе не работают.
+     * Обёртка гарантированно будет, т.к. иначе ссылки в принципе не работают.
      */
     new JSON:jParent = json_get_parent(jValue);
     json_free(jValue);
@@ -118,7 +152,7 @@ static stock Json__GetFilePath(const JSON:jValue, sOut[] = NULL_STRING, const iO
     new JSON:jRoot = Json__GetRoot(jValue);
 
     new sPath[PLATFORM_MAX_PATH];
-    if (!Json_IsWrapper(jRoot)) {
+    if (!Json__IsWrapper(jRoot)) {
         sPath[0] = 0; // EOS
         return sPath;
     }
@@ -132,7 +166,7 @@ static stock Json__GetWorkDir(const JSON:jValue, sOut[] = NULL_STRING, const iOu
     new JSON:jRoot = Json__GetRoot(jValue);
 
     new sPath[PLATFORM_MAX_PATH];
-    if (!Json_IsWrapper(jRoot)) {
+    if (!Json__IsWrapper(jRoot)) {
         sPath[0] = 0; // EOS
         return sPath;
     }
@@ -156,6 +190,28 @@ stock Json_LogForFile(const JSON:jValue, const sPrefix[], const sMessage[], any:
     }
 }
 
+new stock const __Json_ErrForFile_template[] = "[JSON][ERROR] %s: %s";
+stock Json_ErrForFile(const JSON:jValue, const sMessage[], any:...) {
+    static sFormattedMessage[1024];
+    if (numargs() >= 4) {
+        vformat(sFormattedMessage, charsmax(sFormattedMessage), sMessage, 3);
+        log_error(0, __Json_LogForFile_templateMessage, Json__GetFilePath(jValue), sFormattedMessage);
+    } else {
+        log_error(0, __Json_LogForFile_templateMessage, Json__GetFilePath(jValue), sMessage);
+    }
+}
+
+/**
+ * Проверяет, является ли значение ссылкой.
+ *
+ * @param jValue    JSON-хендлер.
+ * @param sFileName Буфер для записи ссылки, если значение ей является.
+ * @param iLen      Размер буфера.
+ *
+ * @note            Не требуется при использовании Json_GetRefValue.
+ *
+ * @return          true, если значение является ссылкой, иначе false.
+ */
 stock bool:Json_IsRef(const JSON:jValue, sFileName[] = NULL_STRING, const iLen = 0) {
     if (!json_is_string(jValue)) {
         return false;
@@ -174,11 +230,28 @@ stock bool:Json_IsRef(const JSON:jValue, sFileName[] = NULL_STRING, const iLen =
     return true;
 }
 
+/**
+ * Возвращает JSON-значение с учётом ссылки.
+ *
+ * @param jValue    JSON-хендлер.
+ * @param sOut      Буфер для записи пути до файла, если значение было ссылкой.
+ * @param iOutLen   Размер буфера.
+ *
+ * @note            Ссылка считается от WorkDir из обёртки jValue.
+ *                  Если обёртки нет, ссылка не будет обработана.
+ *
+ * @note            Полученное по ссылке значение также будет иметь обёртку.
+ *                  WorkDir полученного значения будет наследован от jValue.
+ *
+ * @return          jValue, если значение не являлось ссылкой, иначе значение полученное по ссылке.
+ */
 stock JSON:Json_GetRefValue(&JSON:jValue, sOut[] = NULL_STRING, const iOutLen = 0) {
     new sRefFilePath[PLATFORM_MAX_PATH];
     if (!Json_IsRef(jValue, sRefFilePath, charsmax(sRefFilePath))) {
         return jValue;
     }
+
+    // TODO: Обработка абсолютных ссылок
 
     new sWorkDir[PLATFORM_MAX_PATH];
     Json__GetWorkDir(jValue, sWorkDir, charsmax(sWorkDir));
