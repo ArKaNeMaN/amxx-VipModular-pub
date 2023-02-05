@@ -365,10 +365,7 @@ public client_authorized(UserId, const AuthId[]){
 }
 
 @OnNameCheck(const Trie:Params, const UserId) {
-    static sName[32];
-    VipM_Params_GetStr(Params, "Name", sName, charsmax(sName));
-
-    return IsEqualUserName(UserId, sName);
+    return IsEqualUserName(UserId, VipM_Params_GetStri(Params, "Name"));
 }
 
 bool:@OnFlagsCheck(const Trie:Params, const UserId) {

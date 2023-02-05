@@ -26,7 +26,21 @@ static stock Json__IsWrapper(const JSON:jValue) {
         && json_object_has_value(jValue, __JSON_WRAPPER_FIELD_VALUE)
         && json_get_parent(jValue) == Invalid_JSON
     );
-}   
+}
+
+static stock Json__GetRootConfigsPath(sOut[] = NULL_STRING, const iOutLen = 0) {
+    static sPath[PLATFORM_MAX_PATH];
+
+    if (!sPath[0]) {
+        get_localinfo("amxx_configsdir", sPath, charsmax(sPath));
+    }
+
+    if (iOutLen) {
+        copy(sOut, iOutLen, sPath);
+    }
+
+    return sPath;
+}
 
 static stock Json__GetFileDir(const sFile[]) {
     new sDir[PLATFORM_MAX_PATH];
@@ -154,6 +168,7 @@ static stock Json__GetFilePath(const JSON:jValue, sOut[] = NULL_STRING, const iO
     new sPath[PLATFORM_MAX_PATH];
     if (!Json__IsWrapper(jRoot)) {
         sPath[0] = 0; // EOS
+        copy(sOut, iOutLen, sPath);
         return sPath;
     }
 
@@ -168,6 +183,7 @@ static stock Json__GetWorkDir(const JSON:jValue, sOut[] = NULL_STRING, const iOu
     new sPath[PLATFORM_MAX_PATH];
     if (!Json__IsWrapper(jRoot)) {
         sPath[0] = 0; // EOS
+        copy(sOut, iOutLen, sPath);
         return sPath;
     }
 
@@ -190,14 +206,27 @@ stock Json_LogForFile(const JSON:jValue, const sPrefix[], const sMessage[], any:
     }
 }
 
-new stock const __Json_ErrForFile_template[] = "[JSON][ERROR] %s: %s";
-stock Json_ErrForFile(const JSON:jValue, const sMessage[], any:...) {
+new stock const __Json_ErrorForFile_template[] = "[JSON][ERROR] %s: %s";
+stock Json_ErrorForFile(const JSON:jValue, const sMessage[], any:...) {
     static sFormattedMessage[1024];
     if (numargs() >= 4) {
         vformat(sFormattedMessage, charsmax(sFormattedMessage), sMessage, 3);
-        log_error(0, __Json_LogForFile_templateMessage, Json__GetFilePath(jValue), sFormattedMessage);
     } else {
-        log_error(0, __Json_LogForFile_templateMessage, Json__GetFilePath(jValue), sMessage);
+        copy(sFormattedMessage, charsmax(sFormattedMessage), sMessage);
+    }
+
+    log_amx(__Json_ErrorForFile_template, Json__GetFilePath(jValue), sFormattedMessage);
+    log_error(0, __Json_ErrorForFile_template, Json__GetFilePath(jValue), sFormattedMessage);
+}
+
+new stock const __Json_FatalErrorForFile_template[] = "[JSON] %s: %s";
+stock Json_FatalErrorForFile(const JSON:jValue, const sMessage[], any:...) {
+    static sFormattedMessage[1024];
+    if (numargs() >= 4) {
+        vformat(sFormattedMessage, charsmax(sFormattedMessage), sMessage, 3);
+        set_fail_state(__Json_FatalErrorForFile_template, Json__GetFilePath(jValue), sFormattedMessage);
+    } else {
+        set_fail_state(__Json_FatalErrorForFile_template, Json__GetFilePath(jValue), sMessage);
     }
 }
 
@@ -251,19 +280,61 @@ stock JSON:Json_GetRefValue(&JSON:jValue, sOut[] = NULL_STRING, const iOutLen = 
         return jValue;
     }
 
-    // TODO: Обработка абсолютных ссылок
-
+    new sFileName[PLATFORM_MAX_PATH];
     new sWorkDir[PLATFORM_MAX_PATH];
-    Json__GetWorkDir(jValue, sWorkDir, charsmax(sWorkDir));
-    if (!sWorkDir[0]) {
-        // Если у ссылки нет workdir, значит ссылаться некуда)
-        return jValue;
+
+    if (sRefFilePath[0] == '/') {
+        // Если ссылка начинается со слеша, считать её от amxmodx/configs/
+        Json__GetRootConfigsPath(sWorkDir, charsmax(sWorkDir));
+    } else {
+        Json__GetWorkDir(jValue, sWorkDir, charsmax(sWorkDir));
+        if (!sWorkDir[0]) {
+            // Если у относительной ссылки нет workdir, значит ссылаться некуда)
+            return jValue;
+        }
+    }
+    
+    formatex(sFileName, charsmax(sFileName), "%s/%s.json", sWorkDir, sRefFilePath);
+
+    if (iOutLen) {
+        copy(sOut, iOutLen, sFileName);
     }
 
-    new sFileName[PLATFORM_MAX_PATH];
-    formatex(sFileName, charsmax(sFileName), "%s/%s.json", sWorkDir, sRefFilePath);
-    copy(sOut, iOutLen, sFileName);
-
-    jValue = Json_ParseFromFileEx(sFileName, sWorkDir);
+    jValue = Json_ParseFromFileEx(sFileName, sFileName);
     return jValue;
+}
+
+stock Trie:Json_ReadObjectToTrie(const JSON:jObject, &Trie:tTrie = Invalid_Trie) {
+    if (tTrie == Invalid_Trie) {
+        tTrie = TrieCreate();
+    }
+    
+    if (!json_is_object(jObject)) {
+        // А надо ли ошибку бросать?
+        Json_ErrorForFile(jObject, "Json_ReadObjectToTrie: JSON-value must be an object.");
+        return tTrie;
+    }
+    
+    new sKey[128];
+    for (new i = 0; i < json_object_get_count(jObject); i++) {
+        json_object_get_name(jObject, i, sKey, charsmax(sKey));
+        new JSON:jValue = json_object_get_value_at(jObject, i);
+
+        switch (json_get_type(jValue)) {
+            case JSONString: {
+                new sValue[256];
+                json_get_string(jValue, sValue, charsmax(sValue));
+                TrieSetString(tTrie, sKey, sValue);
+            }
+
+            case JSONNumber:
+                TrieSetCell(tTrie, sKey, json_get_number(jValue));
+
+            case JSONBoolean:
+                TrieSetCell(tTrie, sKey, json_get_bool(jValue));
+        }
+        json_free(jValue);
+    }
+
+    return tTrie;
 }

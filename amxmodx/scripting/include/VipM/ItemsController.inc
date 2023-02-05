@@ -10,6 +10,8 @@
  * Vip Modular: Items Controller
 */
 
+#include <VipM/ItemsController>
+
 enum VipM_IC_T_Item {VipM_IC_Invalid_Item = -1}
 
 enum E_ItemTypeEvent{
@@ -172,4 +174,12 @@ stock bool:VipM_IC_GiveItems(const UserId, const Array:aItems) {
     }
 
     return bRes;
+}
+
+stock bool:VipM_Params_GiveItems(const UserId, const Trie:tParams, const sParam[]) {
+    return VipM_IC_GiveItems(UserId, VipM_Params_GetArr(tParams, sParam));
+}
+
+stock bool:VipM_Params_GiveItem(const UserId, const Trie:tParams, const sParam[]) {
+    return VipM_IC_GiveItems(UserId, VipM_Params_GetCell(tParams, sParam));
 }
