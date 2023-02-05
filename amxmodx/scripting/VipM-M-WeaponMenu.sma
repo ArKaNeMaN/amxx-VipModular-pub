@@ -23,6 +23,11 @@ new const CMD_SWITCH_AUTOOPEN[] = "vipmenu_autoopen";
 #include "VipM/Utils"
 #include "VipM/CommandAliases"
 
+enum {
+    TASK_OFFSET_AUTO_OPEN = 100,
+    TASK_OFFSET_AUTO_CLOSE = 200,
+}
+
 new gUserLeftItems[MAX_PLAYERS + 1] = {0, ...};
 new Trie:g_tUserMenuItemsCounter[MAX_PLAYERS + 1] = {Invalid_Trie, ...};
 
@@ -45,8 +50,11 @@ public VipM_OnInitModules() {
     );
     VipM_Modules_AddParams(MODULE_NAME,
         "Limits", ptLimits, false,
-        "AutoopenLimits", ptLimits, false,
-        "AutoopenDelay", ptFloat, false
+        "AutoopenLimits", ptLimits, false
+    );
+    VipM_Modules_AddParams(MODULE_NAME,
+        "AutoopenDelay", ptFloat, false,
+        "AutoopenCloseDelay", ptFloat, false
     );
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnActivated, "@OnModuleActivate");
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnRead, "@OnReadConfig");
@@ -100,12 +108,34 @@ public VipM_OnInitModules() {
         return;
     }
 
-    set_task(VipM_Params_GetFloat(Params, "AutoopenDelay", 0.0), "@Task_AutoOpen", UserId);
+    set_task(VipM_Params_GetFloat(Params, "AutoopenDelay", 0.0), "@Task_AutoOpen", TASK_OFFSET_AUTO_OPEN + UserId);
 }
 
-@Task_AutoOpen(const UserId) {
+@Task_AutoOpen(UserId) {
+    UserId -= TASK_OFFSET_AUTO_OPEN;
     CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU_SILENT);
+    
+    new Float:fAutoCloseDelay = VipM_Params_GetFloat(VipM_Modules_GetParams(MODULE_NAME, UserId), "AutoopenCloseDelay", 0.0);
+    Dbg_PrintServer("@Task_AutoOpen(%d): fAutoCloseDelay = %.2f", UserId, fAutoCloseDelay);
+    if (fAutoCloseDelay > 0.0) {
+        Dbg_PrintServer("@Task_AutoOpen(%d): Start auto close task", UserId);
+        set_task(fAutoCloseDelay, "@Task_AutoClose", TASK_OFFSET_AUTO_CLOSE + UserId);
+    }
 }
+
+@Task_AutoClose(UserId) {
+    Dbg_PrintServer("@Task_AutoClose(%d)", UserId);
+    UserId -= TASK_OFFSET_AUTO_CLOSE;
+    menu_cancel(UserId);
+    show_menu(UserId, 0, "");
+}
+
+// TODO: Придумать как лучше использовать...
+// AbortAutoCloseMenu(const UserId) {
+//     if (task_exists(TASK_OFFSET_AUTO_CLOSE + UserId)) {
+//         remove_task(TASK_OFFSET_AUTO_CLOSE + UserId);
+//     }
+// }
 
 @Cmd_SwitchAutoOpen(const UserId) {
     gUserAutoOpen[UserId] = !gUserAutoOpen[UserId];
