@@ -17,8 +17,6 @@ public stock const PluginDescription[] = "Modular vip system";
 new Array:Vips; // S_CfgUnit
 new Trie:gUserVip[MAX_PLAYERS + 1] = {Invalid_Trie, ...}; // ModuleName => Trie:Params
 
-#include "VipM/Core/Utils"
-
 #include "VipM/Core/Structs"
 #include "VipM/Core/Modules/Main"
 #include "VipM/Core/Limits/Main"

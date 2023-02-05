@@ -35,28 +35,7 @@ bool:Cfg_ReadParams(
     }
 
     if (List == Invalid_Array) {
-        new ParamName[32];
-        for (new i = 0; i < json_object_get_count(jParams); i++) {
-
-            json_object_get_name(jParams, i, ParamName, charsmax(ParamName));
-            new JSON:jParam = json_object_get_value_at(jParams, i);
-
-            switch (json_get_type(jParam)) {
-                case JSONString: {
-                    new sParam[128];
-                    json_get_string(jParam, sParam, charsmax(sParam));
-                    TrieSetString(Params, ParamName, sParam);
-                }
-                
-                case JSONNumber:
-                    TrieSetCell(Params, ParamName, json_get_number(jParam));
-                    
-                case JSONBoolean:
-                    TrieSetCell(Params, ParamName, json_get_bool(jParam));
-                    
-            }
-            json_free(jParam);
-        }
+        Params = Json_ReadObjectToTrie(jParams, Params);
     } else {
         ArrayForeachArray (List => Param[S_CfgParam]) {
             if (!json_object_has_value(jParams, Param[CfgParam_Name])) {

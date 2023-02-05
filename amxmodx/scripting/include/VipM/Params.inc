@@ -78,7 +78,7 @@ stock VipM_Params_GetInt(const Trie:tParams, const sKey[], const iDef = 0) {
 }
 
 stock bool:VipM_Params_GetBool(const Trie:tParams, const sKey[], const bool:bDef = false) {
-    return !!VipM_Params_GetCell(tParams, sKey, bDef);
+    return VipM_Params_GetCell(tParams, sKey, bDef) ? true : false;
 }
 
 stock Float:VipM_Params_GetFloat(const Trie:tParams, const sKey[], const Float:fDef = 0.0) {
@@ -95,6 +95,18 @@ stock VipM_Params_GetStr(const Trie:tParams, const sKey[], sOut[], const iOutLen
     }
 
     return copy(sOut, iOutLen, sDef);
+}
+
+stock VipM_Params_GetStri(const Trie:tParams, const sKey[], const sDef[] = NULL_STRING) {
+    new sStr[MAX_FMT_LENGTH]
+    if (
+        tParams == Invalid_Trie
+        || !TrieGetString(tParams, sKey, sStr, charsmax(sStr))
+    ) {
+        copy(sStr, charsmax(sStr), sDef);
+    }
+
+    return sStr;
 }
 
 stock Array:VipM_Params_GetArr(const Trie:tParams, const sKey[]) {
