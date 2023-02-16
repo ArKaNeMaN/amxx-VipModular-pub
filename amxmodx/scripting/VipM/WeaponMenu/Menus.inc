@@ -8,7 +8,7 @@ Menu_GetUserMenusCount(const UserId) {
     return ArraySizeSafe(VipM_Params_GetArr(VipM_Modules_GetParams(MODULE_NAME, UserId), "Menus"));
 }
 
-Menu_MainMenu(const UserId, const MainMenuTitle[], const Array:aMenus){
+Menu_MainMenu(const UserId, const MainMenuTitle[], const Array:aMenus) {
     new iMenu = menu_create(MainMenuTitle, "@MenuHandler_Command");
 
     ArrayForeachArray(aMenus => Menu[S_WeaponMenu]) {
@@ -38,12 +38,27 @@ Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
         menu_setprop(iMenu, MPROP_EXITNAME, uLang(UserId, "VIPM_M_WM_MENU_WEAPONS_BACK_TO_MAIN_TEXT"));
     }
 
-    ArrayForeachArray(Menu[WeaponMenu_Items] => MenuItem[S_MenuItem]){
+    static iInactiveItemHandler;
+    if (!iInactiveItemHandler) {
+        iInactiveItemHandler = menu_makecallback("@MenuItemHandler_Inactive");
+    }
+
+    new iItemIndex = 0;
+    ArrayForeachArray(Menu[WeaponMenu_Items] => MenuItem[S_MenuItem]) {
+        if (!VipM_Limits_ExecuteList(MenuItem[MenuItem_ShowLimits], UserId)) {
+            continue;
+        }
+
         switch (MenuItem[MenuItem_Type]) {
             case MenuItemType_Default: {
                 static Cmd[128];
                 CommandAliases_GetMainCmd(CMD_WEAPON_MENU, Cmd, charsmax(Cmd));
-                menu_additem(iMenu, MenuItem[MenuItem_Title], fmt("%s %d %d", Cmd, MenuId, __i__));
+
+                new bool:bIsActive = VipM_Limits_ExecuteList(MenuItem[MenuItem_ActiveLimits], UserId);
+                menu_additem(iMenu, fmt("%s%s", bIsActive ? "" : "\d", MenuItem[MenuItem_Title]), fmt("%s %d %d", Cmd, MenuId, __i__));
+                if (!bIsActive && !MenuItem[MenuItem_FakeInactive]) {
+                    menu_item_setcall(iMenu, iItemIndex, iInactiveItemHandler);
+                }
             }
             
             case MenuItemType_Text: {
@@ -54,8 +69,13 @@ Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
                 menu_addblank2(iMenu);
             }
         }
+        iItemIndex++;
     }
     menu_display(UserId, iMenu);
+}
+
+@MenuItemHandler_Inactive() {
+    return ITEM_DISABLED;
 }
 
 @MenuHandler_Weapons(const UserId, const MenuId, const ItemId) {
@@ -72,8 +92,12 @@ Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
         return;
     }
 
-    static Data[128];
-    menu_item_getinfo(MenuId, ItemId, _, Data, charsmax(Data));
-    client_cmd(UserId, Data);
+    static sCmd[128];
+    menu_item_getinfo(MenuId, ItemId, _, sCmd, charsmax(sCmd));
+
+    if (sCmd[0]) {
+        client_cmd(UserId, sCmd);
+    }
+
     menu_destroy(MenuId);
 }

@@ -49,10 +49,10 @@ public VipM_OnInitModules() {
         "Count", ptInteger, false
     );
     VipM_Modules_AddParams(MODULE_NAME,
-        "Limits", ptLimits, false,
-        "AutoopenLimits", ptLimits, false
+        "Limits", ptLimits, false
     );
     VipM_Modules_AddParams(MODULE_NAME,
+        "AutoopenLimits", ptLimits, false,
         "AutoopenDelay", ptFloat, false,
         "AutoopenCloseDelay", ptFloat, false
     );
@@ -244,7 +244,11 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
         return;
     }
 
-    if (!VipM_Limits_ExecuteList(MenuItem[MenuItem_Limits], UserId)) {
+    if (
+        !VipM_Limits_ExecuteList(MenuItem[MenuItem_ShowLimits], UserId)
+        || !VipM_Limits_ExecuteList(MenuItem[MenuItem_ActiveLimits], UserId)
+        || !VipM_Limits_ExecuteList(MenuItem[MenuItem_Limits], UserId)
+    ) {
         if (!bSilent) {
             ChatPrintL(UserId, "MSG_MENUITEM_NOT_PASSED_LIMIT");
         }

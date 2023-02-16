@@ -114,7 +114,15 @@ bool:Cfg_ReadMenuItem(&JSON:jMenuItem, MenuItem[S_MenuItem]){
     }
     
     MenuItem[MenuItem_Type] = MenuItemType_Default;
+
+    MenuItem[MenuItem_ShowLimits] = VipM_Limits_ReadListFromJson(json_object_get_value(jMenuItem, "ShowLimits"));
+    MenuItem[MenuItem_ActiveLimits] = VipM_Limits_ReadListFromJson(json_object_get_value(jMenuItem, "ActiveLimits"));
     MenuItem[MenuItem_Limits] = VipM_Limits_ReadListFromJson(json_object_get_value(jMenuItem, "Limits"));
+
+    MenuItem[MenuItem_FakeInactive] = false;
+    if (json_object_has_value(jMenuItem, "FakeInactive", JSONBoolean)) {
+        MenuItem[MenuItem_FakeInactive] = json_object_get_bool(jMenuItem, "FakeInactive");
+    }
 
     MenuItem[MenuItem_UseCounter] = true;
     if (json_object_has_value(jMenuItem, "UseCounter", JSONBoolean)) {
@@ -132,6 +140,7 @@ bool:Cfg_ReadMenuItem(&JSON:jMenuItem, MenuItem[S_MenuItem]){
     return true;
 }
 
+// TODO: Надо бы удалить и смотреть только на Items
 JSON:JsonObjectGetItemsValue(const JSON:jObj){
     if (json_object_has_value(jObj, "Items")) {
         return json_object_get_value(jObj, "Items");    
