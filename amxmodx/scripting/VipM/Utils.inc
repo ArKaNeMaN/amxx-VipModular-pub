@@ -312,8 +312,8 @@ stock GetWeekDayIdByName(const sWeekDayName[]) {
     }
 }
 
-stock CreateConstCvar(const sCvarName[], const sCvarValue[]) {
-    set_pcvar_string(create_cvar(sCvarName, sCvarValue), sCvarValue);
+stock CreateConstCvar(const sCvarName[], const sCvarValue[], const iFlags = FCVAR_SERVER) {
+    set_pcvar_string(create_cvar(sCvarName, sCvarValue, iFlags), sCvarValue);
 }
 
 #define CallOnce() CompositeMacros( \

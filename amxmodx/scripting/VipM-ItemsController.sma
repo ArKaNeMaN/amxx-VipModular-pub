@@ -23,10 +23,6 @@ public plugin_precache() {
     PluginInit();
 }
 
-public VipM_OnInitModules() {
-    PluginInit();
-}
-
 PluginInit() {
     CallOnce();
 

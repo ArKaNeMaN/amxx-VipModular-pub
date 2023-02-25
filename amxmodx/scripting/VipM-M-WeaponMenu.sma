@@ -42,6 +42,8 @@ public VipM_OnInitModules() {
     RegisterPluginByVars();
     register_dictionary("VipM-WeaponMenu.ini");
 
+    VipM_IC_Init();
+
     VipM_Modules_Register(MODULE_NAME, true);
     VipM_Modules_AddParams(MODULE_NAME,
         "MainMenuTitle", ptString, false,

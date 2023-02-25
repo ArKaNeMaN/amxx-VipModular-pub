@@ -20,6 +20,8 @@ new const MODULE_NAME[] = "SpawnItems";
 
 public VipM_OnInitModules(){
     RegisterPluginByVars();
+
+    VipM_IC_Init();
     
     VipM_Modules_Register(MODULE_NAME, true);
     VipM_Modules_AddParams(MODULE_NAME,

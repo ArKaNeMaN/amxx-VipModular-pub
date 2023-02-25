@@ -37,6 +37,7 @@ stock VipM_GetCfgPath(const Path[], Out[], const Len){
 
 // Инлайн версия предыдущего стока.
 // Сорян за извращения :))
+// TODO: Заменить на сток, возвращающий строку
 stock __inl_VipM_GetCfgPath[PLATFORM_MAX_PATH] = "";
 #define inl_VipM_GetCfgPath(%1) \
     ( \

@@ -65,6 +65,13 @@ forward VipM_IC_OnReadItem(const JSON:jItem, Trie:Params);
 forward VipM_IC_OnGiveItem(const UserId, const Trie:Params);
 
 /**
+ * Инициализирует контроллер предметов.
+ *
+ * @noreturn
+ */
+native VipM_IC_Init();
+
+/**
  * Регистрирует новый тип предмета.
  *
  * @param Type    Название типа.

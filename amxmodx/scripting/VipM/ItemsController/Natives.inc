@@ -23,11 +23,18 @@ enum {
 public plugin_natives() {
     Natives_Init("VipM_IC");
 
+    Natives_Reg("Init");
     Natives_Reg("RegisterType");
     Natives_Reg("RegisterTypeEvent");
     Natives_Reg("JsonGetItem");
     Natives_Reg("GiveItem");
 }
+
+@_Init() {
+    PluginInit();
+}
+
+// TODO: Вынести логику из нативов в соответствующий файл
 
 @_RegisterType(const PluginId) {
     enum {Arg_Type = 1}
@@ -74,7 +81,7 @@ public plugin_natives() {
     return FwdId >= 0;
 }
 
-@_JsonGetItem(){
+@_JsonGetItem() {
     enum {Arg_jItem = 1}
 
     new JSON:jItem = JSON:get_param_byref(Arg_jItem);
@@ -83,7 +90,7 @@ public plugin_natives() {
     return ItemId;
 }
 
-bool:@_GiveItem(){
+bool:@_GiveItem() {
     enum {Arg_UserId = 1, Arg_ItemId}
 
     new UserId = get_param(Arg_UserId);
