@@ -1,59 +1,57 @@
 [
-    /* Применяется первый доступный модуль привилегий */
-    /* Исключение: Если модуль поддерживает обьединение конфигов. */
-    {
+    { /* Главный админ (флаг l) */
         "Access": [
-            /* Проверки для получения доступа к привилегиям из поля Modules */
-
             {
-                "Limit": "SteamId",
-                "SteamId": "STEAM_0:0:57040922"
-            },
-            {
-                "Limit": "Name",
-                "Name": "ArKaNeMaN"
+                "Limit": "Flags",
+                "Flags": "l"
             }
         ],
         "Modules": [
-            /* Список привилегий, которые будут доступны игроку при прохождении проверок из поля Access */
-            
-            "File:SpawnHealth/Test",
-            "File:Vampire/Test",
-            // "File:SpawnItems/Test",
-            "File:VipInTab/Override",
-            "File:WeaponMenus/Test"
+            "File:WeaponMenu/Admin",
+            "File:SpawnItems/Premium",
+            "File:SpawnHealth/Default",
+            "File:Vampire/Premium",
+            "File:VipInTab/Default"
         ]
     },
-
-    {
-        "Access": {
-            "Limit": "Ip",
-            "Ip": "127.0.0.1"
-        },
-        "Modules": [
-            "File:SpawnHealth/Test",
-            "File:Vampire/Test"
-        ]
-    },
-    {
-        "Access": {
-            "Limit": "Flags",
-            "Flags": "t"
-        },
-        "Modules": [
-            "File:VipInTab/Default",
+    { /* Premium (флаг s) */
+        "Access": [
             {
-                "Module": "SpawnHealth",
-                
-                "Health": 110,
-                "SetHealth": true,
-
-                "Armor": 50,
-                "MaxArmor": 100,
-                "SetArmor": false,
-                "Helmet": true
-            },
-            "File:SpawnItems/Test"
+                "Limit": "Flags",
+                "Flags": "s"
+            }
+        ],
+        "Modules": [
+            "File:WeaponMenu/Premium",
+            "File:SpawnItems/Premium",
+            "File:SpawnHealth/Default",
+            "File:Vampire/Premium",
+            "File:VipInTab/Default"
+        ]
+    },
+    { /* VIP (флаг t) */
+        "Access": [
+            {
+                "Limit": "Flags",
+                "Flags": "t"
+            }
+        ],
+        "Modules": [
+            "File:WeaponMenu/Vip",
+            "File:SpawnItems/Vip",
+            "File:SpawnHealth/Default",
+            "File:VipInTab/Default"
+        ]
+    },
+    { /* Steam-бонус */
+        "Access": [
+            {
+                "Limit": "Steam"
+            }
+        ],
+        "Modules": [
+            "File:SpawnItems/Vip",
+            "File:SpawnHealth/Default"
         ]
     }
 ]

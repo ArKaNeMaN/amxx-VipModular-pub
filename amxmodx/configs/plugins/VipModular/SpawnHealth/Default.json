@@ -1,15 +1,11 @@
-{
+{ /* Выдача брони со второго раунда */
     "Module": "SpawnHealth",
     
     "Limits": [
         "File:Limits/MinRound-2"
     ],
 
-    "Health": 110,
-    "SetHealth": true,
-
-    "Armor": 50,
-    "MaxArmor": 100,
-    "SetArmor": false,
+    "Armor": 100,
+    "SetArmor": true,
     "Helmet": true
 }

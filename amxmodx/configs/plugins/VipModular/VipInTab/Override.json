@@ -1,4 +1,4 @@
-{
+{ /* Статус VIP будет перекрывать все остальные статусы */
     "Module": "VipInTab",
     "Enabled": true,
     "Override": true

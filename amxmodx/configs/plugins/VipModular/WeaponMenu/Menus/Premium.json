@@ -1,0 +1,60 @@
+{
+    "Name": "Premium-меню",
+    "Title": "\\y[\\wPremium-меню\\y]",
+
+    "Items": [
+        {
+            "Title": "АК-47",
+            "Items": [
+                {
+                    "Type": "Weapon",
+                    "Name": "weapon_ak47"
+                }
+            ]
+        },
+        {
+            "Title": "M4A1",
+            "Items": [
+                {
+                    "Type": "Weapon",
+                    "Name": "weapon_m4a1"
+                }
+            ]
+        },
+        {
+            "Title": "AUG",
+            "Items": [
+                {
+                    "Type": "Weapon",
+                    "Name": "weapon_aug"
+                }
+            ]
+        },
+        {
+            "Title": "SG552",
+            "Items": [
+                {
+                    "Type": "Weapon",
+                    "Name": "weapon_sg552"
+                }
+            ]
+        },
+        {
+            "Title": "AWP",
+            "ActiveLimits": "File:Limits/Menus/AwpAccess",
+            "FakeInactive": true,
+            "Items": [
+                {
+                    "Type": "Weapon",
+                    "Name": "weapon_awp"
+                }
+            ]
+        },
+        {
+            "Title": "Гранаты",
+            "Items": [
+                "File:Items/AllGrenades"
+            ]
+        }
+    ]
+}

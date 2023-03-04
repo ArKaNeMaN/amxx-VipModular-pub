@@ -1,0 +1,23 @@
+{
+    "Module": "SpawnItems",
+
+    /* Условия получения предметов. Если выполняется хоть одно - предметы выдаются */
+    "Limits": [
+        // Предметы выдаютсмя только со второго раунда
+        "File:Limits/MinRound-2"
+    ],
+
+    "Items": [
+        { // Дигл
+            "Type": "Weapon",
+            "Name": "weapon_deagle",
+            "GiveType": "Replace"
+        },
+        { // Осколочная граната
+            "Type": "Weapon",
+            "Name": "weapon_hegrenade"
+        },
+        // Набор сапёра
+        "File:Items/DefuseKit"
+    ]
+}

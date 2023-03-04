@@ -1,9 +1,0 @@
-{
-    "Module": "Vampire",
-    
-    "ByKill": 10,
-    "ByHead": 15,
-    "ByKnife": 20,
-
-    "MaxHealth": 255
-}

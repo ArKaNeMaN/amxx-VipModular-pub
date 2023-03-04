@@ -1,6 +1,6 @@
 [
     {
-        /* Понимать так: Модули SpawnItems и WeaponMenu будут активны, если текущая карта не $2000$ или aim_deagle */
+        /* Понимать так: Модули SpawnItems и WeaponMenu будут активны, если текущая карта не $2000$, awp_*, fy_* или aim_* */
         "Modules": [
             "SpawnItems",
             "WeaponMenu"
@@ -12,12 +12,55 @@
                 "Limits": [
                     {
                         "Limit": "Map",
-                        "Map": "$2000$",
+                        "Map": "$",
+                        "Prefix": true,
                         "Real": true
                     },
                     {
                         "Limit": "Map",
                         "Map": "aim_",
+                        "Prefix": true,
+                        "Real": true
+                    },
+                    {
+                        "Limit": "Map",
+                        "Map": "awp_",
+                        "Prefix": true,
+                        "Real": true
+                    },
+                    {
+                        "Limit": "Map",
+                        "Map": "fy_",
+                        "Prefix": true,
+                        "Real": true
+                    },
+                    {
+                        "Limit": "Map",
+                        "Map": "35hp_",
+                        "Prefix": true,
+                        "Real": true
+                    },
+                    {
+                        "Limit": "Map",
+                        "Map": "1hp_",
+                        "Prefix": true,
+                        "Real": true
+                    },
+                    {
+                        "Limit": "Map",
+                        "Map": "100hp_",
+                        "Prefix": true,
+                        "Real": true
+                    },
+                    {
+                        "Limit": "Map",
+                        "Map": "he_",
+                        "Prefix": true,
+                        "Real": true
+                    },
+                    {
+                        "Limit": "Map",
+                        "Map": "ka_",
                         "Prefix": true,
                         "Real": true
                     }
