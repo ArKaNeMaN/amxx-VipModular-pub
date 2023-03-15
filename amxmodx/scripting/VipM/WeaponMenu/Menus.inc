@@ -87,6 +87,8 @@ Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
 }
 
 @MenuHandler_Command(const UserId, const MenuId, const ItemId){
+    AbortAutoCloseMenu(UserId);
+
     if (ItemId == MENU_EXIT) {
         menu_destroy(MenuId);
         return;

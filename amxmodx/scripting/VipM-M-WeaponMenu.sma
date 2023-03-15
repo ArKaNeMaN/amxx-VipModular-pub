@@ -132,12 +132,11 @@ public VipM_OnInitModules() {
     show_menu(UserId, 0, "");
 }
 
-// TODO: Придумать как лучше использовать...
-// AbortAutoCloseMenu(const UserId) {
-//     if (task_exists(TASK_OFFSET_AUTO_CLOSE + UserId)) {
-//         remove_task(TASK_OFFSET_AUTO_CLOSE + UserId);
-//     }
-// }
+AbortAutoCloseMenu(const UserId) {
+    if (task_exists(TASK_OFFSET_AUTO_CLOSE + UserId)) {
+        remove_task(TASK_OFFSET_AUTO_CLOSE + UserId);
+    }
+}
 
 @Cmd_SwitchAutoOpen(const UserId) {
     gUserAutoOpen[UserId] = !gUserAutoOpen[UserId];

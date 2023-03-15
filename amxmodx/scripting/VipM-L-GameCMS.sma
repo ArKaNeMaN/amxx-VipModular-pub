@@ -7,6 +7,10 @@
     #define GCMS_GROUP_NAME_MAX_LEN (MAX_NAME_LENGTH * 2)
 #endif
 
+#if !defined GCMS_SERVICE_NAME_MAX_LEN
+    #define GCMS_SERVICE_NAME_MAX_LEN (MAX_STRING_LEN * 2)
+#endif
+
 #pragma semicolon 1
 #pragma compress 1
 
@@ -49,7 +53,7 @@ public VipM_OnInitModules() {
 }
 
 @OnServiceCheck(const Trie:Params, const UserId) {
-    new sServiceName[32];
+    new sServiceName[GCMS_SERVICE_NAME_MAX_LEN];
     VipM_Params_GetStr(Params, "Service", sServiceName, charsmax(sServiceName));
 
     return cmsapi_service_timeleft(UserId, .srvName=sServiceName, .part=false) > TIME_TRACKING_STOPPED;
