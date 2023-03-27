@@ -19,6 +19,12 @@ stock const __JSON_FILE_TEMPLATE_STR[] = "%s.json";
 stock const __USER_NAME_TEMPLATE_STR[] = "%n";
 stock const __LANG_MSG_LAYOUT_KEY[] = "MSG_LAYOUT";
 
+const WEAPON_GRENADE = (
+    BIT(WEAPON_HEGRENADE)
+    |BIT(WEAPON_SMOKEGRENADE)
+    |BIT(WEAPON_FLASHBANG)
+);
+
 #define CompositeMacros(%1) \
     do { %1 } while(is_linux_server() == 0xDEADBEEF)
 
@@ -297,6 +303,16 @@ stock RegisterPlugin(
 //         register_plugin(PluginName, PluginVersion, PluginAuthor);
 //     }
 // }
+
+stock ItemHasClip(const ItemId) {
+    new WeaponId = get_member(ItemId, m_iId);
+    switch (WeaponId) {
+        case WEAPON_KNIFE, WEAPON_HEGRENADE, WEAPON_SMOKEGRENADE, WEAPON_FLASHBANG, WEAPON_SHIELDGUN:
+            return false;
+        default:
+            return true;
+    }
+}
 
 stock ItemHasClip(const ItemId) {
     new WeaponIdType:WeaponId = get_member(ItemId, m_iId);
