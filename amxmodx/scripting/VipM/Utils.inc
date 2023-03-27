@@ -17,6 +17,12 @@ stock const __CLANG_TEMPLATE_STR[] = "%L";
 stock const __JSON_FILE_TEMPLATE_STR[] = "%s.json";
 stock const __USER_NAME_TEMPLATE_STR[] = "%n";
 
+const WEAPON_GRENADE = (
+    BIT(WEAPON_HEGRENADE)
+    |BIT(WEAPON_SMOKEGRENADE)
+    |BIT(WEAPON_FLASHBANG)
+);
+
 #define CompositeMacros(%1) \
     do { %1 } while(is_linux_server() == 0xDEADBEEF)
 
@@ -382,11 +388,23 @@ stock RegisterPlugin(
 //     }
 // }
 
+stock ItemHasClip(const ItemId) {
+    new WeaponId = get_member(ItemId, m_iId);
+    switch (WeaponId) {
+        case WEAPON_KNIFE, WEAPON_HEGRENADE, WEAPON_SMOKEGRENADE, WEAPON_FLASHBANG, WEAPON_SHIELDGUN:
+            return false;
+        default:
+            return true;
+    }
+}
+
 stock InstantReloadAllWeapons(const UserId) {
     for (new InventorySlotType:iSlot = PRIMARY_WEAPON_SLOT; iSlot <= PISTOL_SLOT; iSlot++) {
         new ItemId = get_member(UserId, m_rgpPlayerItems, iSlot);
         while (!is_nullent(ItemId)) {
-            set_member(ItemId, m_Weapon_iClip, rg_get_iteminfo(ItemId, ItemInfo_iMaxClip));
+            if (ItemHasClip(ItemId)) {
+                set_member(ItemId, m_Weapon_iClip, rg_get_iteminfo(ItemId, ItemInfo_iMaxClip));
+            }
             ItemId = get_member(ItemId, m_pNext);
         }
     }
@@ -394,7 +412,11 @@ stock InstantReloadAllWeapons(const UserId) {
 
 stock InstantReloadActiveWeapon(const UserId) {
     new ItemId = get_member(UserId, m_pActiveItem);
-    if (!is_nullent(ItemId)) {
+    if (is_nullent(ItemId)) {
+        return;
+    }
+
+    if (ItemHasClip(ItemId)) {
         set_member(ItemId, m_Weapon_iClip, rg_get_iteminfo(ItemId, ItemInfo_iMaxClip));
     }
 }
