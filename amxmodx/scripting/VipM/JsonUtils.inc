@@ -395,6 +395,11 @@ stock JSON:Json_GetRefValue(&JSON:jValue, sOut[] = NULL_STRING, const iOutLen = 
     return Json_ParseFromFileEx(sFileName, sWorkDir);
 }
 
+stock JSON:Json_GetRefValueC(const JSON:jValue, sOut[] = NULL_STRING, const iOutLen = 0, const bool:bFreeSrcIfRef = false) {
+    new JSON:_jValue = jValue;
+    return Json_GetRefValue(_jValue, sOut, iOutLen, bFreeSrcIfRef);
+}
+
 stock Trie:Json_ReadObjectToTrie(const JSON:jObject, &Trie:tTrie = Invalid_Trie) {
     if (tTrie == Invalid_Trie) {
         tTrie = TrieCreate();

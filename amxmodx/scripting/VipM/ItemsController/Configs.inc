@@ -2,6 +2,8 @@
 #include json
 #include "VipM/JsonUtils"
 
+// TODO: Переписать на хендлеры
+
 static Trie:g_ItemsCache = Invalid_Trie;
 
 Cfg_JsonGetItem(&JSON:jItem) {
