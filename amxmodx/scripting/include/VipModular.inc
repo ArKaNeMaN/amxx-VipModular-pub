@@ -19,32 +19,39 @@ stock const VIPM_CFG_PATH[] = "plugins/VipModular";
  *          Иначе из папки вип-системы (см. константу VIPM_CFG_PATH).
  *
  * @param Path      Путь / Название файла.
- * @param Out       Буффер для записи полученного пути.
- * @param Len       Размер буфера.
+ * @param sOut      Буффер для записи полученного пути.
+ * @param iOutLen   Размер буфера.
  *
  * @return  Кол-во записанных в буфер ячеек.
  */
-stock VipM_GetCfgPath(const Path[], Out[], const Len){
+stock VipM_GetCfgPath(const sPath[], sOut[], const iOutLen){
     static __amxx_configsdir[PLATFORM_MAX_PATH];
     if (!__amxx_configsdir[0]) {
         get_localinfo("amxx_configsdir", __amxx_configsdir, charsmax(__amxx_configsdir));
     }
     
-    return (Path[0] == '/')
-        ? formatex(Out, Len, "%s%s", __amxx_configsdir, Path)
-        : formatex(Out, Len, "%s/%s/%s", __amxx_configsdir, VIPM_CFG_PATH, Path);
+    return (sPath[0] == '/')
+        ? formatex(sOut, iOutLen, "%s%s", __amxx_configsdir, sPath)
+        : formatex(sOut, iOutLen, "%s/%s/%s", __amxx_configsdir, VIPM_CFG_PATH, sPath);
 }
 
-// Инлайн версия предыдущего стока.
-// Сорян за извращения :))
-// TODO: Заменить на сток, возвращающий строку
-stock __inl_VipM_GetCfgPath[PLATFORM_MAX_PATH] = "";
-#define inl_VipM_GetCfgPath(%1) \
-    ( \
-        VipM_GetCfgPath(%1, __inl_VipM_GetCfgPath, charsmax(__inl_VipM_GetCfgPath)) \
-        ? __inl_VipM_GetCfgPath \
-        : NULL_STRING \
-    )
+/**
+ * Получение пути, относительно папки с конфигами вип-системы или AmxModX.
+ *
+ * @note    Если название файла начинается со слеша `/`, файл будет взят из папки amxmodx/configs.
+ *          Иначе из папки вип-системы (см. константу VIPM_CFG_PATH).
+ *
+ * @param Path      Путь / Название файла.
+ *
+ * @return  Полученный путь.
+ */
+stock VipM_iGetCfgPath(const sPath[]) {
+    new sRetPath[PLATFORM_MAX_PATH];
+    VipM_GetCfgPath(sPath, sRetPath, charsmax(sRetPath));
+    return sRetPath;
+}
+// inl_VipM_GetCfgPath is deprecated
+#define inl_VipM_GetCfgPath VipM_iGetCfgPath
 
 enum _:VipM_FwdReturn{
     /*
@@ -59,7 +66,7 @@ enum _:VipM_FwdReturn{
 }
 
 /**
- * Вызывается в момент инициалзиации модулей, типов условных элементов и режимов доступа.
+ * Вызывается в момент инициалзиации модулей и лимитов.
  *
  * @note    Вызывается из plugin_precache
  *
@@ -68,7 +75,7 @@ enum _:VipM_FwdReturn{
 forward VipM_OnInitModules();
 
 /**
- * Вызывается в момент чтения элемента конфига (модуля или ограничения).
+ * Вызывается в момент чтения элемента конфига (модуля или лимита).
  *
  * @param jUnit     JSON-обьект с параметрами
  * @param tParams   Хэш-карта с прочитанными параметрами. Может быть изменена.
@@ -84,7 +91,7 @@ forward VipM_OnInitModules();
 forward VipM_OnReadUnit(const JSON:jUnit, const Trie:tParams);
 
 /**
- * Вызывается после полной загрузки вип-системы.
+ * Вызывается после полной загрузки системы привилегий.
  *
  * @note    Вызывается из plugin_precache
  *
