@@ -15,9 +15,9 @@ new g_sSteamIds[MAX_PLAYERS + 1][64];
 new g_sIps[MAX_PLAYERS + 1][32];
 new g_sRealMapName[32];
 
-new bool:g_bUsedInRound[MAX_PLAYERS + 1] = {false, ...};
-new bool:g_bUsedInMap[MAX_PLAYERS + 1] = {false, ...};
-new bool:g_bUsedInGame[MAX_PLAYERS + 1] = {false, ...};
+new Trie:g_tUsedInRound = Invalid_Trie;
+new Trie:g_tUsedInMap = Invalid_Trie;
+new Trie:g_tUsedInGame = Invalid_Trie;
 
 public VipM_OnInitModules(){
     RegisterPluginByVars();
@@ -123,6 +123,10 @@ public VipM_OnInitModules(){
 
     RegisterHookChain(RG_CBasePlayer_RoundRespawn, "@OnPlayerRoundRespawn", true);
     RegisterHookChain(RG_CSGameRules_RestartRound, "@OnRestartRound", true);
+
+    g_tUsedInRound = TrieCreate();
+    g_tUsedInMap = TrieCreate();
+    g_tUsedInGame = TrieCreate();
 }
 
 public client_authorized(UserId, const AuthId[]){
@@ -131,44 +135,51 @@ public client_authorized(UserId, const AuthId[]){
 
     copy(g_sSteamIds[UserId], charsmax(g_sSteamIds[]), AuthId);
     get_user_ip(UserId, g_sIps[UserId], charsmax(g_sIps[]), true);
-
-    g_bUsedInRound[UserId] = false;
-}
-
-@OnPlayerRoundRespawn(const UserId) {
-    g_bUsedInRound[UserId] = false;
 }
 
 @OnRestartRound() {
+    TrieClear(g_tUsedInRound);
     if (get_member_game(m_bCompleteReset)) {
-        arrayset(g_bUsedInGame, false, sizeof g_bUsedInGame);
+        TrieClear(g_tUsedInGame);
     }
 }
 
-@OnOncePerGameCheck(const Trie:Params, const UserId) {
-    if (g_bUsedInGame[UserId]) {
+@OnOncePerGameCheck(const Trie:tParams, const UserId) {
+    static sTrieKey[64];
+    formatex(sTrieKey, charsmax(sTrieKey), "%s|%d", g_sSteamIds[UserId], tParams);
+    // В случае лимитов, хендлер Trie параметров можно считать уникальным для каждого инстанса лимита
+    // Нужно чтобы можно было указать этот лимит в двух местах и чтобы они при этом не пересекались
+    // Ну а SteamID для того, чтобы после перезахода оно не сбрасывалось
+
+    if (TrieKeyExists(g_tUsedInGame, sTrieKey)) {
         return false;
     }
 
-    g_bUsedInGame[UserId] = true;
+    TrieSetCell(g_tUsedInGame, sTrieKey, true);
     return true;
 }
 
-@OnOncePerMapCheck(const Trie:Params, const UserId) {
-    if (g_bUsedInMap[UserId]) {
+@OnOncePerMapCheck(const Trie:tParams, const UserId) {
+    static sTrieKey[64];
+    formatex(sTrieKey, charsmax(sTrieKey), "%s|%d", g_sSteamIds[UserId], tParams);
+
+    if (TrieKeyExists(g_tUsedInMap, sTrieKey)) {
         return false;
     }
 
-    g_bUsedInMap[UserId] = true;
+    TrieSetCell(g_tUsedInMap, sTrieKey, true);
     return true;
 }
 
-@OnOncePerRoundCheck(const Trie:Params, const UserId) {
-    if (g_bUsedInRound[UserId]) {
+@OnOncePerRoundCheck(const Trie:tParams, const UserId) {
+    static sTrieKey[64];
+    formatex(sTrieKey, charsmax(sTrieKey), "%s|%d", g_sSteamIds[UserId], tParams);
+
+    if (TrieKeyExists(g_tUsedInRound, sTrieKey)) {
         return false;
     }
 
-    g_bUsedInRound[UserId] = true;
+    TrieSetCell(g_tUsedInRound, sTrieKey, true);
     return true;
 }
 
