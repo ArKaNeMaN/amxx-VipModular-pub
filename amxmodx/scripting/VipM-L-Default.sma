@@ -15,6 +15,10 @@ new g_sSteamIds[MAX_PLAYERS + 1][64];
 new g_sIps[MAX_PLAYERS + 1][32];
 new g_sRealMapName[32];
 
+new bool:g_bUsedInRound[MAX_PLAYERS + 1] = {false, ...};
+new bool:g_bUsedInMap[MAX_PLAYERS + 1] = {false, ...};
+new bool:g_bUsedInGame[MAX_PLAYERS + 1] = {false, ...};
+
 public VipM_OnInitModules(){
     RegisterPluginByVars();
 
@@ -106,6 +110,19 @@ public VipM_OnInitModules(){
         "Reverse", ptBoolean, false
     );
     VipM_Limits_RegisterTypeEvent("InBuyZone", Limit_OnCheck, "@OnInBuyZoneCheck");
+
+    VipM_Limits_RegisterType("OncePerRound", true, false);
+    VipM_Limits_RegisterTypeEvent("OncePerRound", Limit_OnCheck, "@OnOncePerRoundCheck");
+
+    // thx for idea: https://dev-cs.ru/threads/24759/page-2#post-141912
+    VipM_Limits_RegisterType("OncePerMap", true, false);
+    VipM_Limits_RegisterTypeEvent("OncePerMap", Limit_OnCheck, "@OnOncePerMapCheck");
+
+    VipM_Limits_RegisterType("OncePerGame", true, false);
+    VipM_Limits_RegisterTypeEvent("OncePerGame", Limit_OnCheck, "@OnOncePerGameCheck");
+
+    RegisterHookChain(RG_CBasePlayer_RoundRespawn, "@OnPlayerRoundRespawn", true);
+    RegisterHookChain(RG_CSGameRules_RestartRound, "@OnRestartRound", true);
 }
 
 public client_authorized(UserId, const AuthId[]){
@@ -114,6 +131,45 @@ public client_authorized(UserId, const AuthId[]){
 
     copy(g_sSteamIds[UserId], charsmax(g_sSteamIds[]), AuthId);
     get_user_ip(UserId, g_sIps[UserId], charsmax(g_sIps[]), true);
+
+    g_bUsedInRound[UserId] = false;
+}
+
+@OnPlayerRoundRespawn(const UserId) {
+    g_bUsedInRound[UserId] = false;
+}
+
+@OnRestartRound() {
+    if (get_member_game(m_bCompleteReset)) {
+        arrayset(g_bUsedInGame, false, sizeof g_bUsedInGame);
+    }
+}
+
+@OnOncePerGameCheck(const Trie:Params, const UserId) {
+    if (g_bUsedInGame[UserId]) {
+        return false;
+    }
+
+    g_bUsedInGame[UserId] = true;
+    return true;
+}
+
+@OnOncePerMapCheck(const Trie:Params, const UserId) {
+    if (g_bUsedInMap[UserId]) {
+        return false;
+    }
+
+    g_bUsedInMap[UserId] = true;
+    return true;
+}
+
+@OnOncePerRoundCheck(const Trie:Params, const UserId) {
+    if (g_bUsedInRound[UserId]) {
+        return false;
+    }
+
+    g_bUsedInRound[UserId] = true;
+    return true;
 }
 
 @OnInBuyZoneCheck(const Trie:Params, const UserId) {
