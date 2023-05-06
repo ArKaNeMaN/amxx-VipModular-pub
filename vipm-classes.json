@@ -1,0 +1,184 @@
+[
+    {
+        "classType": "module",
+        "classData": {
+            "name": "SpawnHealth",
+            "params": [
+                {
+                    "name": "Health",
+                    "type": "Integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "name": "SetHealth",
+                    "type": "Boolean",
+                    "required": false,
+                    "default": true
+                },
+                {
+                    "name": "MaxHealth",
+                    "type": "Integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "name": "Armor",
+                    "type": "Integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "name": "SetArmor",
+                    "type": "Boolean",
+                    "required": false,
+                    "default": true
+                },
+                {
+                    "name": "MaxArmor",
+                    "type": "Integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "name": "Helmet",
+                    "type": "Boolean",
+                    "required": false,
+                    "default": false
+                },
+                {
+                    "name": "Limits",
+                    "type": "Limits",
+                    "required": false,
+                    "default": []
+                }
+            ]
+        }
+    },
+    {
+        "classType": "module",
+        "classData": {
+            "name": "SpawnItems",
+            "params": [
+                {
+                    "name": "Items",
+                    "type": "Items",
+                    "required": true
+                },
+                {
+                    "name": "Limits",
+                    "type": "Limits",
+                    "required": false,
+                    "default": []
+                }
+            ]
+        }
+    },
+    {
+        "classType": "module",
+        "classData": {
+            "name": "VipInTab",
+            "params": [
+                {
+                    "name": "Enabled",
+                    "type": "Boolean",
+                    "required": false,
+                    "default": true
+                },
+                {
+                    "name": "Override",
+                    "type": "Boolean",
+                    "required": false,
+                    "default": false
+                }
+            ]
+        }
+    },
+    {
+        "classType": "module",
+        "classData": {
+            "name": "Vampire",
+            "params": [
+                {
+                    "name": "ByKill",
+                    "type": "Integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "name": "ByHead",
+                    "type": "Integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "name": "ByKnife",
+                    "type": "Integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "name": "MaxHealth",
+                    "type": "Integer",
+                    "required": false,
+                    "default": 100
+                },
+                {
+                    "name": "Limits",
+                    "type": "Limits",
+                    "required": false,
+                    "default": []
+                }
+            ]
+        }
+    },
+    {
+        "classType": "module",
+        "classData": {
+            "name": "WeaponMenu",
+            "params": [
+                {
+                    "name": "MainMenuTitle",
+                    "type": "String",
+                    "required": false,
+                    "default": ""
+                },
+                {
+                    "name": "Menus",
+                    "type": "Custom",
+                    "required": true
+                },
+                {
+                    "name": "Count",
+                    "type": "Integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "name": "Limits",
+                    "type": "Limits",
+                    "required": false,
+                    "default": []
+                },
+                {
+                    "name": "AutoopenLimits",
+                    "type": "Limits",
+                    "required": false,
+                    "default": []
+                },
+                {
+                    "name": "AutoopenDelay",
+                    "type": "Float",
+                    "required": false,
+                    "default": 0.0
+                },
+                {
+                    "name": "AutoopenCloseDelay",
+                    "type": "Float",
+                    "required": false,
+                    "default": 0.0
+                }
+            ]
+        }
+    }
+]
