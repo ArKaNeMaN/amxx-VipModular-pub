@@ -2,52 +2,71 @@
     {
         "classType": "module",
         "classData": {
+            "title": "Здоровье и броня",
+            "desc": "Выдаёт игроку указанные количества очков здоровья и/или брони в начале каждого раунда.",
+
             "name": "SpawnHealth",
             "params": [
                 {
                     "name": "Health",
+                    "desc": "Количество выдаваемый очков здоровья",
+
                     "type": "Integer",
                     "required": false,
                     "default": 0
                 },
                 {
                     "name": "SetHealth",
+                    "desc": "Если true - будет УСТАНОВЛЕНО указанное кол-во очков, иначе будет ДОБАВЛЕНО",
+
                     "type": "Boolean",
                     "required": false,
                     "default": true
                 },
                 {
                     "name": "MaxHealth",
+                    "desc": "(Только для SetHealth: false) Значение, выше которого очки здоровья выдаваться не будут",
+
                     "type": "Integer",
                     "required": false,
                     "default": 0
                 },
                 {
                     "name": "Armor",
+                    "desc": "Количество выдаваемый очков брони",
+
                     "type": "Integer",
                     "required": false,
                     "default": 0
                 },
                 {
                     "name": "SetArmor",
+                    "desc": "Если true - будет УСТАНОВЛЕНО указанное кол-во очков, иначе будет ДОБАВЛЕНО",
+
                     "type": "Boolean",
                     "required": false,
                     "default": true
                 },
                 {
                     "name": "MaxArmor",
+                    "desc": "(Только для SetArmor: false) Значение, выше которого очки брони выдаваться не будут",
+
                     "type": "Integer",
                     "required": false,
                     "default": 0
                 },
                 {
                     "name": "Helmet",
+                    "desc": "Выдавать ли шлем",
+
                     "type": "Boolean",
                     "required": false,
                     "default": false
                 },
                 {
                     "name": "Limits",
+                    "desc": "При каких условиях бонус будет выдан",
+
                     "type": "Limits",
                     "required": false,
                     "default": []
@@ -58,15 +77,22 @@
     {
         "classType": "module",
         "classData": {
+            "title": "Предметы",
+            "desc": "Выдаёт игроку указанные предметы в начале каждого раунда.",
+
             "name": "SpawnItems",
             "params": [
                 {
                     "name": "Items",
+                    "desc": "Список предметов, которые будут выданы",
+
                     "type": "Items",
                     "required": true
                 },
                 {
                     "name": "Limits",
+                    "desc": "При каких условиях предметы будут выданы",
+
                     "type": "Limits",
                     "required": false,
                     "default": []
@@ -77,16 +103,23 @@
     {
         "classType": "module",
         "classData": {
+            "title": "VIP в таблице счёта",
+            "desc": "Отображает для игрока статус VIP в таблице счёта",
+
             "name": "VipInTab",
             "params": [
                 {
                     "name": "Enabled",
+                    "desc": "Отображать ли VIP-статус в таблице счёта?",
+
                     "type": "Boolean",
                     "required": false,
                     "default": true
                 },
                 {
                     "name": "Override",
+                    "desc": "Перекрывать ли другие статусы?",
+
                     "type": "Boolean",
                     "required": false,
                     "default": false
@@ -97,34 +130,47 @@
     {
         "classType": "module",
         "classData": {
+            "title": "Вампиризм",
+            "desc": "Добавляет игроку указанное количество очков здоровья за убийство других игроков",
+
             "name": "Vampire",
             "params": [
                 {
                     "name": "ByKill",
+                    "desc": "Количество здоровья, выдываемое за обычное убийство",
+
                     "type": "Integer",
                     "required": false,
                     "default": 0
                 },
                 {
                     "name": "ByHead",
+                    "desc": "Количество здоровья, выдываемое за убийство в голову",
+
                     "type": "Integer",
                     "required": false,
                     "default": 0
                 },
                 {
                     "name": "ByKnife",
+                    "desc": "Количество здоровья, выдываемое за убийство ножом",
+
                     "type": "Integer",
                     "required": false,
                     "default": 0
                 },
                 {
                     "name": "MaxHealth",
+                    "desc": "Максимальное количество здоровья",
+
                     "type": "Integer",
                     "required": false,
                     "default": 100
                 },
                 {
                     "name": "Limits",
+                    "desc": "Условия, при которых вампиризм будет работать",
+
                     "type": "Limits",
                     "required": false,
                     "default": []
@@ -135,45 +181,62 @@
     {
         "classType": "module",
         "classData": {
+            "title": "Оружейное меню",
+            "desc": "Позволяет игроку брать различные предметы из специального меню",
+
             "name": "WeaponMenu",
             "params": [
                 {
                     "name": "MainMenuTitle",
+                    "desc": "Заголовок основного меню (При доступе к хотя бы двум меню)",
+
                     "type": "String",
                     "required": false,
                     "default": ""
                 },
                 {
                     "name": "Menus",
+                    "desc": "Массив доступных игроков меню (Поддерживаются ссылки)",
+
                     "type": "Custom",
                     "required": true
                 },
                 {
                     "name": "Count",
+                    "desc": "Сколько игрок может взять предметов за раунд из всех меню в сумме",
+
                     "type": "Integer",
                     "required": false,
                     "default": 0
                 },
                 {
                     "name": "Limits",
+                    "desc": "Условия, при которых игрок может открыть меню",
+
                     "type": "Limits",
                     "required": false,
                     "default": []
                 },
                 {
                     "name": "AutoopenLimits",
+                    "desc": "Условия, при которых будет срабатывать автоматическое открытие оружейного меню",
+
                     "type": "Limits",
                     "required": false,
                     "default": []
                 },
                 {
                     "name": "AutoopenDelay",
+                    "desc": "Задержка автоматического открытия в секундах",
+
                     "type": "Float",
                     "required": false,
                     "default": 0.0
                 },
                 {
                     "name": "AutoopenCloseDelay",
+                    "desc": "Через сколько секунд закрывать меню после автоматического открытия",
+
                     "type": "Float",
                     "required": false,
                     "default": 0.0
