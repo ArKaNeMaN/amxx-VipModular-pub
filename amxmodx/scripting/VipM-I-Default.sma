@@ -138,10 +138,17 @@ public VipM_IC_OnInitTypes() {
 @OnRefillBpAmmoGive(const UserId, const Trie:Params) {
     new iMaxAmmos[32] = {-1, ...};
 
+    // Получение дефолтных значений
     for (new WeaponIdType:iWpnId = WEAPON_P228; iWpnId < WEAPON_P90; iWpnId++) {
-        iMaxAmmos[rg_get_weapon_info(iWpnId, WI_AMMO_TYPE)] = rg_get_weapon_info(iWpnId, WI_MAX_ROUNDS);
+        switch (iWpnId) {
+            case WEAPON_KNIFE, WEAPON_HEGRENADE, WEAPON_SMOKEGRENADE, WEAPON_FLASHBANG, WEAPON_SHIELDGUN:
+                iMaxAmmos[rg_get_weapon_info(iWpnId, WI_AMMO_TYPE)] = -1;
+            default:
+                iMaxAmmos[rg_get_weapon_info(iWpnId, WI_AMMO_TYPE)] = rg_get_weapon_info(iWpnId, WI_MAX_ROUNDS);
+        }
     }
 
+    // Получение актуальных значений исходя из пушек в инвентаре 
     for (new InventorySlotType:iSlot = PRIMARY_WEAPON_SLOT; iSlot <= PISTOL_SLOT; iSlot++) {
         new ItemId = get_member(UserId, m_rgpPlayerItems, iSlot);
         while (ItemId > 0 && !is_nullent(ItemId)) {

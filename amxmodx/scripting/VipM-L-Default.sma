@@ -121,7 +121,6 @@ public VipM_OnInitModules(){
     VipM_Limits_RegisterType("OncePerGame", true, false);
     VipM_Limits_RegisterTypeEvent("OncePerGame", Limit_OnCheck, "@OnOncePerGameCheck");
 
-    RegisterHookChain(RG_CBasePlayer_RoundRespawn, "@OnPlayerRoundRespawn", true);
     RegisterHookChain(RG_CSGameRules_RestartRound, "@OnRestartRound", true);
 
     g_tUsedInRound = TrieCreate();
