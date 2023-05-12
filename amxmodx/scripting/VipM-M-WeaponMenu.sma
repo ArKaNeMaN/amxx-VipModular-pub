@@ -81,7 +81,7 @@ public VipM_OnInitModules() {
 
 @OnModuleActivate() {
     RegisterHookChain(RG_CBasePlayer_Spawn, "@OnPlayerSpawn", true);
-    RegisterHookChain(RG_CBasePlayer_RoundRespawn, "@OnPlayerRoundRespawn", true);
+    RegisterHookChain(RG_CSGameRules_RestartRound, "@OnRestartRound", true);
     
     CommandAliases_Open(GET_FILE_JSON_PATH("Cmds/WeaponMenu"), true);
     CommandAliases_RegisterClient(CMD_WEAPON_MENU, "@Cmd_Menu");
@@ -90,18 +90,21 @@ public VipM_OnInitModules() {
     CommandAliases_Close();
 }
 
-@OnPlayerRoundRespawn(const UserId) {
-    if (!IsUserValidA(UserId)) {
-        return;
+@OnRestartRound() {
+    // TODO: Добавить квар для переключения вариантов
+    for (new UserId = 1; UserId <= MAX_PLAYERS; UserId++) {
+        if (!IsUserValidA(UserId)) {
+            return;
+        }
+
+        new Trie:Params = VipM_Modules_GetParams(MODULE_NAME, UserId);
+        gUserLeftItems[UserId] = VipM_Params_GetInt(Params, "Count", 0);
+        g_tUserMenuItemsCounter[UserId] = KeyValueCounter_Reset(g_tUserMenuItemsCounter[UserId]);
+
+        // Или авто-открытие тоже сюда перенести?
+        // Но смысл в авто-открытии при каждом спавне вроде тоже есть)
+        // Если вдруг оно не надо, можно какой-нить лимит по времени раунда туда сунуть
     }
-
-    new Trie:Params = VipM_Modules_GetParams(MODULE_NAME, UserId);
-    gUserLeftItems[UserId] = VipM_Params_GetInt(Params, "Count", 0);
-    g_tUserMenuItemsCounter[UserId] = KeyValueCounter_Reset(g_tUserMenuItemsCounter[UserId]);
-
-    // Или авто-открытие тоже сюда перенести?
-    // Но смысл в авто-открытии при каждом спавне вроде тоже есть)
-    // Если вдруг оно не надо, можно какой-нить лимит по времени раунда туда сунуть
 }
 
 @OnPlayerSpawn(const UserId) {
