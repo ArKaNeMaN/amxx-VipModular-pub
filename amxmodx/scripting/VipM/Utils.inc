@@ -165,6 +165,10 @@ stock __JSON_LAST_FILE_OBJECT[PLATFORM_MAX_PATH];
 stock JSON:JSON_GET_FILE_OR_OBJECT(JSON:Value) {
     __JSON_LAST_FILE_OBJECT[0] = 0;
 
+    if (Value == Invalid_JSON) {
+        return Value;
+    }
+
     if (!json_is_string(Value)) {
         return Value;
     }

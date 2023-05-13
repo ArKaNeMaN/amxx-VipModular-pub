@@ -121,6 +121,10 @@ native bool:VipM_IC_GiveItem(const UserId, const VipM_IC_T_Item:ItemId);
 
 stock Array:VipM_IC_JsonGetItems(JSON:jItems) {
     new Array:aItems = Invalid_Array;
+    if (jItems == Invalid_JSON) {
+        return aItems;
+    }
+
     switch (json_get_type(jItems)) {
         case JSONArray: {
             new cItems = json_array_get_count(jItems);
