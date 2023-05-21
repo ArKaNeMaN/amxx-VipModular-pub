@@ -84,13 +84,21 @@ public VipM_IC_OnInitTypes() {
         TrieSetCell(tParams, "MaxHealth", json_object_get_real(jItem, "MaxHealth"));
     }
 
+    if (json_object_has_value(jItem, "SetHealth", JSONBoolean)) {
+        TrieSetCell(tParams, "SetHealth", json_object_get_bool(jItem, "SetHealth"));
+    }
+
     return VIPM_CONTINUE;
 }
 
 @OnHealthGive(const UserId, const Trie:tParams) {
-    new Float:fAddHealth = VipM_Params_GetFloat(tParams, "MaxHealth", 100.0) - (VipM_Params_GetFloat(tParams, "Health") + Float:get_entvar(UserId, var_health));
-    if (fAddHealth >= 0.0) {
-        ExecuteHamB(Ham_TakeHealth, UserId, fAddHealth, DMG_GENERIC);
+    if (VipM_Params_GetBool(tParams, "SetHealth", false)) {
+        set_entvar(UserId, var_health, VipM_Params_GetFloat(tParams, "Health"));
+    } else {
+        new Float:fAddHealth = VipM_Params_GetFloat(tParams, "MaxHealth", 100.0) - (VipM_Params_GetFloat(tParams, "Health") + Float:get_entvar(UserId, var_health));
+        if (fAddHealth >= 0.0) {
+            ExecuteHamB(Ham_TakeHealth, UserId, fAddHealth, DMG_GENERIC);
+        }
     }
 }
 
