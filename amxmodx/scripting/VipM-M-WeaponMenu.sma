@@ -94,7 +94,7 @@ public VipM_OnInitModules() {
 ResetUserMenuCounters(const UserId) {
     new Trie:Params = VipM_Modules_GetParams(MODULE_NAME, UserId);
 
-    gUserLeftItems[UserId] = VipM_Params_GetInt(Params, "Count", 0);
+    gUserLeftItems[UserId] = VipM_Params_GetInt(Params, "Count", -1);
     g_tUserMenuItemsCounter[UserId] = KeyValueCounter_Reset(g_tUserMenuItemsCounter[UserId]);
 
     gUserShouldResetCounters[UserId] = false;
@@ -261,7 +261,7 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
 
     if (
         MenuItem[MenuItem_UseCounter]
-        && GetUserLeftItems(UserId, MenuId, Menu) <= 0
+        && GetUserLeftItems(UserId, MenuId, Menu) == 0
     ) {
         if (!bSilent) {
             ChatPrintL(UserId, "MSG_NO_LEFT_ITEMS");
@@ -290,7 +290,6 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
 
         if (Menu[WeaponMenu_Count]) {
             KeyValueCounter_Inc(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId));
-            Dbg_Log("After inc menu limit counter: KeyValueCounter_Get(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId)) = %d", KeyValueCounter_Get(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId)));
         }
     }
 }
@@ -299,16 +298,13 @@ GetUserLeftItems(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
     new iUserItemsLeft = gUserLeftItems[UserId];
     new iMenuItemsLeft = Menu[WeaponMenu_Count] - KeyValueCounter_Get(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId));
 
-    Dbg_Log("GetUserLeftItems(%n, %d, ...):", UserId, MenuId);
-    Dbg_Log("    KeyValueCounter_Get(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId)) = %d", KeyValueCounter_Get(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId)));
-    Dbg_Log("    Menu[WeaponMenu_Count] = %d", Menu[WeaponMenu_Count]);
-    Dbg_Log("    gUserLeftItems[UserId] = %d", gUserLeftItems[UserId]);
-    Dbg_Log("    iUserItemsLeft = %d", iUserItemsLeft);
-    Dbg_Log("    iMenuItemsLeft = %d", iMenuItemsLeft);
-    
-    if (Menu[WeaponMenu_Count]) {
-        return min(iUserItemsLeft, iMenuItemsLeft);
-    } else {
+    if (iUserItemsLeft < 0) {
+        return iMenuItemsLeft;
+    }
+
+    if (Menu[WeaponMenu_Count] < 0) {
         return iUserItemsLeft;
     }
+    
+    return min(iUserItemsLeft, iMenuItemsLeft);
 }

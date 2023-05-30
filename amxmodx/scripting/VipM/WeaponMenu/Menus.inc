@@ -23,12 +23,13 @@ Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
     new iItemsLeft = GetUserLeftItems(UserId, MenuId, Menu);
     new iMenusCount = Menu_GetUserMenusCount(UserId);
 
-    Dbg_Log("Menu_WeaponsMenu(%n, %d, ...):", UserId, MenuId);
-    Dbg_Log("    Menu[WeaponMenu_Count] = %d", Menu[WeaponMenu_Count]);
-    Dbg_Log("    iItemsLeft = %d", iItemsLeft);
+    new sItemsLeft[64] = "";
+    if (iItemsLeft >= 0) {
+        formatex(sItemsLeft, charsmax(sItemsLeft), "\w%L^n", UserId, "VIPM_M_WM_MENU_MAIN_ITEMS_LEFT", iItemsLeft);
+    }
 
     new iMenu = menu_create(
-        fmt("%s^n\w%L^n", Menu[WeaponMenu_Title], UserId, "VIPM_M_WM_MENU_MAIN_ITEMS_LEFT", iItemsLeft),
+        fmt("%s^n%s", Menu[WeaponMenu_Title], sItemsLeft),
         Menu[WeaponMenu_BackOnExit] && iMenusCount > 1
             ? "@MenuHandler_Weapons"
             : "@MenuHandler_Command"
