@@ -33,6 +33,7 @@ new gUserLeftItems[MAX_PLAYERS + 1] = {0, ...};
 new Trie:g_tUserMenuItemsCounter[MAX_PLAYERS + 1] = {Invalid_Trie, ...};
 
 new bool:gUserAutoOpen[MAX_PLAYERS + 1] = {true, ...};
+new gUserExpireStatus[MAX_PLAYERS + 1][VIPM_M_WEAPONMENU_EXPIRE_STATUS_MAX_LEN];
 
 #include "VipM/WeaponMenu/KeyValueCounter"
 #include "VipM/WeaponMenu/Structs"
@@ -102,6 +103,7 @@ ResetUserMenuCounters(const UserId) {
 
 public client_putinserver(UserId) {
     gUserShouldResetCounters[UserId] = true;
+    gUserExpireStatus[UserId][0] = 0;
 }
 
 @OnRestartRound() {
@@ -308,3 +310,5 @@ GetUserLeftItems(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
     
     return min(iUserItemsLeft, iMenuItemsLeft);
 }
+
+#include "VipM/WeaponMenu/Natives"
