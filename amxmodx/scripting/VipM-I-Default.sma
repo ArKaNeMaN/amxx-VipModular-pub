@@ -16,6 +16,12 @@ public stock const PluginURL[] = _VIPM_PLUGIN_URL;
 public stock const PluginDescription[] = "[VipModular][Item] Default items.";
 
 new Float:g_fSpeedMult[MAX_PLAYERS + 1] = {1.0, ...};
+new Float:g_fGivenDmgMult[MAX_PLAYERS + 1] = {1.0, ...};
+new Float:g_fTakenDmgMult[MAX_PLAYERS + 1] = {1.0, ...};
+
+new HookChain:g_iHook_ResetMaxSpeed_Post = INVALID_HOOKCHAIN;
+new HookChain:g_iHook_TakeDamage_Pre = INVALID_HOOKCHAIN;
+new HookChain:g_iHook_Spawn_Pre = INVALID_HOOKCHAIN;
 
 public VipM_IC_OnInitTypes() {
     RegisterPluginByVars();
@@ -59,16 +65,63 @@ public VipM_IC_OnInitTypes() {
     VipM_IC_RegisterType("Health");
     VipM_IC_RegisterTypeEvent("Health", ItemType_OnRead, "@OnHealthRead");
     VipM_IC_RegisterTypeEvent("Health", ItemType_OnGive, "@OnHealthGive");
+
+    VipM_IC_RegisterType("DamageMult");
+    VipM_IC_RegisterTypeEvent("DamageMult", ItemType_OnRead, "@OnDamageMultRead");
+    VipM_IC_RegisterTypeEvent("DamageMult", ItemType_OnGive, "@OnDamageMultGive");
+
+    DisableHookChain(g_iHook_ResetMaxSpeed_Post = RegisterHookChain(RG_CBasePlayer_ResetMaxSpeed, "@OnPlayerResetSpeedPost", true));
+    DisableHookChain(g_iHook_Spawn_Pre = RegisterHookChain(RG_CBasePlayer_Spawn, "@OnPlayerSpawnPre", false));
+    DisableHookChain(g_iHook_TakeDamage_Pre = RegisterHookChain(RG_CBasePlayer_TakeDamage, "@OnPlayerTakeDamage", false));
 }
 
 @OnPlayerSpawnPre(const UserId) {
     g_fSpeedMult[UserId] = 1.0;
+    g_fGivenDmgMult[UserId] = 1.0;
+    g_fTakenDmgMult[UserId] = 1.0;
 }
 
 @OnPlayerResetSpeedPost(const UserId) {
     if (g_fSpeedMult[UserId] != 1.0) {
         MultUserSpeed(UserId, g_fSpeedMult[UserId]);
     }
+}
+
+@OnPlayerTakeDamage(const VictimId, InflictorId, AttackerId, Float:fDamage, bitsDamageType) {
+    if (is_user_connected(AttackerId)) {
+        fDamage *= g_fTakenDmgMult[AttackerId];
+    }
+
+    if (is_user_connected(VictimId)) {
+        fDamage *= g_fTakenDmgMult[VictimId];
+    }
+
+    SetHookChainArg(4, ATYPE_FLOAT, fDamage);
+    return HC_CONTINUE;
+}
+
+@OnDamageMultRead(const JSON:jItem, const Trie:tParams) {
+    TrieDeleteKey(tParams, "Name");
+
+    if (json_object_has_value(jItem, "Given", JSONNumber)) {
+        TrieSetCell(tParams, "Given", json_object_get_real(jItem, "Given"));
+    }
+
+    if (json_object_has_value(jItem, "Taken", JSONNumber)) {
+        TrieSetCell(tParams, "Taken", json_object_get_real(jItem, "Taken"));
+    }
+
+    CallOnceR(VIPM_CONTINUE); // Чтобы лишний раз не дёргать натив активации хука
+    
+    EnableHookChain(g_iHook_Spawn_Pre);
+    EnableHookChain(g_iHook_TakeDamage_Pre);
+
+    return VIPM_CONTINUE;
+}
+
+@OnDamageMultGive(const UserId, const Trie:tParams) {
+    g_fGivenDmgMult[UserId] = VipM_Params_GetFloat(tParams, "Given", 1.0);
+    g_fTakenDmgMult[UserId] = VipM_Params_GetFloat(tParams, "Taken", 1.0);
 }
 
 @OnHealthRead(const JSON:jItem, const Trie:tParams) {
@@ -186,12 +239,10 @@ public VipM_IC_OnInitTypes() {
     }
     TrieSetCell(Params, "Multiplier", json_object_get_real(jItem, "Multiplier"));
 
-    static bIsUsed;
-    if (!bIsUsed) {
-        bIsUsed = true;
-        RegisterHookChain(RG_CBasePlayer_Spawn, "@OnPlayerSpawnPre", false);
-        RegisterHookChain(RG_CBasePlayer_ResetMaxSpeed, "@OnPlayerResetSpeedPost", true);
-    }
+    CallOnceR(VIPM_CONTINUE); // Чтобы лишний раз не дёргать натив активации хука
+
+    EnableHookChain(g_iHook_Spawn_Pre);
+    EnableHookChain(g_iHook_ResetMaxSpeed_Post);
 
     return VIPM_CONTINUE;
 }
