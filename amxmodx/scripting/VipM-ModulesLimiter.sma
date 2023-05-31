@@ -15,14 +15,17 @@ new const MODULES_CONFIG_FILE[] = "Modules";
 
 new Trie:g_tModulesLimits = Invalid_Trie;
 
-public VipM_OnInitModules() {
+public VipM_OnLoaded() {
     RegisterPluginByVars();
     
     g_tModulesLimits = Configs_LoadModulesLimitsFromFile(MODULES_CONFIG_FILE, g_tModulesLimits);
 }
 
 public VipM_OnActivateModule(const sModuleName[]) {
-    if (!TrieKeyExists(g_tModulesLimits, sModuleName)) {
+    if (
+        g_tModulesLimits == Invalid_Trie
+        || !TrieKeyExists(g_tModulesLimits, sModuleName)
+    ) {
         Dbg_Log("Module `%s` activated. (!TrieKeyExists)", sModuleName);
         return VIPM_CONTINUE;
     }

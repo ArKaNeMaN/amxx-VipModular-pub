@@ -28,11 +28,12 @@ Trie:Configs_LoadModulesLimitsFromFile(const sFileName[], Trie:tModules = Invali
 
         new JSON:jLimits = json_object_get_value(jItem, "Limits");
         new Array:aLimits = VipM_Limits_ReadListFromJson(jLimits);
+        json_free(jLimits);
         if (!ArraySizeSafe(aLimits)) {
             Json_LogForFile(jItem, "WARNING", "Field `Limits` must have 1 or more items.");
             json_free(jItem);
+            continue;
         }
-        json_free(jLimits);
 
 
         new Array:aModuleNames = json_object_get_strings_list(jItem, "Modules", VIPM_MODULE_MAX_NAME);
