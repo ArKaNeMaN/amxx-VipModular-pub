@@ -32,7 +32,7 @@ Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
 
     static sExpireStatus[128];
     if (gUserExpireStatus[UserId][0]) {
-        formatex(sItemsLeft, charsmax(sItemsLeft), "\w%L^n", UserId, "VIPM_M_WM_MENU_EXPIRE_STATUS", gUserExpireStatus[UserId]);
+        formatex(sExpireStatus, charsmax(sExpireStatus), "\w%L^n", UserId, "VIPM_M_WM_MENU_EXPIRE_STATUS", gUserExpireStatus[UserId]);
     } else {
         sExpireStatus[0] = 0;
     }
