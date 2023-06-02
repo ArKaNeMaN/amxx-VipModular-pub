@@ -26,6 +26,9 @@ new HookChain:g_iHook_Spawn_Pre = INVALID_HOOKCHAIN;
 public VipM_IC_OnInitTypes() {
     RegisterPluginByVars();
 
+    // Затычка для тех мест, где при отсутствии предметов выоезает ошибка/варн
+    VipM_IC_RegisterType("None");
+
     VipM_IC_RegisterType("Random");
     VipM_IC_RegisterTypeEvent("Random", ItemType_OnRead, "@OnRandomRead");
     VipM_IC_RegisterTypeEvent("Random", ItemType_OnGive, "@OnRandomGive");
