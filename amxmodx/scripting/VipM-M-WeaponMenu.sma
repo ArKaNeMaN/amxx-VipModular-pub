@@ -99,6 +99,8 @@ ResetUserMenuCounters(const UserId) {
     g_tUserMenuItemsCounter[UserId] = KeyValueCounter_Reset(g_tUserMenuItemsCounter[UserId]);
 
     gUserShouldResetCounters[UserId] = false;
+
+    Dbg_Log("ResetUserMenuCounters(%n): gUserLeftItems[UserId] = %d", UserId, gUserLeftItems[UserId]);
 }
 
 public client_putinserver(UserId) {
@@ -110,15 +112,19 @@ public client_putinserver(UserId) {
     for (new UserId = 1; UserId <= MAX_PLAYERS; UserId++) {
         gUserShouldResetCounters[UserId] = true;
     }
+    Dbg_Log("@OnRestartRound(): Should reset all counters.");
 }
 
 @OnPlayerSpawn(const UserId) {
     if (!IsUserValidA(UserId)) {
+        Dbg_Log("@OnPlayerSpawn(%n): Invalid (or dead) player", UserId);
         return;
     }
 
     if (gUserShouldResetCounters[UserId]) {
         ResetUserMenuCounters(UserId);
+    } else {
+        Dbg_Log("@OnPlayerSpawn(%n): Shouldn't reset counter", UserId);
     }
 
     // TODO: Добавить квар для отключения авто-открытия
@@ -183,6 +189,7 @@ AbortAutoCloseMenu(const UserId) {
 
 _Cmd_Menu(const UserId, const bool:bSilent = false) {
     if (!IsUserValid(UserId)) {
+        Dbg_Log("_Cmd_Menu(%d, %s): Invalid player", UserId, bSilent ? "true" : "false");
         return;
     }
 
@@ -191,6 +198,7 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
             ChatPrintL(UserId, "MSG_YOU_DEAD");
         }
 
+        Dbg_Log("_Cmd_Menu(%n, %s): Player is dead", UserId, bSilent ? "true" : "false");
         return;
     }
 
@@ -202,6 +210,7 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
             ChatPrintL(UserId, "MSG_NO_ACCESS");
         }
 
+        Dbg_Log("_Cmd_Menu(%n, %s): No access", UserId, bSilent ? "true" : "false");
         return;
     }
     
@@ -210,6 +219,7 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
             ChatPrintL(UserId, "MSG_MAIN_NOT_PASSED_LIMIT");
         }
 
+        Dbg_Log("_Cmd_Menu(%n, %s): Not passed main limits", UserId, bSilent ? "true" : "false");
         return;
     }
 
@@ -231,6 +241,7 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
         ArraySizeSafe(aMenus) <= MenuId
         || MenuId < 0
     ) {
+        Dbg_Log("_Cmd_Menu(%n, %s): Invalid menu id (%d)", UserId, bSilent ? "true" : "false", MenuId);
         return;
     }
 
@@ -242,6 +253,7 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
             ChatPrintL(UserId, "MSG_MENU_NOT_PASSED_LIMIT");
         }
 
+        Dbg_Log("_Cmd_Menu(%n, %s): Not passed menu limits", UserId, bSilent ? "true" : "false");
         return;
     }
     
@@ -255,6 +267,7 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
         ArraySizeSafe(Menu[WeaponMenu_Items]) <= ItemId
         || ItemId < 0
     ) {
+        Dbg_Log("_Cmd_Menu(%n, %s): Invalid item id (%d)", UserId, bSilent ? "true" : "false", ItemId);
         return;
     }
 
@@ -268,7 +281,8 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
         if (!bSilent) {
             ChatPrintL(UserId, "MSG_NO_LEFT_ITEMS");
         }
-        
+
+        Dbg_Log("_Cmd_Menu(%n, %s): No left items", UserId, bSilent ? "true" : "false");
         return;
     }
 
@@ -280,7 +294,8 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
         if (!bSilent) {
             ChatPrintL(UserId, "MSG_MENUITEM_NOT_PASSED_LIMIT");
         }
-        
+
+        Dbg_Log("_Cmd_Menu(%n, %s): Not passed item limits", UserId, bSilent ? "true" : "false");
         return;
     }
     
@@ -299,15 +314,23 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
 GetUserLeftItems(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
     new iUserItemsLeft = gUserLeftItems[UserId];
     new iMenuItemsLeft = Menu[WeaponMenu_Count] - KeyValueCounter_Get(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId));
+    
+    Dbg_Log("GetUserLeftItems(%n, %d, %d): iUserItemsLeft = %d", UserId, MenuId, Menu[WeaponMenu_Name], iUserItemsLeft);
+    Dbg_Log("GetUserLeftItems(%n, %d, %d): iMenuItemsLeft = %d", UserId, MenuId, Menu[WeaponMenu_Name], iMenuItemsLeft);
+    Dbg_Log("GetUserLeftItems(%n, %d, %d): Menu[WeaponMenu_Count] = %d", UserId, MenuId, Menu[WeaponMenu_Name], Menu[WeaponMenu_Count]);
+    Dbg_Log("GetUserLeftItems(%n, %d, %d): g_tUserMenuItemsCounter[UserId] = %d", UserId, MenuId, Menu[WeaponMenu_Name], KeyValueCounter_Get(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId)));
 
     if (iUserItemsLeft < 0) {
+        Dbg_Log("GetUserLeftItems(%n, %d, %d): return %d (no global limit)", UserId, MenuId, Menu[WeaponMenu_Name], iMenuItemsLeft);
         return iMenuItemsLeft;
     }
 
     if (Menu[WeaponMenu_Count] < 0) {
+        Dbg_Log("GetUserLeftItems(%n, %d, %d): return %d (no menu limit)", UserId, MenuId, Menu[WeaponMenu_Name], iUserItemsLeft);
         return iUserItemsLeft;
     }
     
+    Dbg_Log("GetUserLeftItems(%n, %d, %d): return %d (has both limits)", UserId, MenuId, Menu[WeaponMenu_Name], min(iUserItemsLeft, iMenuItemsLeft));
     return min(iUserItemsLeft, iMenuItemsLeft);
 }
 

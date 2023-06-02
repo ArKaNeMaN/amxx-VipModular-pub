@@ -4,6 +4,7 @@
 
 - [MultiJump](https://github.com/ArKaNeMaN/VipM-M-MultiJump) - Даёт игрокам возможность совершать два или более прыжка
 - [KillItems](https://github.com/ArKaNeMaN/VipM-M-KillItems) - Выдаёт предметы игроку после убийства другого игрока
+- [WelcomeMessage](https://github.com/ArKaNeMaN/VipM-M-WelcomeMessage) - Приветственные сообщения
 
 ## Ограничения
 
