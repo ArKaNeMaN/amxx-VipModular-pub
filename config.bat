@@ -30,11 +30,15 @@ if exist (local.build-config) (
     for /f "delims== tokens=1,2" %%G in (local.build-config) do set %%G=%%H
 )
 
-if "%PACKAGE_DEBUG%" == "1" (
+if "%PACKAGE_RELEASE%" == "1" (
+    set PACKAGE_DEBUG=0
+    set PACKAGE_COMPILED_PLUGINS_USE=0
+    set PACKAGE_NAME=%PACKAGE_NAME%-release
+) else if "%PACKAGE_DEBUG%" == "1" (
     set PACKAGE_NAME=%PACKAGE_NAME%-debug
 )
-set AMXX_COMPILER_EXECUTABLE_PATH=%AMXX_COMPILER_DIR%\%AMXX_COMPILER_EXECUTABLE%
 
+set AMXX_COMPILER_EXECUTABLE_PATH=%AMXX_COMPILER_DIR%\%AMXX_COMPILER_EXECUTABLE%
 
 set ROOT_PATH=%CD%
 set AMXMODX_PATH=%ROOT_PATH%\%PACKAGE_AMXMODX_FOLDER%
