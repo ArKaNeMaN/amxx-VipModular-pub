@@ -108,6 +108,10 @@ public client_putinserver(UserId) {
     gUserExpireStatus[UserId][0] = 0;
 }
 
+public client_disconnected(UserId) {
+    AbortAutoCloseMenu(UserId);
+}
+
 @OnRestartRound() {
     for (new UserId = 1; UserId <= MAX_PLAYERS; UserId++) {
         gUserShouldResetCounters[UserId] = true;
@@ -166,9 +170,7 @@ public client_putinserver(UserId) {
 }
 
 AbortAutoCloseMenu(const UserId) {
-    if (task_exists(TASK_OFFSET_AUTO_CLOSE + UserId)) {
-        remove_task(TASK_OFFSET_AUTO_CLOSE + UserId);
-    }
+    remove_task(TASK_OFFSET_AUTO_CLOSE + UserId);
 }
 
 @Cmd_SwitchAutoOpen(const UserId) {
