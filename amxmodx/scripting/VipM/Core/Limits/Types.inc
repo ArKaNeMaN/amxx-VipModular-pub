@@ -118,11 +118,7 @@ Limits_SetStaticValue(const sLimitName[], const bool:bValue, const UserId = 0){
     CHECK_LIMIT_FOR_PLAYER(LimitType, UserId, 0);
 
     if (LimitType[Limit_ForPlayer]) {
-        if (bValue) {
-            BitSet(LimitType[Limit_StaticValue], UserId);
-        } else {
-            BitReset(LimitType[Limit_StaticValue], UserId);
-        }
+        BitSetIf(LimitType[Limit_StaticValue], UserId, bValue);
     } else {
         LimitType[Limit_StaticValue] = _:bValue;
     }

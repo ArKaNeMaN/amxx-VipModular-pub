@@ -270,6 +270,13 @@ stock Array:json_object_get_strings_list(
 #define BitReset(%1,%2) \
     %1 &= ~(1 << (%2 - 1))
 
+// by @the_hunter1 :))
+#define BitSetIf(%1,%2,%3) ( \
+    %3 \
+    && (%1 |= (1 << (%2 & 31))) \
+    || (%1 &= ~(1 << (%2 & 31))) \
+)
+
 #define BitIs(%1,%2) \
     (bool:(%1 & (1 << (%2 - 1))))
 
