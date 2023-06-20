@@ -6,6 +6,8 @@ enum _:S_WeaponMenu{
     Array:WeaponMenu_Limits,
     WeaponMenu_Count,
     bool:WeaponMenu_BackOnExit,
+    bool:WeaponMenu_Fake,
+    WeaponMenu_FakeMessage[256],
 }
 
 enum MenuItemType{

@@ -259,6 +259,14 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
         return;
     }
     
+    if (Menu[WeaponMenu_Fake]) {
+        if (Menu[WeaponMenu_FakeMessage][0]) {
+            ChatPrint(UserId, Menu[WeaponMenu_FakeMessage]);
+        }
+        Dbg_Log("_Cmd_Menu(%n, %s): Fake menu (%s)", UserId, bSilent ? "true" : "false", Menu[WeaponMenu_FakeMessage]);
+        return;
+    }
+
     if (CMD_ARG_NUM() < 2) {
         Menu_WeaponsMenu(UserId, MenuId, Menu);
         return;

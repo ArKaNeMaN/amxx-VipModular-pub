@@ -20,6 +20,11 @@
 
     /* Список доступных меню */
     "Menus": [
-        "File:WeaponMenu/Menus/Vip"
+        "File:WeaponMenu/Menus/Vip",
+        {
+            "Name": "\\dPremium-меню \\r[недоступно]",
+            "Fake": true,
+            "FakeMessage": "^3Для использования ^4Premium-меню ^3приобретите соответствующую услугу."
+        }
     ]
 }

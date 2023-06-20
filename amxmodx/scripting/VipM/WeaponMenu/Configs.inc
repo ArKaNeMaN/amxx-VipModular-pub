@@ -45,8 +45,26 @@ bool:Cfg_ReadMenu(&JSON:jMenu, Menu[S_WeaponMenu]){
     if (jMenu == Invalid_JSON) {
         return false;
     }
-
+    
     json_object_get_string(jMenu, "Name", Menu[WeaponMenu_Name], charsmax(Menu[WeaponMenu_Name]));
+
+    Menu[WeaponMenu_Fake] = false;
+    if (json_object_has_value(jMenu, "Fake", JSONBoolean)) {
+        Menu[WeaponMenu_Fake] = json_object_get_bool(jMenu, "Fake");
+    }
+
+    // Возможно странное решение, но пока норм)
+    // Один хер потом переделывать на нормальную систему меню))
+    if (Menu[WeaponMenu_Fake]) {
+        json_object_get_string(jMenu, "FakeMessage", Menu[WeaponMenu_FakeMessage], charsmax(Menu[WeaponMenu_FakeMessage]));
+        replace_all(Menu[WeaponMenu_FakeMessage], charsmax(Menu[WeaponMenu_FakeMessage]), "^^1", "^1");
+        replace_all(Menu[WeaponMenu_FakeMessage], charsmax(Menu[WeaponMenu_FakeMessage]), "^^3", "^3");
+        replace_all(Menu[WeaponMenu_FakeMessage], charsmax(Menu[WeaponMenu_FakeMessage]), "^^4", "^4");
+        
+        json_free(jMenu);
+        return true;
+    }
+
     json_object_get_string(jMenu, "Title", Menu[WeaponMenu_Title], charsmax(Menu[WeaponMenu_Title]));
 
     Menu[WeaponMenu_Count] = -1;
