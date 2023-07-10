@@ -3,7 +3,9 @@
         /* Понимать так: Модули SpawnItems и WeaponMenu будут активны, если текущая карта не $2000$, awp_*, fy_* или aim_* */
         "Modules": [
             "SpawnItems",
-            "WeaponMenu"
+            "WeaponMenu",
+            "SpawnHealth",
+            "Vampire"
         ],
         "Limits": {
             "Limit": "Logic-NOT",
