@@ -64,64 +64,45 @@ enum E_ParamType {
 }
 stock const VIPM_PARAM_TYPE_NAMES[E_ParamType][] = {"Custom", "Integer", "Float", "Bool", "String", "Color", "Vector2", "Vector3", "Limit", "Limits"};
 
-stock VipM_Params_GetInt(const Trie:Params, const Key[], const Def = 0) {
-    new Val;
-    if (Params == Invalid_Trie) {
-        return Def;
+stock any:VipM_Params_GetCell(const Trie:tParams, const sKey[], const any:iDef = 0) {
+    if (tParams == Invalid_Trie) {
+        return iDef;
     }
-    return TrieGetCell(Params, Key, Val) ? Val : Def;
+
+    new any:iVal;
+    return TrieGetCell(tParams, sKey, iVal) ? iVal : iDef;
 }
 
-stock any:VipM_Params_GetCell(const Trie:Params, const Key[], const any:Def = 0) {
-    return any:VipM_Params_GetInt(Params, Key, _:Def);
+stock VipM_Params_GetInt(const Trie:tParams, const sKey[], const iDef = 0) {
+    return _:VipM_Params_GetCell(tParams, sKey, iDef);
 }
 
-stock bool:VipM_Params_GetBool(const Trie:Params, const Key[], const bool:Def = false) {
-    new bool:Val;
-    if (Params == Invalid_Trie) {
-        return Def;
-    }
-    return TrieGetCell(Params, Key, Val) ? Val : Def;
+stock bool:VipM_Params_GetBool(const Trie:tParams, const sKey[], const bool:bDef = false) {
+    return !!VipM_Params_GetCell(tParams, sKey, bDef);
 }
 
-stock Float:VipM_Params_GetFloat(const Trie:Params, const Key[], const Float:Def = 0.0) {
-    new Float:Val;
-    if (Params == Invalid_Trie) {
-        return Def;
-    }
-    return TrieGetCell(Params, Key, Val) ? Val : Def;
+stock Float:VipM_Params_GetFloat(const Trie:tParams, const sKey[], const Float:fDef = 0.0) {
+    return Float:VipM_Params_GetCell(tParams, sKey, fDef);
 }
 
-stock VipM_Params_GetStr(const Trie:Params, const Key[], Out[], const Len, const Def[] = NULL_STRING) {
-    new s = 0;
+stock VipM_Params_GetStr(const Trie:tParams, const sKey[], sOut[], const iOutLen, const sDef[] = NULL_STRING) {
+    new iWrittenLen = 0;
     if (
-        Params != Invalid_Trie
-        && TrieGetString(Params, Key, Out, Len, s)
+        tParams != Invalid_Trie
+        && TrieGetString(tParams, sKey, sOut, iOutLen, iWrittenLen)
     ) {
-        return s;
+        return iWrittenLen;
     }
 
-    return formatex(Out, Len, Def);
+    return copy(sOut, iOutLen, sDef);
 }
 
-stock Array:VipM_Params_GetArr(const Trie:Params, const Key[]) {
-    new Array:Arr = Invalid_Array;
-    if (
-        Params == Invalid_Trie
-        || !TrieGetCell(Params, Key, Arr)
-    ) {
-        return Invalid_Array;
-    }
-
-    return Arr;
+stock Array:VipM_Params_GetArr(const Trie:tParams, const sKey[]) {
+    return Array:VipM_Params_GetCell(tParams, sKey, Invalid_Array);
 }
 
-stock T_LimitUnit:VipM_Params_GetLimit(const Trie:Params, const Key[], const T_LimitUnit:Def = Invalid_LimitUnit) {
-    new T_LimitUnit:iLimit;
-    if (Params == Invalid_Trie) {
-        return Def;
-    }
-    return TrieGetCell(Params, Key, iLimit) ? iLimit : Def;
+stock T_LimitUnit:VipM_Params_GetLimit(const Trie:tParams, const sKey[], const T_LimitUnit:iDef = Invalid_LimitUnit) {
+    return T_LimitUnit:VipM_Params_GetCell(tParams, sKey, iDef);
 }
 
 stock bool:VipM_Params_ExecuteLimit(
@@ -134,6 +115,7 @@ stock bool:VipM_Params_ExecuteLimit(
     if (iLimit == Invalid_LimitUnit) {
         return bDef;
     }
+
     return VipM_Limits_Execute(iLimit, UserId);
 }
 
@@ -148,5 +130,6 @@ stock bool:VipM_Params_ExecuteLimitsList(
     if (aLimits == Invalid_Array) {
         return bDef;
     }
+    
     return VipM_Limits_ExecuteList(aLimits, UserId, iType);
 }
