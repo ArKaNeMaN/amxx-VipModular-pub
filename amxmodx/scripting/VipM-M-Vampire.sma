@@ -74,6 +74,10 @@ public VipM_OnInitModules(){
         VampHealth = ByKill;
     }
 
+    if (ByKill <= 0) {
+        return;
+    }
+
     client_print(UserId, print_center, "%L", UserId, "VAMPIRE_HEALTH_MESSAGE", VampHealth);
     Health = clamp(Health + VampHealth, 1, MaxHealth < 1 ? cellmax : MaxHealth);
     set_entvar(UserId, var_health, float(Health));
