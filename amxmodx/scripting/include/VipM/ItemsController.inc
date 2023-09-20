@@ -3,6 +3,9 @@
 #endif
 #define _vipmodular_ic_included
 
+#include <amxmodx>
+#include <json>
+
 /**
  * Vip Modular: Items Controller
 */
