@@ -92,7 +92,7 @@ public VipM_IC_OnInitTypes() {
 
 @OnPlayerTakeDamage(const VictimId, InflictorId, AttackerId, Float:fDamage, bitsDamageType) {
     if (is_user_connected(AttackerId)) {
-        fDamage *= g_fTakenDmgMult[AttackerId];
+        fDamage *= g_fGivenDmgMult[AttackerId];
     }
 
     if (is_user_connected(VictimId)) {
