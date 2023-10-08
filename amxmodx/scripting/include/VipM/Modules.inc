@@ -101,3 +101,15 @@ native bool:VipM_Modules_IsActive(const Module[]);
  * @return Хэш-карту с параметрами.
  */
 native Trie:VipM_Modules_GetParams(const Module[], const UserId);
+
+/**
+ * Проверка наличия у игрока доступа к указанному модулю.
+ *
+ * @param sModuleName   Название модуля.
+ * @param UserId        Индекс игрока.
+ *
+ * @return true, если у игрока имеется доступ к модулю, иначе false.
+ */
+stock bool:VipM_Modules_HasModule(const sModuleName[], const UserId) {
+    return VipM_Modules_GetParams(sModuleName, UserId) != Invalid_Trie;
+}
