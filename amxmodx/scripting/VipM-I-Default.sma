@@ -179,7 +179,7 @@ public VipM_IC_OnInitTypes() {
         TrieSetCell(tParams, "SetArmor", json_object_get_bool(jItem, "SetArmor"));
     }
 
-    if (json_object_has_value(jItem, "Helmet", false)) {
+    if (json_object_has_value(jItem, "Helmet", JSONBoolean)) {
         TrieSetCell(tParams, "Helmet", json_object_get_bool(jItem, "Helmet"));
     }
 
@@ -190,7 +190,7 @@ public VipM_IC_OnInitTypes() {
     if (VipM_Params_GetBool(tParams, "SetArmor", false)) {
         rg_set_user_armor(UserId, VipM_Params_GetInt(tParams, "Armor"), VipM_Params_GetBool(tParams, "Helmet", false) ? ARMOR_VESTHELM : ARMOR_KEVLAR);
     } else {
-        new Float:iAddArmor = VipM_Params_GetInt(tParams, "MaxArmor", 100) - (VipM_Params_GetInt(tParams, "Armor") + rg_get_user_armor(UserId));
+        new iAddArmor = VipM_Params_GetInt(tParams, "MaxArmor", 100) - (VipM_Params_GetInt(tParams, "Armor") + rg_get_user_armor(UserId));
         if (iAddArmor >= 0) {
             rg_set_user_armor(UserId, iAddArmor, VipM_Params_GetBool(tParams, "Helmet", false) ? ARMOR_VESTHELM : ARMOR_KEVLAR);
         }
