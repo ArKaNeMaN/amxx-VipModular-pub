@@ -23,7 +23,8 @@ public VipM_OnInitModules(){
         "MaxHealth", ptInteger, false,
         "ByKill", ptInteger, false,
         "ByHead", ptInteger, false,
-        "ByKnife", ptInteger, false
+        "ByKnife", ptInteger, false,
+        "ByGrenade", ptInteger, false
     );
     VipM_Modules_AddParams(MODULE_NAME,
         "Limits", ptLimits, false
@@ -70,6 +71,8 @@ public VipM_OnInitModules(){
         VampHealth = VipM_Params_GetInt(Params, "ByKnife", ByKill);
     } else if(get_member(VictimId, m_bHeadshotKilled)) {
         VampHealth = VipM_Params_GetInt(Params, "ByHead", ByKill);
+    } else if (get_member(VictimId, m_bKilledByGrenade)) {
+        VampHealth = VipM_Params_GetInt(Params, "ByGrenade", ByKill);
     } else {
         VampHealth = ByKill;
     }
