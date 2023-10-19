@@ -73,6 +73,10 @@ public VipM_IC_OnInitTypes() {
     VipM_IC_RegisterTypeEvent("DamageMult", ItemType_OnRead, "@OnDamageMultRead");
     VipM_IC_RegisterTypeEvent("DamageMult", ItemType_OnGive, "@OnDamageMultGive");
 
+    VipM_IC_RegisterType("Armor");
+    VipM_IC_RegisterTypeEvent("Armor", ItemType_OnRead, "@OnArmorRead");
+    VipM_IC_RegisterTypeEvent("Armor", ItemType_OnGive, "@OnArmorGive");
+
     DisableHookChain(g_iHook_ResetMaxSpeed_Post = RegisterHookChain(RG_CBasePlayer_ResetMaxSpeed, "@OnPlayerResetSpeedPost", true));
     DisableHookChain(g_iHook_Spawn_Pre = RegisterHookChain(RG_CBasePlayer_Spawn, "@OnPlayerSpawnPre", false));
     DisableHookChain(g_iHook_TakeDamage_Pre = RegisterHookChain(RG_CBasePlayer_TakeDamage, "@OnPlayerTakeDamage", false));
@@ -154,6 +158,41 @@ public VipM_IC_OnInitTypes() {
         new Float:fAddHealth = VipM_Params_GetFloat(tParams, "MaxHealth", 100.0) - (VipM_Params_GetFloat(tParams, "Health") + Float:get_entvar(UserId, var_health));
         if (fAddHealth >= 0.0) {
             ExecuteHamB(Ham_TakeHealth, UserId, fAddHealth, DMG_GENERIC);
+        }
+    }
+}
+
+@OnArmorRead(const JSON:jItem, const Trie:tParams) {
+    TrieDeleteKey(tParams, "Name");
+
+    if (!json_object_has_value(jItem, "Armor", JSONNumber)) {
+        Json_LogForFile(jItem, "ERROR", "Param `Armor` required for `Armor` item.");
+        return VIPM_STOP;
+    }
+    TrieSetCell(tParams, "Armor", json_object_get_number(jItem, "Armor"));
+
+    if (json_object_has_value(jItem, "MaxArmor", JSONNumber)) {
+        TrieSetCell(tParams, "MaxArmor", json_object_get_number(jItem, "MaxArmor"));
+    }
+
+    if (json_object_has_value(jItem, "SetArmor", JSONBoolean)) {
+        TrieSetCell(tParams, "SetArmor", json_object_get_bool(jItem, "SetArmor"));
+    }
+
+    if (json_object_has_value(jItem, "Helmet", JSONBoolean)) {
+        TrieSetCell(tParams, "Helmet", json_object_get_bool(jItem, "Helmet"));
+    }
+
+    return VIPM_CONTINUE;
+}
+
+@OnArmorGive(const UserId, const Trie:tParams) {
+    if (VipM_Params_GetBool(tParams, "SetArmor", false)) {
+        rg_set_user_armor(UserId, VipM_Params_GetInt(tParams, "Armor"), VipM_Params_GetBool(tParams, "Helmet", false) ? ARMOR_VESTHELM : ARMOR_KEVLAR);
+    } else {
+        new iAddArmor = VipM_Params_GetInt(tParams, "MaxArmor", 100) - (VipM_Params_GetInt(tParams, "Armor") + rg_get_user_armor(UserId));
+        if (iAddArmor >= 0) {
+            rg_set_user_armor(UserId, iAddArmor, VipM_Params_GetBool(tParams, "Helmet", false) ? ARMOR_VESTHELM : ARMOR_KEVLAR);
         }
     }
 }
