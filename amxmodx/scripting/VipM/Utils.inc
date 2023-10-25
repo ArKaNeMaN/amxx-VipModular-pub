@@ -278,7 +278,7 @@ stock Array:json_object_get_strings_list(
 )
 
 #define BitIs(%1,%2) \
-    (bool:(%1 & (1 << (%2 - 1))))
+    (bool:(%1 & (1 << %2)))
 
 stock bool:HasUserFlagsStr(const UserId, const sFlags[], const bool:bStrict = false) {
     return HasUserFlags(UserId, read_flags(sFlags), bStrict);

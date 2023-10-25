@@ -1,6 +1,7 @@
 #include amxmodx
 #include "VipM/ArrayMap"
 #include "VipM/Utils"
+#include "VipM/DebugMode"
 
 enum T_Limit {Invalid_Limit = -1}
 
@@ -118,7 +119,7 @@ Limits_SetStaticValue(const sLimitName[], const bool:bValue, const UserId = 0){
     CHECK_LIMIT_FOR_PLAYER(LimitType, UserId, 0);
 
     if (LimitType[Limit_ForPlayer]) {
-        BitSetIf(LimitType[Limit_StaticValue], UserId, bValue);
+        BitSetIf(LimitType[Limit_StaticValue], UserId - 1, bValue);
     } else {
         LimitType[Limit_StaticValue] = _:bValue;
     }
@@ -135,8 +136,21 @@ bool:Limits_GetStaticValue(const sLimitName[], const UserId = 0){
     CHECK_LIMIT_STATIC(LimitType, false)
     CHECK_LIMIT_FOR_PLAYER(LimitType, UserId, false);
 
-    return LimitType[Limit_ForPlayer] 
-        ? BitIs(LimitType[Limit_StaticValue], UserId) 
+    if (UserId > 0) {
+        Dbg_Log("Limits_GetStaticValue(%s, %n):", sLimitName, UserId);
+    } else {
+        Dbg_Log("Limits_GetStaticValue(%s, %d):", sLimitName, UserId);
+    }
+    
+    Dbg_Log("  LimitType[Limit_ForPlayer] = %s", LimitType[Limit_ForPlayer] ? "true" : "false");
+    Dbg_Log("  LimitType[Limit_StaticValue] = %d", LimitType[Limit_StaticValue]);
+    
+    if (UserId > 0) {
+        Dbg_Log("  BitIs(LimitType[Limit_StaticValue], UserId - 1) = %d", BitIs(LimitType[Limit_StaticValue], UserId - 1));
+    }
+
+    return LimitType[Limit_ForPlayer]
+        ? BitIs(LimitType[Limit_StaticValue], UserId - 1)
         : (bool:LimitType[Limit_StaticValue]);
 }
 
