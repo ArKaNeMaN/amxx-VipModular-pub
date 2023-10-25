@@ -58,7 +58,8 @@ public VipM_OnInitModules() {
     VipM_Modules_AddParams(MODULE_NAME,
         "AutoopenLimits", ptLimits, false,
         "AutoopenDelay", ptFloat, false,
-        "AutoopenCloseDelay", ptFloat, false
+        "AutoopenCloseDelay", ptFloat, false,
+        "AutoopenMenuNum", ptInteger, false
     );
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnActivated, "@OnModuleActivate");
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnRead, "@OnReadConfig");
@@ -152,9 +153,17 @@ public client_disconnected(UserId) {
 
 @Task_AutoOpen(UserId) {
     UserId -= TASK_OFFSET_AUTO_OPEN;
-    CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU_SILENT);
+
+    new Trie:tParams = VipM_Modules_GetParams(MODULE_NAME, UserId);
+    new Float:fAutoCloseDelay = VipM_Params_GetFloat(tParams, "AutoopenCloseDelay", 0.0);
+    new iMenuNum = VipM_Params_GetInt(tParams, "AutoopenMenuNum", -1);
+
+    if (iMenuNum > 0) {
+        CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU_SILENT, IntToStr(iMenuNum - 1));
+    } else {
+        CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU_SILENT);
+    }
     
-    new Float:fAutoCloseDelay = VipM_Params_GetFloat(VipM_Modules_GetParams(MODULE_NAME, UserId), "AutoopenCloseDelay", 0.0);
     Dbg_PrintServer("@Task_AutoOpen(%d): fAutoCloseDelay = %.2f", UserId, fAutoCloseDelay);
     if (fAutoCloseDelay > 0.0) {
         Dbg_PrintServer("@Task_AutoOpen(%d): Start auto close task", UserId);
