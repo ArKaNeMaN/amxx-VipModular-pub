@@ -71,5 +71,13 @@ public client_putinserver(UserId) {
         return;
     }
 
+    RequestFrame("@CallUserUpdate", UserId);
+}
+
+@CallUserUpdate(UserId) {
+    if (!is_user_connected(UserId)) {
+        return;
+    }
+
     Vips_UserUpdate(UserId);
 }
