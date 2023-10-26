@@ -118,10 +118,23 @@ Limits_SetStaticValue(const sLimitName[], const bool:bValue, const UserId = 0){
     CHECK_LIMIT_STATIC(LimitType, 0)
     CHECK_LIMIT_FOR_PLAYER(LimitType, UserId, 0);
 
+    if (UserId > 0) {
+        Dbg_Log("Limits_SetStaticValue(%s, %n):", sLimitName, UserId);
+    } else {
+        Dbg_Log("Limits_SetStaticValue(%s, %d):", sLimitName, UserId);
+    }
+
+    Dbg_Log("  sLimitName[] = %s", sLimitName);
+    Dbg_Log("  LimitType[Limit_ForPlayer] = %s", LimitType[Limit_ForPlayer] ? "true" : "false");
+    Dbg_Log("  LimitType[Limit_StaticValue] (before set) = %d", LimitType[Limit_StaticValue]);
+    Dbg_Log("  bValue = %d", bValue);
+
     if (LimitType[Limit_ForPlayer]) {
         BitSetIf(LimitType[Limit_StaticValue], UserId - 1, bValue);
+        Dbg_Log("  BitIs(LimitType[Limit_StaticValue], UserId - 1) = %d", BitIs(LimitType[Limit_StaticValue], UserId - 1));
     } else {
         LimitType[Limit_StaticValue] = _:bValue;
+        Dbg_Log("  LimitType[Limit_StaticValue] (after set) = %d", LimitType[Limit_StaticValue]);
     }
     
     SET_LIMIT_TYPE(LimitType);
