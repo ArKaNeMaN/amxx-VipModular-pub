@@ -41,10 +41,6 @@ public plugin_precache() {
 
     Vips = Cfg_LoadVipsConfigs();
 
-    if (!ArraySizeSafe(Vips)) {
-        set_fail_state("Vips configs not found.");
-    }
-
     server_print("[%s v%s] Loaded %d config units.", PluginName, VIPM_VERSION, ArraySizeSafe(Vips));
     Forwards_RegAndCall("Loaded", ET_IGNORE);
 
