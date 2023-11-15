@@ -61,6 +61,10 @@ public VipM_OnInitModules() {
         "AutoopenCloseDelay", ptFloat, false,
         "AutoopenMenuNum", ptInteger, false
     );
+    VipM_Modules_AddParams(MODULE_NAME,
+        "StayOpen", ptBoolean, false,
+        "StayOpen_CheckCounter", ptBoolean, false
+    );
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnActivated, "@OnModuleActivate");
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnRead, "@OnReadConfig");
 }
@@ -87,7 +91,7 @@ public VipM_OnInitModules() {
     RegisterHookChain(RG_CSGameRules_RestartRound, "@OnRestartRound", false);
     
     CommandAliases_Open(GET_FILE_JSON_PATH("Cmds/WeaponMenu"), true);
-    CommandAliases_RegisterClient(CMD_WEAPON_MENU, "@Cmd_Menu");
+    CommandAliases_RegisterClient(CMD_WEAPON_MENU, "@Cmd_Menu"); // vipmenu <menu-id> <item-id>
     CommandAliases_RegisterClient(CMD_WEAPON_MENU_SILENT, "@Cmd_MenuSilent");
     CommandAliases_RegisterClient(CMD_SWITCH_AUTOOPEN, "@Cmd_SwitchAutoOpen");
     CommandAliases_Close();
@@ -293,9 +297,11 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
     static MenuItem[S_MenuItem];
     ArrayGetArray(Menu[WeaponMenu_Items], ItemId, MenuItem);
 
+    new iItemsLeft = GetUserLeftItems(UserId, MenuId, Menu);
+
     if (
         MenuItem[MenuItem_UseCounter]
-        && GetUserLeftItems(UserId, MenuId, Menu) == 0
+        && iItemsLeft == 0
     ) {
         if (!bSilent) {
             ChatPrintL(UserId, "MSG_NO_LEFT_ITEMS");
@@ -327,6 +333,16 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
         if (Menu[WeaponMenu_Count]) {
             KeyValueCounter_Inc(g_tUserMenuItemsCounter[UserId], IntToStr(MenuId));
         }
+    }
+
+    if (
+        VipM_Params_GetBool(Params, "StayOpen", false)
+        && (
+            !VipM_Params_GetBool(Params, "StayOpen_CheckCounter", true)
+            || iItemsLeft != 0
+        )
+    ) {
+        CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU, "%d", MenuId);
     }
 }
 
