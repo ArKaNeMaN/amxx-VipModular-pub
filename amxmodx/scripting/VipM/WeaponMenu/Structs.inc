@@ -9,6 +9,7 @@ enum _:S_WeaponMenu{
     bool:WeaponMenu_Fake,
     WeaponMenu_FakeMessage[256],
     WeaponMenu_PerPage,
+    bool:WeaponMenu_ShowPage,
 }
 
 enum MenuItemType{
