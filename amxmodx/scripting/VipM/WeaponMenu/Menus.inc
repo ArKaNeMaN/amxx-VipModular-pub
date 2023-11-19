@@ -16,6 +16,11 @@ Menu_MainMenu(const UserId, const MainMenuTitle[], const Array:aMenus) {
         CommandAliases_GetMainCmd(CMD_WEAPON_MENU, Cmd, charsmax(Cmd));
         menu_additem(iMenu, Menu[WeaponMenu_Name], fmt("%s %d", Cmd, __i__));
     }
+
+    menu_setprop(iMenu, MPROP_BACKNAME, Lang("VIPM_M_WM_MENU_BACK"));
+    menu_setprop(iMenu, MPROP_NEXTNAME, Lang("VIPM_M_WM_MENU_NEXT"));
+    menu_setprop(iMenu, MPROP_EXITNAME, Lang("VIPM_M_WM_MENU_EXIT"));
+
     menu_display(UserId, iMenu);
 }
 
@@ -56,6 +61,10 @@ Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
     }
 
     menu_setprop(iMenu, MPROP_SHOWPAGE, Menu[WeaponMenu_ShowPage]);
+
+    menu_setprop(iMenu, MPROP_BACKNAME, Lang("VIPM_M_WM_MENU_BACK"));
+    menu_setprop(iMenu, MPROP_NEXTNAME, Lang("VIPM_M_WM_MENU_NEXT"));
+    menu_setprop(iMenu, MPROP_EXITNAME, Lang("VIPM_M_WM_MENU_EXIT"));
 
     static iInactiveItemHandler;
     if (!iInactiveItemHandler) {
