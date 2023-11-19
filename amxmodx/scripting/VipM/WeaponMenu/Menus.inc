@@ -51,6 +51,10 @@ Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
         menu_setprop(iMenu, MPROP_EXITNAME, uLang(UserId, "VIPM_M_WM_MENU_WEAPONS_BACK_TO_MAIN_TEXT"));
     }
 
+    if (Menu[WeaponMenu_PerPage] >= 0) {
+        menu_setprop(iMenu, MPROP_PERPAGE, Menu[WeaponMenu_PerPage]);
+    }
+
     static iInactiveItemHandler;
     if (!iInactiveItemHandler) {
         iInactiveItemHandler = menu_makecallback("@MenuItemHandler_Inactive");
