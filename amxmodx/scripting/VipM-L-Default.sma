@@ -121,6 +121,14 @@ public VipM_OnInitModules(){
     VipM_Limits_RegisterType("OncePerGame", true, false);
     VipM_Limits_RegisterTypeEvent("OncePerGame", Limit_OnCheck, "@OnOncePerGameCheck");
 
+    VipM_Limits_RegisterType("Time", false, false);
+    VipM_Limits_AddTypeParams("Time",
+        "Before", ptString, false,
+        "After", ptString, false
+    );
+    VipM_Limits_RegisterTypeEvent("Time", Limit_OnRead, "@OnTimeRead");
+    VipM_Limits_RegisterTypeEvent("Time", Limit_OnCheck, "@OnTimeCheck");
+
     RegisterHookChain(RG_CSGameRules_RestartRound, "@OnRestartRound", true);
 
     g_tUsedInRound = TrieCreate();
@@ -141,6 +149,34 @@ public client_authorized(UserId, const AuthId[]){
     if (get_member_game(m_bCompleteReset)) {
         TrieClear(g_tUsedInGame);
     }
+}
+
+@OnTimeRead(const JSON:jCfg, const Trie:tParams) {
+    new sTime[8];
+    
+    TrieGetString(tParams, "Before", sTime, charsmax(sTime));
+    TrieSetCell(tParams, "Before", ParseColonTime(sTime), .replace = true);
+
+    TrieGetString(tParams, "After", sTime, charsmax(sTime));
+    TrieSetCell(tParams, "After", ParseColonTime(sTime), .replace = true);
+
+    return VIPM_CONTINUE;
+}
+
+@OnTimeCheck(const Trie:tParams) {
+    new iBefore = VipM_Params_GetInt(tParams, "Before", 0);
+    new iAfter = VipM_Params_GetInt(tParams, "After", 0);
+    new iCurrent = GetTime();
+
+    if (iBefore && iCurrent > iBefore) {
+        return false;
+    }
+
+    if (iAfter && iCurrent < iAfter) {
+        return false;
+    }
+
+    return true;
 }
 
 @OnOncePerGameCheck(const Trie:tParams, const UserId) {

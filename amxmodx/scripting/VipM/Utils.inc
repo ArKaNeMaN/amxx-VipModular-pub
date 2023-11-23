@@ -438,3 +438,14 @@ stock bool:IsUserInBuyZone(const UserId) {
     get_member(UserId, m_signals, Signal);
     return ((SignalState:Signal[US_State] & SIGNAL_BUY) == SIGNAL_BUY);
 }
+
+stock ParseColonTime(const sTime[], const sColon[] = ":") {
+    new sHours[3], sMinutes[3];
+    split(sTime, sHours, charsmax(sHours), sMinutes, charsmax(sMinutes), sColon);
+
+    return ((clamp(str_to_num(sHours), 0, 23) * 60) + clamp(str_to_num(sMinutes), 0, 59)) * 60;
+}
+
+stock GetTime() {
+    return get_systime() % (24 * 60 * 60);
+}
