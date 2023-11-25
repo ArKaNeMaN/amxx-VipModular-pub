@@ -2,6 +2,7 @@
 #include <reapi>
 #include <VipModular>
 #include "VipM/Utils"
+#include "VipM/DebugMode"
 
 #pragma semicolon 1
 #pragma compress 1
@@ -168,15 +169,42 @@ public client_authorized(UserId, const AuthId[]){
     new iAfter = VipM_Params_GetInt(tParams, "After", 0);
     new iCurrent = GetTime();
 
-    if (iBefore && iCurrent > iBefore) {
-        return false;
+    Dbg_Log("@OnTimeCheck(%d):", tParams);
+    Dbg_Log("  iBefore = %d", iBefore);
+    Dbg_Log("  iAfter = %d", iAfter);
+    Dbg_Log("  iCurrent = %d", iCurrent);
+
+    if (!iBefore && !iAfter) {
+        return true;
     }
 
-    if (iAfter && iCurrent < iAfter) {
-        return false;
+    if (!iBefore) {
+        return iCurrent > iAfter;
     }
 
-    return true;
+    if (!iAfter) {
+        return iCurrent < iBefore;
+    }
+
+    if (iBefore == iAfter) {
+        return iBefore == iCurrent;
+    }
+
+    if (iAfter < iBefore) {
+        return (
+            iCurrent > iAfter
+            && iCurrent < iBefore
+        );
+    }
+
+    if (iAfter > iBefore) {
+        return (
+            iCurrent > iAfter
+            || iCurrent < iBefore
+        );
+    }
+    
+    return false;
 }
 
 @OnOncePerGameCheck(const Trie:tParams, const UserId) {
