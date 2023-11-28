@@ -447,7 +447,9 @@ public VipM_IC_OnInitTypes() {
     }
 
     new def_BpAmmo = (rg_get_weapon_info(iWpnId, WI_MAX_ROUNDS));
-    rg_set_user_bpammo(UserId, iWpnId, iBpAmmo < 0 ? def_BpAmmo : iBpAmmo);
+    if (def_BpAmmo >= 0) {
+        rg_set_user_bpammo(UserId, iWpnId, iBpAmmo < 0 ? def_BpAmmo : iBpAmmo);
+    }
 
     return VIPM_CONTINUE;
 }
