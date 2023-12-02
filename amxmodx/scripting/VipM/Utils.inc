@@ -309,25 +309,12 @@ stock ItemHasClip(const ItemId) {
     return true;
 }
 
-stock ItemHasClip(const ItemId) {
-    new WeaponIdType:WeaponId = get_member(ItemId, m_iId);
-    switch (WeaponId) {
-        case WEAPON_KNIFE, WEAPON_HEGRENADE, WEAPON_SMOKEGRENADE, WEAPON_FLASHBANG, WEAPON_SHIELDGUN:
-            return false;
-        default:
-            return true;
-    }
-    return true;
-}
-
 stock InstantReloadAllWeapons(const UserId) {
     for (new InventorySlotType:iSlot = PRIMARY_WEAPON_SLOT; iSlot <= PISTOL_SLOT; iSlot++) {
         new ItemId = get_member(UserId, m_rgpPlayerItems, iSlot);
         while (!is_nullent(ItemId)) {
             if (ItemHasClip(ItemId)) {
-                if (ItemHasClip(ItemId)) {
                 set_member(ItemId, m_Weapon_iClip, rg_get_iteminfo(ItemId, ItemInfo_iMaxClip));
-            }
             }
             ItemId = get_member(ItemId, m_pNext);
         }
