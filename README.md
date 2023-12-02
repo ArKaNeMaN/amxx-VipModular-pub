@@ -5,7 +5,7 @@
 ## Инструкции по настройке
 
 - [Основные настройки](readme/configs.md)
-- [Контроллер предметов](readme/items.md)
+- [Контроллер предметов](readme/extensions/items.md)
 - [Стандартные расширения](readme/default-extensions.md)
 - [Сторонние расширения](readme/thirdparty-extensions.md)
 
