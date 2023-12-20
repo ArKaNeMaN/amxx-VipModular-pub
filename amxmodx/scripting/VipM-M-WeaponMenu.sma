@@ -4,6 +4,9 @@
 #include "VipM/Utils"
 #include "VipM/DebugMode"
 
+#include "VipM/WeaponMenu/Objects/WeaponMenu"
+#include "VipM/WeaponMenu/Objects/MenuItem"
+
 #pragma semicolon 1
 #pragma compress 1
 
@@ -36,14 +39,11 @@ new bool:gUserAutoOpen[MAX_PLAYERS + 1] = {true, ...};
 new gUserExpireStatus[MAX_PLAYERS + 1][VIPM_M_WEAPONMENU_EXPIRE_STATUS_MAX_LEN];
 
 #include "VipM/WeaponMenu/KeyValueCounter"
-#include "VipM/WeaponMenu/Structs"
-#include "VipM/WeaponMenu/Configs"
 #include "VipM/WeaponMenu/Menus"
 
 public VipM_OnInitModules() {
     RegisterPluginByVars();
     register_dictionary("VipM-WeaponMenu.ini");
-
     VipM_IC_Init();
 
     VipM_Modules_Register(MODULE_NAME, true);
@@ -69,18 +69,16 @@ public VipM_OnInitModules() {
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnRead, "@OnReadConfig");
 }
 
-@OnReadConfig(const JSON:jCfg, Trie:Params) {
-    if (!json_object_has_value(jCfg, "Menus", JSONArray)) {
-        log_amx("[WARNING] Param `Menus` required for module `%s`.", MODULE_NAME);
+@OnReadConfig(const JSON:jCfg, Trie:tParams) {
+    if (!json_object_has_value(jCfg, "Menus")) {
+        Json_LogForFile(jCfg, "WARNING", "Param 'Menus' required for module '%s'.", MODULE_NAME);
         return VIPM_STOP;
     }
+    
+    TrieSetCell(tParams, "Menus", Json_Object_GetWeaponMenusList(jCfg, "Menus"));
 
-    new JSON:jMenus = json_object_get_value(jCfg, "Menus");
-    new Array:aMenus = Cfg_ReadMenus(jMenus);
-    TrieSetCell(Params, "Menus", aMenus);
-
-    if (!TrieKeyExists(Params, "MainMenuTitle")) {
-        TrieSetString(Params, "MainMenuTitle", Lang("MENU_MAIN_TITLE"));
+    if (!TrieKeyExists(tParams, "MainMenuTitle")) {
+        TrieSetString(tParams, "MainMenuTitle", Lang("MENU_MAIN_TITLE"));
     }
 
     return VIPM_CONTINUE;
@@ -209,9 +207,7 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
     }
 
     if (!is_user_alive(UserId)) {
-        if (!bSilent) {
-            ChatPrintL(UserId, "MSG_YOU_DEAD");
-        }
+        ChatPrintLIf(!bSilent, UserId, "MSG_YOU_DEAD");
 
         Dbg_Log("_Cmd_Menu(%n, %s): Player is dead", UserId, bSilent ? "true" : "false");
         return;
@@ -221,18 +217,14 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
     new Array:aMenus = VipM_Params_GetArr(Params, "Menus");
 
     if (ArraySizeSafe(aMenus) < 1) {
-        if (!bSilent) {
-            ChatPrintL(UserId, "MSG_NO_ACCESS");
-        }
+        ChatPrintLIf(!bSilent, UserId, "MSG_NO_ACCESS");
 
         Dbg_Log("_Cmd_Menu(%n, %s): No access", UserId, bSilent ? "true" : "false");
         return;
     }
     
     if (!VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_AND)) {
-        if (!bSilent) {
-            ChatPrintL(UserId, "MSG_MAIN_NOT_PASSED_LIMIT");
-        }
+        ChatPrintLIf(!bSilent, UserId, "MSG_MAIN_NOT_PASSED_LIMIT");
 
         Dbg_Log("_Cmd_Menu(%n, %s): Not passed main limits", UserId, bSilent ? "true" : "false");
         return;
@@ -264,18 +256,13 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
     ArrayGetArray(aMenus, MenuId, Menu);
 
     if (!VipM_Limits_ExecuteList(Menu[WeaponMenu_Limits], UserId)) {
-        if (!bSilent) {
-            ChatPrintL(UserId, "MSG_MENU_NOT_PASSED_LIMIT");
-        }
-
+        ChatPrintLIf(!bSilent, UserId, "MSG_MENU_NOT_PASSED_LIMIT");
         Dbg_Log("_Cmd_Menu(%n, %s): Not passed menu limits", UserId, bSilent ? "true" : "false");
         return;
     }
     
-    if (Menu[WeaponMenu_Fake]) {
-        if (Menu[WeaponMenu_FakeMessage][0]) {
-            ChatPrint(UserId, Menu[WeaponMenu_FakeMessage]);
-        }
+    if (Menu[WeaponMenu_FakeMessage][0]) {
+        ChatPrint(UserId, Menu[WeaponMenu_FakeMessage]);
         Dbg_Log("_Cmd_Menu(%n, %s): Fake menu (%s)", UserId, bSilent ? "true" : "false", Menu[WeaponMenu_FakeMessage]);
         return;
     }
@@ -303,9 +290,7 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
         MenuItem[MenuItem_UseCounter]
         && iItemsLeft == 0
     ) {
-        if (!bSilent) {
-            ChatPrintL(UserId, "MSG_NO_LEFT_ITEMS");
-        }
+        ChatPrintLIf(!bSilent, UserId, "MSG_NO_LEFT_ITEMS");
 
         Dbg_Log("_Cmd_Menu(%n, %s): No left items", UserId, bSilent ? "true" : "false");
         return;
@@ -316,9 +301,7 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
         || !VipM_Limits_ExecuteList(MenuItem[MenuItem_ActiveLimits], UserId)
         || !VipM_Limits_ExecuteList(MenuItem[MenuItem_Limits], UserId)
     ) {
-        if (!bSilent) {
-            ChatPrintL(UserId, "MSG_MENUITEM_NOT_PASSED_LIMIT");
-        }
+        ChatPrintLIf(!bSilent, UserId, "MSG_MENUITEM_NOT_PASSED_LIMIT");
 
         Dbg_Log("_Cmd_Menu(%n, %s): Not passed item limits", UserId, bSilent ? "true" : "false");
         return;

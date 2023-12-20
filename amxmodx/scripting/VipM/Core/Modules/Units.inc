@@ -21,13 +21,10 @@ new Array:ModuleUnits;
 #define ModuleUnits_Get(%1,%2) \
     ArrayGetArray(ModuleUnits, _:%1, %2)
 
-new Trie:__cache_ModuleUnits;
-
 // Init
 
 Modules_InitUnits() {
     ModuleUnits = ArrayCreate(S_ModuleUnit, MODULE_UNITS_PRESERVED_SIZE);
-    __cache_ModuleUnits = TrieCreate();
 }
 
 
@@ -136,7 +133,7 @@ bool:ModuleUnits_ReadFromJson(const JSON:jMUnit, sMUnit[S_ModuleUnit]) {
     sMUnit[ModuleUnit_Params] = TrieCreate();
     
     new ErrParam[32];
-    if (!Cfg_ReadParams(jMUnit, sMUnit[ModuleUnit_Params], sModule[Module_Params], ErrParam, charsmax(ErrParam))) {
+    if (!CfgParam_ReadList(jMUnit, sMUnit[ModuleUnit_Params], sModule[Module_Params], ErrParam, charsmax(ErrParam))) {
         Json_LogForFile(jMUnit, "WARNING", "Param `%s` required for module `%s`, but not found.", ErrParam, sModule[Module_Name]);
         return false;
     }
@@ -167,61 +164,37 @@ bool:ModuleUnits_ReadFromJson(const JSON:jMUnit, sMUnit[S_ModuleUnit]) {
     return true;
 }
 
-
 // Loaders
 
 T_ModuleUnit:ModuleUnits_LoadFromJson(const JSON:jModuleUnit) {
-    TrieCreateIfNotCreated(__cache_ModuleUnits);
+    static Trie:tCache = Invalid_Trie;
+    TrieCreateIfNotCreated(tCache);
 
-    new T_ModuleUnit:iUnit = Invalid_ModuleUnit;
-    new JSON:jRefedValue = jModuleUnit;
-    new sJsonRef[PLATFORM_MAX_PATH];
-    if (Json_IsRef(jModuleUnit, sJsonRef, charsmax(sJsonRef))) {
-        if (TrieGetCell(__cache_ModuleUnits, sJsonRef, iUnit)) {
-            return iUnit;
+    new JSON:jRefed, T_ModuleUnit:iUnit = Invalid_ModuleUnit;
+    Json_GetCachedRefValue_Begin(jModuleUnit, tCache, iUnit, jRefed)
+    {
+        new ModuleUnit[S_ModuleUnit];
+        if (ModuleUnits_ReadFromJson(jRefed, ModuleUnit)) {
+            iUnit = ModuleUnits_Push(ModuleUnit);
         }
-
-        jRefedValue = Json_GetRefValue(jRefedValue, .bFreeSrcIfRef=true);
     }
-
-    if (jRefedValue == Invalid_JSON) {
-        return Invalid_ModuleUnit;
-    }
-
-    new sModuleUnit[S_ModuleUnit];
-    if (!ModuleUnits_ReadFromJson(jRefedValue, sModuleUnit)) {
-        return Invalid_ModuleUnit;
-    }
-
-    iUnit = ModuleUnits_Push(sModuleUnit);
-
-    if (sJsonRef[0]) {
-        TrieSetCell(__cache_ModuleUnits, sJsonRef, iUnit);
-        Json_FreeRefedValue(jRefedValue);
-    }
-    
-    return iUnit;
+    Json_GetCachedRefValue_End(jModuleUnit, tCache, iUnit, jRefed)
 }
 
-Array:ModuleUnits_LoadListFromJson(const JSON:jModules, Array:aModules = Invalid_Array) {
-    new T_ModuleUnit:iMUnit;
-    ArrayCreateIfNotCreated(aModules, 1, json_get_count(jModules));
+Array:ModuleUnits_LoadListFromJson(const JSON:jModules, &Array:aModules = Invalid_Array) {
+    ArrayCreateIfNotCreated(aModules, 1, 1);
 
     if (!json_is_array(jModules)) {
-        iMUnit = ModuleUnits_LoadFromJson(jModules);
+        new T_ModuleUnit:iMUnit = ModuleUnits_LoadFromJson(jModules);
         if (iMUnit != Invalid_ModuleUnit) {
             ArrayPushCell(aModules, iMUnit);    
         }
     } else {
-        json_array_foreach_value(jModules: i => jModule) {
-            iMUnit = ModuleUnits_LoadFromJson(jModule);
-            if (iMUnit != Invalid_ModuleUnit) {
-                ArrayPushCell(aModules, iMUnit);
-            }
+        json_array_foreach_value (jModules: i => jModule) {
+            aModules = ModuleUnits_LoadListFromJson(jModule, aModules);
             json_free(jModule);
         }
     }
 
-    ArrayDestroyIfEmpty(aModules);
     return aModules;
 }

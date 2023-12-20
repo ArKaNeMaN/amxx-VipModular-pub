@@ -17,9 +17,8 @@ public stock const PluginDescription[] = "Modular vip system";
 new Array:Vips; // S_CfgUnit
 new Trie:gUserVip[MAX_PLAYERS + 1] = {Invalid_Trie, ...}; // ModuleName => Trie:Params
 
-#include "VipM/Core/Structs"
 #include "VipM/Core/Modules/Main"
-#include "VipM/Core/Limits/Main"
+#include "VipM/Core/Objects/Limits/Type"
 #include "VipM/Core/Configs/Main"
 #include "VipM/Core/Vips"
 
@@ -30,10 +29,13 @@ public plugin_precache() {
     RegisterPluginByVars();
     register_library(VIPM_LIBRARY);
     CreateConstCvar("vipm_version", VIPM_VERSION);
-
     RegisterForwards();
     SrvCmds_Init();
-    Limits_Init();
+
+    LimitType_Init();
+    LimitUnit_Init();
+    Forwards_RegAndCall("InitLimits", ET_IGNORE);
+    
     Modules_Init();
     Forwards_RegAndCall("InitModules", ET_IGNORE);
 

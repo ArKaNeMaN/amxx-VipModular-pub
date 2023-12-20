@@ -4,6 +4,8 @@
 #include "VipM/ArrayTrieUtils"
 #include "VipM/DebugMode"
 
+#include "VipM/WeaponMenu/Objects/WeaponMenu"
+
 Menu_GetUserMenusCount(const UserId) {
     return ArraySizeSafe(VipM_Params_GetArr(VipM_Modules_GetParams(MODULE_NAME, UserId), "Menus"));
 }

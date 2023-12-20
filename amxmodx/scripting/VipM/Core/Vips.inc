@@ -9,6 +9,8 @@
 
 #include <amxmodx>
 
+#include "VipM/Core/Objects/Limits/Unit"
+
 #define Vips_CheckAndAdd(%1) \
     CfgUnits_CheckAndAdd(%1, Vips)
 
@@ -23,7 +25,7 @@ Vips_UserUpdate(const UserId) {
 }
 
 #define CfgUnit_CheckAccess(%1,%2) \
-    Limits_ExecuteUnitList(%2[CfgUnit_LimitUnits], %1, Limit_Exec_OR)
+    LimitUnit_ExecuteList(%2[CfgUnit_LimitUnits], %1, Limit_Exec_OR)
 
 #define CfgUnit_AddToUser(%1,%2) \
     ModuleUnits_AddListToUser(%1, %2[CfgUnit_ModuleUnits])

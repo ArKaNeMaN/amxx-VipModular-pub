@@ -5,6 +5,8 @@
 
 #include amxmodx
 
+#define VIPM_PARAM_NAME_MAX_LEN 32
+
 /**
  * Vip Modular: Parameters
 */

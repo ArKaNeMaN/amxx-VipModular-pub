@@ -27,19 +27,19 @@ stock TrieDestroySafe(Trie:t) {
     ArrayForeachArrayEx(%1 => %2[%3], __i__)
 
 #define ArrayForeachArrayEx(%1=>%2[%3],%4) \
-    if(%1 != Invalid_Array)\
-        for(new %2[%3], %4 = 0; %4 < ArraySizeSafe(%1); %4++)\
-            if(ArrayGetArray(%1, %4, %2))
+    if (%1 != Invalid_Array)\
+        for (new %2[%3], %4 = 0; %4 < ArraySizeSafe(%1); %4++)\
+            if (ArrayGetArray(%1, %4, %2))
 
 #define ArrayForeachArray2(%1:%4=>%2[%3]) \
-    if(%1 != Invalid_Array) \
-        for(new %2[%3], %4 = 0; %4 < ArraySizeSafe(%1); %4++) \
-            if(ArrayGetArray(%1, %4, %2))
+    if (%1 != Invalid_Array) \
+        for (new %2[%3], %4 = 0; %4 < ArraySizeSafe(%1); %4++) \
+            if (ArrayGetArray(%1, %4, %2))
 
 #define ArrayForeachString(%1:%4=>%2[%3]) \
-    if(%1 != Invalid_Array) \
-        for(new %2[%3], %4 = 0; %4 < ArraySizeSafe(%1); %4++) \
-            if(ArrayGetString(%1, %4, %2, charsmax(%2)))
+    if (%1 != Invalid_Array) \
+        for (new %2[%3], %4 = 0; %4 < ArraySizeSafe(%1); %4++) \
+            if (ArrayGetString(%1, %4, %2, charsmax(%2)))
 
 #define ArrayCreateIfNotCreated(%1,%2) \
     %1 = (%1 == Invalid_Array) \
@@ -51,11 +51,10 @@ stock TrieDestroySafe(Trie:t) {
         ? TrieCreate() \
         : %1
 
-#define ArrayDestroyIfEmpty(%1) \
-    CompositeMacros( \
-        if(!ArraySizeSafe(%1)) \
-            ArrayDestroy(%1); \
-    )
+#define ArrayDestroyIfEmpty(%1) CompositeMacros( \
+    if (!ArraySizeSafe(%1)) \
+        ArrayDestroy(%1); \
+)
 
 stock Array:ArrayMergeCells(const Array:a1, const Array:a2) {
     new Array:aMerged = ArrayClone(a1);

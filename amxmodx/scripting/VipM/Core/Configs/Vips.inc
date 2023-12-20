@@ -1,6 +1,8 @@
-#include amxmodx
-#include json
-#include regex
+#include <amxmodx>
+#include <json>
+#include <regex>
+
+#include "VipM/Core/Objects/Limits/Unit"
 
 static stock const VIPS_CFG_FILE[] = "Vips";
 static stock const VIPS_CFGS_DIR[] = "Vips";
@@ -36,14 +38,9 @@ Array:Cfg_LoadVipsConfigs(Array:aList = Invalid_Array) {
 }
 
 Array:Cfg_LoadVipsConfigFromFile(const sFileName[], Array:aList = Invalid_Array) {
-    if (!JSON_FILE_EXTSTS(sFileName)) {
-        set_fail_state("[ERROR] Vips config '%s' not found.", GET_FILE_JSON_PATH(sFileName));
-        return Invalid_Array;
-    }
-
-    new JSON:jVips = GET_FILE_JSON(sFileName);
+    new JSON:jVips = Json_ParseFromFileEx(sFileName);
     if (!json_is_array(jVips)) {
-        set_fail_state("[ERROR] JSON syntax error in file '%s'.", GET_FILE_JSON_PATH(sFileName));
+        set_fail_state("[ERROR] File '%s' must contains a JSON-array.", GET_FILE_JSON_PATH(sFileName));
         return Invalid_Array;
     }
 
@@ -53,10 +50,10 @@ Array:Cfg_LoadVipsConfigFromFile(const sFileName[], Array:aList = Invalid_Array)
         if (Cfg_ReadVipConfig(jCfgUnit, CfgUnit)) {
             ArrayPushArray(aList, CfgUnit);
         }
-        json_free(jCfgUnit);
+        Json_FreeEx(jCfgUnit);
     }
     
-    Json_DeepFree(jVips);
+    Json_FreeEx(jVips);
     return aList;
 }
 
@@ -66,7 +63,7 @@ bool:Cfg_ReadVipConfig(const JSON:jCfgUnit, CfgUnit[S_CfgUnit]) {
         return false;
     }
 
-    CfgUnit[CfgUnit_LimitUnits] = Limits_LoadUnitListFromJson(jAccess);
+    CfgUnit[CfgUnit_LimitUnits] = LimitUnit_ReadList(jAccess);
     json_free(jAccess);
     if (!ArraySizeSafe(CfgUnit[CfgUnit_LimitUnits])) {
         ArrayDestroy(CfgUnit[CfgUnit_LimitUnits]);

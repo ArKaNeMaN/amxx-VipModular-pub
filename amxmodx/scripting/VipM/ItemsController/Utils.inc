@@ -51,14 +51,3 @@
         TrieSetCell(%1[ItemType_Events], IntToStr(%2), %3); \
     } \
     else TrieDeleteKey(%1[ItemType_Events], IntToStr(%2))
-
-
-PrintTypesData(const am[ArrayMap]){
-    server_print("╔═════╤══════════════════════════════════╗");
-    server_print("║  #  │ Type name                        ║");
-    server_print("╟─────┼──────────────────────────────────╢");
-    ArrayMapForeachArray (am => Type[S_ItemType]) {
-        server_print("║ %03d │ %-32s ║", __i__, Type[ItemType_Name]);
-    }
-    server_print("╚═════╧══════════════════════════════════╝");
-}
