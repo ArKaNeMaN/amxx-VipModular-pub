@@ -1,6 +1,7 @@
 #include <amxmodx>
 #include "VipM/DebugMode"
 #include "VipM/Natives"
+#include "VipM/Core/Objects/Param"
 
 Natives_Modules_Init(){
     Natives_Reg("Modules_Register");
@@ -37,12 +38,8 @@ Natives_Modules_Init(){
     NATIVE_CHECK_MODULE(ModuleName)
     GET_MODULE(ModuleName, Module);
     new bool:bSave = (Module[Module_Params] == Invalid_Array);
-
-    // Dbg_PrintServer("Module_AddParams(%s): bSave = %s", ModuleName, bSave ? "+" : "-");
     
-    Module[Module_Params] = Native_GetParamsList(Arg_Params - 1, ParamsCount, Module[Module_Params]);
-    
-    // Dbg_PrintServer(":---");
+    Module[Module_Params] = CfgParam_GetFromNative(Arg_Params, ParamsCount, Module[Module_Params]);
     
     if (bSave) {
         SET_MODULE(Module);

@@ -125,6 +125,8 @@ native VipM_IC_T_Item:VipM_IC_JsonGetItem(&JSON:jItem);
 native bool:VipM_IC_GiveItem(const UserId, const VipM_IC_T_Item:ItemId);
 
 stock Array:VipM_IC_JsonGetItems(JSON:jItems) {
+    // TODO: Не удалять хендлер (то же относится и к нативу)
+
     new Array:aItems = Invalid_Array;
     if (jItems == Invalid_JSON) {
         return aItems;
@@ -182,4 +184,16 @@ stock bool:VipM_Params_GiveItems(const UserId, const Trie:tParams, const sParam[
 
 stock bool:VipM_Params_GiveItem(const UserId, const Trie:tParams, const sParam[]) {
     return VipM_IC_GiveItems(UserId, VipM_Params_GetCell(tParams, sParam));
+}
+
+stock Array:Json_Object_GetItemsIC(const JSON:jObj, const sKey[], const bool:bDotNot = false) {
+    if (!json_object_has_value(jObj, sKey, .dot_not = bDotNot)) {
+        return Invalid_Array;
+    }
+
+    new JSON:jItems = json_object_get_value(jObj, sKey, bDotNot);
+    new Array:aItems = VipM_IC_JsonGetItems(jItems);
+    json_free(jItems);
+
+    return aItems;
 }

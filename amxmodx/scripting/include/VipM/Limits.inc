@@ -3,9 +3,13 @@
 #endif
 #define _vipmodular_l_included
 
+#include <json>
+
 /**
  * Vip Modular: Limits
 */
+
+#define VIPM_LIMITS_TYPE_NAME_MAX_LEN 64
 
 enum T_LimitUnit {Invalid_LimitUnit = -1}
 
@@ -47,6 +51,16 @@ enum E_LimitsExecType {
     /* Исключающее ИЛИ */
     Limit_Exec_XOR,
 }
+
+/**
+ * Вызывается в момент, когда нужно регистрировать типы лимитов.
+ * Типы лимитов должны регистрироваться строго в рамках этого форварда.
+ *
+ * @note    Вызывается в рамках plugin_precache.
+ *
+ * @noreturn
+ */
+forward VipM_OnInitLimits();
 
 /**
  * Вызывается перед чтением параметров условного элемента.
@@ -161,3 +175,15 @@ native bool:VipM_Limits_Execute(const T_LimitUnit:iLimit, const UserId = 0);
  * @return          true, если условие выполняется, иначе false.
  */
 native bool:VipM_Limits_ExecuteList(const Array:aLimits, const UserId = 0, const E_LimitsExecType:iType = Limit_Exec_OR);
+
+stock Array:Json_Object_GetLimits(const JSON:jObj, const sKey[], const bool:bDotNot = false) {
+    if (!json_object_has_value(jObj, sKey, .dot_not = bDotNot)) {
+        return Invalid_Array;
+    }
+
+    new JSON:jLimits = json_object_get_value(jObj, sKey, bDotNot);
+    new Array:aLimits = VipM_Limits_ReadListFromJson(jLimits);
+    json_free(jLimits);
+
+    return aLimits;
+}

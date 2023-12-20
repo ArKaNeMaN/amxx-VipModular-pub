@@ -13,11 +13,11 @@ Cfg_JsonGetItem(&JSON:jItem) {
     new sJsonRef[PLATFORM_MAX_PATH];
     if (Json_IsRef(jItem, sJsonRef, charsmax(sJsonRef))) {
         if (TrieGetCell(g_ItemsCache, sJsonRef, iItem)) {
-            Json_FreeRefedValue(jItem);
+            Json_FreeEx(jItem);
             return iItem;
         }
 
-        jItem = Json_GetRefValue(jItem, .bFreeSrcIfRef=true);
+        // jItem = Json_GetRefValue(jItem, .bFreeSrcIfRef=true);
     }
 
     if (jItem == Invalid_JSON) {
@@ -30,13 +30,13 @@ Cfg_JsonGetItem(&JSON:jItem) {
         || !Json_Object_GetItemTypeAndRemove(jItem, sItemTypeName, charsmax(sItemTypeName))
     ) {
         Json_LogForFile(jItem, "WARNING", "Invalid item format.");
-        Json_FreeRefedValue(jItem);
+        Json_FreeEx(jItem);
         return -1;
     }
 
     if (!TYPE_EXISTS(sItemTypeName)) {
         Json_LogForFile(jItem, "WARNING", "Item type `%s` not found.", sItemTypeName);
-        Json_FreeRefedValue(jItem);
+        Json_FreeEx(jItem);
         return -1;
     }
 
@@ -53,7 +53,7 @@ Cfg_JsonGetItem(&JSON:jItem) {
     Forwards_DefaultReturn(VIPM_CONTINUE);
     if (Forwards_CallP("ReadItem", jItem, Item[Item_Params]) == VIPM_STOP) {
         TrieDestroySafe(Item[Item_Params]);
-        Json_FreeRefedValue(jItem);
+        Json_FreeEx(jItem);
         return -1;
     }
 
@@ -62,7 +62,7 @@ Cfg_JsonGetItem(&JSON:jItem) {
 
     new iRet = VIPM_CONTINUE;
     EMIT_TYPE_EVENT(ItemType, ItemType_OnRead, iRet, jItem, Item[Item_Params])
-    Json_FreeRefedValue(jItem);
+    Json_FreeEx(jItem);
 
     if (iRet == VIPM_STOP) {
         TrieDestroySafe(Item[Item_Params]);

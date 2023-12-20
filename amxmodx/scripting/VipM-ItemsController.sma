@@ -16,7 +16,7 @@ public stock const PluginDescription[] = "Vip Modular`s items controller";
 #include "VipM/ItemsController/Structs"
 #include "VipM/ItemsController/Utils"
 
-DefineArrayMap(Types); // S_ItemType
+new ArrayMap(Types); // S_ItemType
 new Array:Items;
 
 public plugin_precache() {

@@ -12,36 +12,30 @@ enum ArrayMap{
 #define ArrayMap(%1) \
     %1[ArrayMap]
 
-#define DefineArrayMap(%1) \
-    new ArrayMap(%1)
-    
-#define DefineStaticArrayMap(%1) \
-    static ArrayMap(%1)
-
-stock InitArrayMap(AM[ArrayMap], const CellSize = 1, const Reserved = 32){
+stock InitArrayMap(AM[ArrayMap], const CellSize = 1, const Reserved = 1) {
     AM[AM_Arr] = ArrayCreate(CellSize, Reserved);
     AM[AM_Map] = TrieCreate();
 }
 
-stock ArrayMapPushArray(AM[ArrayMap], const any:Input[], const Key[], Size = -1){
+stock ArrayMapPushArray(AM[ArrayMap], const any:Input[], const Key[], Size = -1) {
     new Id = ArrayPushArray(AM[AM_Arr], Input, Size);
     TrieSetCell(AM[AM_Map], Key, Id, true);
     return Id;
 }
 
-stock ArrayMapPushString(AM[ArrayMap], const Input[], const Key[]){
+stock ArrayMapPushString(AM[ArrayMap], const Input[], const Key[]) {
     new Id = ArrayPushString(AM[AM_Arr], Input);
     TrieSetCell(AM[AM_Map], Key, Id, true);
     return Id;
 }
 
-stock ArrayMapPushCell(AM[ArrayMap], any:Input, const Key[]){
+stock ArrayMapPushCell(AM[ArrayMap], any:Input, const Key[]) {
     new Id = ArrayPushCell(AM[AM_Arr], Input);
     TrieSetCell(AM[AM_Map], Key, Id, true);
     return Id;
 }
 
-stock ArrayMapGetIndex(AM[ArrayMap], const Key[]){
+stock ArrayMapGetIndex(AM[ArrayMap], const Key[]) {
     new Id = -1;
     TrieGetCell(AM[AM_Map], Key, Id);
     return Id;
@@ -49,29 +43,29 @@ stock ArrayMapGetIndex(AM[ArrayMap], const Key[]){
 
 
 #define ArrayMapForeach(%1,%2) \
-    if(ArrayMapCreated(%1))\
-        for(new %2 = 0; %2 < ArrayMapSize(%1); %2++)
+    if (ArrayMapCreated(%1)) \
+        for (new %2 = 0; %2 < ArrayMapSize(%1); %2++)
 
 #define ArrayMapForeachArray(%1=>%2[%3]) \
     ArrayMapForeachArrayEx(%1=>%2[%3], __i__)
 
 #define ArrayMapForeachArrayEx(%1=>%2[%3],%4) \
-    if(ArrayMapCreated(%1))\
-        for(new %2[%3], %4 = 0; %4 < ArrayMapSize(%1); %4++)\
-            if(ArrayMapGetiArray(%1, %4, %2))
+    if (ArrayMapCreated(%1)) \
+        for (new %2[%3], %4 = 0; %4 < ArrayMapSize(%1); %4++) \
+            if (ArrayMapGetiArray(%1, %4, %2))
 
 #define ArrayMapForeachArray2(%1:%4=>%2[%3]) \
-    if(ArrayMapCreated(%1)) \
-        for(new %2[%3], %4 = 0; %4 < ArrayMapSize(%1); %4++) \
-            if(ArrayMapGetiArray(%1, %4, %2))
+    if (ArrayMapCreated(%1)) \
+        for (new %2[%3], %4 = 0; %4 < ArrayMapSize(%1); %4++) \
+            if (ArrayMapGetiArray(%1, %4, %2))
 
 
 #define ArrayMapCreated(%1) \
     (%1[AM_Arr] != Invalid_Array)
 
 #define ArrayMapDestroy(%1) \
-    if(ArrayMapCreated(%1)){\
-        ArrayDestroy(%1[AM_Arr]); TrieDestroy(%1[AM_Map]);\
+    if (ArrayMapCreated(%1)) { \
+        ArrayDestroy(%1[AM_Arr]); TrieDestroy(%1[AM_Map]); \
     }
 
 #define ArrayMapSize(%1) \

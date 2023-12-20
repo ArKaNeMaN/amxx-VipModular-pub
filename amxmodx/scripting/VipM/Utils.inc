@@ -55,6 +55,9 @@ stock const __LANG_MSG_LAYOUT_KEY[] = "MSG_LAYOUT";
 #define ChatPrintL(%1,%2) \
     ChatPrint(%1, __CLANG_TEMPLATE_STR, %1, %2)
 
+#define ChatPrintLIf(%3,%1,%2) \
+    ((%3) && ChatPrint(%1, __CLANG_TEMPLATE_STR, %1, %2))
+
 #define GET_FILE(%1) \
     VipM_iGetCfgPath(%1)
 
@@ -84,57 +87,17 @@ stock CMD_INIT_PARAMS() {
 #define CMD_ARG_NUM() \
     (read_argc() - __CMD_NULL_ARG - 1)
 
-stock static const JSON_FILE_VALUE_PREFIX[] = "File:";
-stock __JSON_LAST_FILE_OBJECT[PLATFORM_MAX_PATH];
-stock JSON:JSON_GET_FILE_OR_OBJECT(JSON:Value) {
-    __JSON_LAST_FILE_OBJECT[0] = 0;
-
-    if (Value == Invalid_JSON) {
-        return Value;
-    }
-
-    if (!json_is_string(Value)) {
-        return Value;
-    }
-    
-    new FileName[PLATFORM_MAX_PATH];
-    json_get_string(Value, FileName, charsmax(FileName));
-    if (!equali(JSON_FILE_VALUE_PREFIX, FileName, charsmax(JSON_FILE_VALUE_PREFIX))) {
-        return Value;
-    }
-
-    json_free(Value);
-
-    formatex(__JSON_LAST_FILE_OBJECT, charsmax(__JSON_LAST_FILE_OBJECT), FileName[charsmax(JSON_FILE_VALUE_PREFIX)]);
-
-    Value = GET_FILE_JSON(__JSON_LAST_FILE_OBJECT);
-    if (Value == Invalid_JSON) {
-        log_amx("[WARNING] JSON syntax error in file `%s`.", __JSON_LAST_FILE_OBJECT);        
-    }
-
-    return Value;
-}
-
-#define GetLastJsonObjectFile() \
-    __JSON_LAST_FILE_OBJECT
-
-#define HasLastJsonObjectFile() \
-    bool:(GetLastJsonObjectFile()[0])
-
-#define SaveLastJsonObjectFile(%1) \
-    new %1[PLATFORM_MAX_PATH];copy(%1, charsmax(%1), GetLastJsonObjectFile())
-
 #define json_array_foreach(%1:%2) \
-    if(json_is_array(%1)) \
-        for(new %2 = 0; %2 < json_array_get_count(%1); %2++)
+    if (json_is_array(%1)) \
+        for (new %2 = 0; %2 < json_array_get_count(%1); %2++)
 
 #define json_array_foreach_vars(%1:%2,[%3]) \
-    if(json_is_array(%1)) \
-        for(new %3, %2 = 0; %2 < json_array_get_count(%1); %2++)
+    if (json_is_array(%1)) \
+        for (new %3, %2 = 0; %2 < json_array_get_count(%1); %2++)
 
 #define json_array_foreach_value(%1:%2=>%3) \
     json_array_foreach_vars(%1: %2, [JSON:%3]) \
-        if((%3 = json_array_get_value(%1, %2)) != Invalid_JSON)
+        if ((%3 = json_array_get_value(%1, %2)) != Invalid_JSON)
 
 #define json_get_count(%1) \
     (json_is_array(%1) ? json_array_get_count(%1) : 1)
@@ -170,10 +133,10 @@ stock Array:json_object_get_strings_list(
 }
 
 #define BitSet(%1,%2) \
-    %1 |= (1 << (%2 - 1))
+    %1 |= (1 << %2)
 
 #define BitReset(%1,%2) \
-    %1 &= ~(1 << (%2 - 1))
+    %1 &= ~(1 << %2)
 
 // by @the_hunter1 :))
 #define BitSetIf(%1,%2,%3) ( \

@@ -11,33 +11,8 @@
 #include "VipM/Natives"
 #include "VipM/Utils"
 
-Array:Native_GetParamsList(const NullArg, const ParamsCount, Array:aParams = Invalid_Array) {
-    const ARGS_NUM_PER_PARAM = 3;
-
-    if ((ParamsCount - NullArg) % ARGS_NUM_PER_PARAM != 0) {
-        log_error(1, "[ERROR] Invalid parameters num.");
-        return Invalid_Array;
-    }
-
-    if (aParams == Invalid_Array) {
-        aParams = ArrayCreate(S_CfgParam, max(1, (ParamsCount - NullArg) / ARGS_NUM_PER_PARAM));
-    }
-
-    new Param[S_CfgParam];
-    for (new i = NullArg+1; i < ParamsCount; i += ARGS_NUM_PER_PARAM) {
-        get_string(i, Param[CfgParam_Name], charsmax(Param[CfgParam_Name]));
-        Param[CfgParam_Type] = E_ParamType:get_param_byref(i+1);
-        Param[CfgParam_Required] = bool:get_param_byref(i+2);
-        
-        // Dbg_PrintServer("^t- %s: %d, %s", Param[CfgParam_Name], _:Param[CfgParam_Type], Param[CfgParam_Required] ? "+" : "-");
-
-        ArrayPushArray(aParams, Param);
-    }
-    return aParams;
-}
-
-#include "VipM/Core/Natives/Limits.inc"
-#include "VipM/Core/Natives/Modules.inc"
+#include "VipM/Core/API/Limits"
+#include "VipM/Core/API/Modules"
 
 public plugin_natives() {
     Natives_Init("VipM");
@@ -46,7 +21,7 @@ public plugin_natives() {
     Natives_Reg("Json_LogForFile");
 
     Natives_Modules_Init();
-    Natives_Limits_Init();
+    API_Limits_Init();
 }
 
 // native VipM_Json_LogForFile(const JSON:jValue, const sPrefix[], const sMessage[], any:...);

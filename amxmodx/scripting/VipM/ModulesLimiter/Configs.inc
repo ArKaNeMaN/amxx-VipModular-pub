@@ -7,7 +7,7 @@
 Trie:Configs_LoadModulesLimitsFromFile(const sFileName[], Trie:tModules = Invalid_Trie) {
     TrieCreateIfNotCreated(tModules);
 
-    new JSON:jFile = GET_FILE_JSON(sFileName);
+    new JSON:jFile = Json_ParseFromFileEx(sFileName);
     if (jFile == Invalid_JSON) {
         log_error(0, "Invalid JSON syntax. File `%s`.", GET_FILE_JSON_PATH(sFileName));
         return tModules;
@@ -15,7 +15,7 @@ Trie:Configs_LoadModulesLimitsFromFile(const sFileName[], Trie:tModules = Invali
 
     if (!json_is_array(jFile)) {
         Json_LogForFile(jFile, "WARNING", "Root value must be an array.");
-        Json_DeepFree(jFile);
+        Json_FreeEx(jFile);
         return tModules;
     }
 
@@ -34,7 +34,6 @@ Trie:Configs_LoadModulesLimitsFromFile(const sFileName[], Trie:tModules = Invali
             json_free(jItem);
             continue;
         }
-
 
         new Array:aModuleNames = json_object_get_strings_list(jItem, "Modules", VIPM_MODULE_MAX_NAME);
         if (!ArraySizeSafe(aModuleNames)) {
@@ -55,6 +54,6 @@ Trie:Configs_LoadModulesLimitsFromFile(const sFileName[], Trie:tModules = Invali
         ArrayDestroy(aModuleNames);
     }
 
-    Json_DeepFree(jFile);
+    Json_FreeEx(jFile);
     return tModules;
 }
