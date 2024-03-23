@@ -32,7 +32,7 @@ stock static const __JSON_WRAPPER_REF_FILE_PREFIX[] = "File:";
     do { %1 } while(is_linux_server() == 0xDEADBEEF)
 
 #define Json__VFormatEx(%1,%2,%3) Json__CompositeMacros( \
-    if (numargs() > %3) { \
+    if (numargs() >= %3) { \
         vformat(%1, charsmax(%1), %2, %3); \
     } else { \
         copy(%1, charsmax(%1), %2); \
@@ -91,9 +91,9 @@ static stock JSON:Json__FreeWrapper(&JSON:jWrapper, const bool:bFreeIfNotWrapper
 static stock Json__GetWrapperPathValue(
     const JSON:jValue,
     const sKey[],
-    sOut[] = NULL_STRING,
+    sOut[] = "",
     const iOutLen = 0,
-    const sDefault[] = NULL_STRING
+    const sDefault[] = ""
 ) {
     new JSON:jWrapper = Json__GetWrapper(jValue);
 
@@ -112,7 +112,7 @@ static stock Json__GetWrapperPathValue(
     return sPath;
 }
 
-static stock Json__GetFilePath(const JSON:jValue, sOut[] = NULL_STRING, const iOutLen = 0, const sDefault[] = NULL_STRING) {
+static stock Json__GetFilePath(const JSON:jValue, sOut[] = "", const iOutLen = 0, const sDefault[] = "") {
     new sPath[PLATFORM_MAX_PATH];
     Json__GetWrapperPathValue(jValue, __JSON_WRAPPER_FIELD_FILE, sPath, charsmax(sPath), sDefault);
     
@@ -120,7 +120,7 @@ static stock Json__GetFilePath(const JSON:jValue, sOut[] = NULL_STRING, const iO
     return sPath;
 }
 
-static stock Json__GetWorkDir(const JSON:jValue, sOut[] = NULL_STRING, const iOutLen = 0, const sDefault[] = NULL_STRING) {
+static stock Json__GetWorkDir(const JSON:jValue, sOut[] = "", const iOutLen = 0, const sDefault[] = "") {
     new sPath[PLATFORM_MAX_PATH];
     Json__GetWrapperPathValue(jValue, __JSON_WRAPPER_FIELD_WORKDIR, sPath, charsmax(sPath), sDefault);
 
@@ -128,7 +128,7 @@ static stock Json__GetWorkDir(const JSON:jValue, sOut[] = NULL_STRING, const iOu
     return sPath;
 }
 
-static stock Json__GetRootConfigsPath(sOut[] = NULL_STRING, const iOutLen = 0) {
+static stock Json__GetRootConfigsPath(sOut[] = "", const iOutLen = 0) {
     static sPath[PLATFORM_MAX_PATH];
 
     if (!sPath[0]) {
@@ -172,7 +172,7 @@ static stock Json__GetFileDir(const sFile[]) {
  *
  * @return          Хендлер прочитанного из файла значения.
  */
-stock JSON:Json_ParseFromFileEx(const sPath[], const sWorkDir[] = NULL_STRING, const bool:bWithComments = true) {
+stock JSON:Json_ParseFromFileEx(const sPath[], const sWorkDir[] = "", const bool:bWithComments = true) {
     if (!file_exists(sPath)) {
         log_amx("[ERROR] File '%s' not found.", sPath);
         return Invalid_JSON;
@@ -283,7 +283,7 @@ stock Json_FatalErrorForFile(const JSON:jValue, const sMessage[], any:...) {
  *
  * @return          true, если значение является ссылкой, иначе false.
  */
-stock bool:Json_IsRef(const JSON:jValue, sFileName[] = NULL_STRING, const iLen = 0) {
+stock bool:Json_IsRef(const JSON:jValue, sFileName[] = "", const iLen = 0) {
     if (!json_is_string(jValue)) {
         return false;
     }
@@ -318,7 +318,7 @@ stock bool:Json_IsRef(const JSON:jValue, sFileName[] = NULL_STRING, const iLen =
  */
 stock JSON:Json_GetRefValue(
     const JSON:jValue,
-    sOut[] = NULL_STRING,
+    sOut[] = "",
     const iOutLen = 0,
     &bool:bIsRef = false
 ) {
@@ -446,7 +446,7 @@ stock Json_Object_GetString(
     const sKey[],
     sOut[],
     const iOutLen,
-    const sDefault[] = NULL_STRING,
+    const sDefault[] = "",
     const bool:bDotNot = false
 ) {
     if (!json_object_has_value(jObj, sKey, JSONString, bDotNot)) {
@@ -456,7 +456,7 @@ stock Json_Object_GetString(
     }
 }
 
-stock Json_Object_GetStr(const JSON:jObj, const sKey[], const sDefault[] = NULL_STRING, const bool:bDotNot = false) {
+stock Json_Object_GetStr(const JSON:jObj, const sKey[], const sDefault[] = "", const bool:bDotNot = false) {
     new sRes[MAX_FMT_LENGTH];
     Json_Object_GetString(jObj, sKey, sRes, charsmax(sRes), sDefault, bDotNot);
     
@@ -468,7 +468,7 @@ stock Json_Object_GetColoredChatMessage(
     const sKey[],
     sOut[],
     const iOutLen,
-    const sDefault[] = NULL_STRING,
+    const sDefault[] = "",
     const bool:bDotNot = false
 ) {
     new iRes = Json_Object_GetString(jObj, sKey, sOut, iOutLen, sDefault, bDotNot);

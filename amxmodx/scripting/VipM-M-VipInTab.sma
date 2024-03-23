@@ -24,7 +24,7 @@ public VipM_OnInitModules() {
     RegisterPluginByVars();
 
     VipM_Modules_Register(MODULE_NAME, true);
-    VipM_SetModuleParams(MODULE_NAME,
+    VipM_Modules_AddParams(MODULE_NAME,
         "Enabled", ptBoolean, true,
         "Override", ptBoolean, false
     );

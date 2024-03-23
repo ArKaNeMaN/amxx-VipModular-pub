@@ -3,7 +3,9 @@
 #include "VipM/Natives"
 #include "VipM/Core/Objects/Param"
 
-Natives_Modules_Init(){
+API_Modules_Init(){
+    Natives_Init("VipM");
+
     Natives_Reg("Modules_Register");
     Natives_Reg("Modules_AddParams");
     Natives_Reg("Modules_RegisterEvent");
@@ -11,114 +13,91 @@ Natives_Modules_Init(){
     Natives_Reg("Modules_GetParams");
 }
 
-@_Modules_Register(const PluginId) {
-    enum {Arg_Module = 1, Arg_Once}
+T_ModuleType:@_Modules_Register(const PluginId) {
+    enum {Arg_sModuleTypeName = 1}
 
-    new Module[S_Module];
+    new sModuleTypeName[VIPM_MODULES_TYPE_NAME_MAX_LEN];
+    get_string(Arg_sModuleTypeName, sModuleTypeName, charsmax(sModuleTypeName));
 
-    get_string(Arg_Module, Module[Module_Name], charsmax(Module[Module_Name]));
-    Module[Module_PluginId] = PluginId;
-    Module[Module_Enabled] = false;
-    Module[Module_Once] = bool:get_param(Arg_Once);
+    new T_ModuleType:iModuleType = ModuleType_Construct(sModuleTypeName);
+    if (iModuleType == Invalid_ModuleType) {
+        log_error(0, "Can't create module type '%s'.", sModuleTypeName);
+        return Invalid_ModuleType;
+    }
 
-    Module[Module_Params] = Invalid_Array;
-    Module[Module_Events] = Invalid_Trie;
-
-    Module[Module_Used] = false;
-
-    ArrayMapPushArray(Modules, Module, Module[Module_Name]);
+    return iModuleType;
 }
 
-@_Modules_AddParams(const PluginId, const ParamsCount) {
-    enum {Arg_Module = 1, Arg_Params}
-    
-    new ModuleName[32], Module[S_Module];
-    get_string(Arg_Module, ModuleName, charsmax(ModuleName));
+@_Modules_AddParams(const PluginId, const iParamsNum) {
+    enum {Arg_sModuleTypeName = 1, Arg_Params}
 
-    NATIVE_CHECK_MODULE(ModuleName)
-    GET_MODULE(ModuleName, Module);
-    new bool:bSave = (Module[Module_Params] == Invalid_Array);
-    
-    Module[Module_Params] = CfgParam_GetFromNative(Arg_Params, ParamsCount, Module[Module_Params]);
-    
-    if (bSave) {
-        SET_MODULE(Module);
+    new sModuleTypeName[VIPM_MODULES_TYPE_NAME_MAX_LEN];
+    get_string(Arg_sModuleTypeName, sModuleTypeName, charsmax(sModuleTypeName));
+
+    new T_ModuleType:iModuleType = ModuleType_Find(sModuleTypeName);
+    if (iModuleType == Invalid_ModuleType) {
+        log_error(0, "Module type '%s' not found.", sModuleTypeName);
+        return;
     }
+
+    new Array:aParams = CfgParam_GetFromNative(Arg_Params, iParamsNum);
+    if (aParams == Invalid_Array) {
+        return;
+    }
+
+    ModuleType_MergeParamsList(iModuleType, aParams);
 }
 
 bool:@_Modules_RegisterEvent(const PluginId) {
-    enum {Arg_Module = 1, Arg_Event, Arg_Func}
-    
-    new ModuleName[32], Module[S_Module];
-    get_string(Arg_Module, ModuleName, charsmax(ModuleName));
+    enum {Arg_sModuleTypeName = 1, Arg_iEvent, Arg_sFuncName}
 
-    NATIVE_CHECK_MODULE(ModuleName)
-    GET_MODULE(ModuleName, Module);
+    new sModuleTypeName[VIPM_MODULES_TYPE_NAME_MAX_LEN];
+    get_string(Arg_sModuleTypeName, sModuleTypeName, charsmax(sModuleTypeName));
 
-    new E_ModuleEvent:Event = E_ModuleEvent:get_param(Arg_Event);
-
-    new FuncName[64];
-    get_string(Arg_Func, FuncName, charsmax(FuncName));
-
-    new FwdId = -1;
-    switch (Event) {
-        case Module_OnRead: // (const JSON:jCfg, Trie:Params)
-            FwdId = CreateOneForward(PluginId, FuncName, FP_CELL, FP_CELL);
-
-        case Module_OnActivated: // ()
-            FwdId = CreateOneForward(PluginId, FuncName);
-
-        case Module_OnCompareParams: // (Trie:MainParams, const Trie:NewParams)
-            FwdId = CreateOneForward(PluginId, FuncName, FP_CELL, FP_CELL);
-    }
-
-    if (FwdId < 0) {
+    new T_ModuleType:iModuleType = ModuleType_Find(sModuleTypeName);
+    if (iModuleType == Invalid_ModuleType) {
+        log_error(0, "Module type '%s' not found.", sModuleTypeName);
         return false;
     }
 
-    SET_MODULE_EVENT(Module, Event, FwdId);
-    SET_MODULE(Module);
+    new E_ModuleEvent:iEvent = E_ModuleEvent:get_param(Arg_iEvent);
+
+    new sFuncName[64];
+    get_string(Arg_sFuncName, sFuncName, charsmax(sFuncName));
     
-    return FwdId >= 0;
+    ModuleType_SetEventListener(iModuleType, iEvent, PluginId, sFuncName);
+    return true;
 }
 
-@_Modules_IsActive() {
-    enum {Arg_Module = 1}
-    
-    static ModuleName[32], Module[S_Module];
-    get_string(Arg_Module, ModuleName, charsmax(ModuleName));
+bool:@_Modules_IsActive() {
+    enum {Arg_sModuleTypeName = 1}
 
-    NATIVE_CHECK_MODULE(ModuleName)
-    GET_MODULE(ModuleName, Module);
+    new sModuleTypeName[VIPM_MODULES_TYPE_NAME_MAX_LEN];
+    get_string(Arg_sModuleTypeName, sModuleTypeName, charsmax(sModuleTypeName));
 
-    return Module[Module_Enabled];
+    new T_ModuleType:iModuleType = ModuleType_Find(sModuleTypeName);
+    if (iModuleType == Invalid_ModuleType) {
+        log_error(0, "Module type '%s' not found.", sModuleTypeName);
+        return false;
+    }
+
+    return ModuleType_IsActive(iModuleType);
 }
 
 Trie:@_Modules_GetParams() {
-    enum {Arg_Module = 1, Arg_UserId, Arg_Forced}
-    
-    static ModuleName[32];
-    get_string(Arg_Module, ModuleName, charsmax(ModuleName));
-    NATIVE_CHECK_MODULE(ModuleName)
+    enum {Arg_sModuleTypeName = 1, Arg_UserId}
 
-    new UserId = get_param(Arg_UserId);
+    new sModuleTypeName[VIPM_MODULES_TYPE_NAME_MAX_LEN];
+    get_string(Arg_sModuleTypeName, sModuleTypeName, charsmax(sModuleTypeName));
 
-    new bool:bCanGetParams = true;
-    if (!get_param(Arg_Forced)) {
-        static Module[S_Module];
-        GET_MODULE(ModuleName, Module);
-        bCanGetParams = Module[Module_Enabled];
-    }
-    
-    new Trie:Params = Invalid_Trie;
-    if (
-        !is_user_connected(UserId)
-        || gUserVip[UserId] == Invalid_Trie
-        || !TrieGetCell(gUserVip[UserId], ModuleName, Params)
-        || !bCanGetParams
-    ) {
+    // TODO: Потом переделать сразу не хендлеры
+    new T_ModuleType:iModuleType = ModuleType_Find(sModuleTypeName);
+    if (iModuleType == Invalid_ModuleType) {
+        log_error(0, "Module type '%s' not found.", sModuleTypeName);
         return Invalid_Trie;
     }
+
+    new UserId = get_param(Arg_UserId);
     
-    return Params;
+    return VipsManager_GetUserParams(UserId, iModuleType);
 }

@@ -7,7 +7,9 @@
  * Vip Modular: Modules
 */
 
-#define VIPM_MODULE_MAX_NAME 32
+#define VIPM_MODULES_TYPE_NAME_MAX_LEN 64
+
+stock const VIPM_MODULES_PARAMS_TEMP_MARK_KEY[] = "___temp_module_params___";
 
 enum E_ModuleEvent{
 
@@ -41,8 +43,27 @@ enum E_ModuleEvent{
      *      NewParams - Добавляемый набор параметров модуля.
      * 
      * Примечание: Результат обьединения должен быть возвращён обработчиком события.
+     * 
+     * УСТАРЕЛО! Позже будет добавлен другой механизм подобный этому.
      */
     Module_OnCompareParams,
+
+    /*
+     * Описание:    Вызывается при добавлении игроку второго модуля того же типа.
+     * Возв. тип:   Trie
+     * Параметры:   (const Trie:tParams1, const Trie:tParams2):
+     *      tParams1 - Первый набор параметров.
+     *      tParams2 - Второй набор параметров.
+     * 
+     * Примечание: Если обработчик для этого события не зарегистрирован,
+     *             всегда будет выбираться tParams1 (модуль, добавленный первым) без изменений.
+     * 
+     * Примечание: Очищение пришедших в параметрах Trie вызовет ошибки в работе модулей.
+     * 
+     * Примечание: Обработчик может вернуть один из полученных Trie или создать новый.
+     *             При содании нового Trie ядро само позаботится о его очищении в будущем.
+     */
+    Module_OnMergeParams,
 }
 
 forward VipM_OnReadModuleUnit(const JSON:jUnit, const Trie:tParams);
@@ -81,7 +102,6 @@ native bool:VipM_Modules_RegisterEvent(const Module[], const E_ModuleEvent:Event
  * @noreturn
  */
 native VipM_Modules_AddParams(const Module[], const any:...);
-#define VipM_SetModuleParams VipM_Modules_AddParams
 
 /**
  * Активен ли указанный модуль.

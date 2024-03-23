@@ -24,10 +24,14 @@ stock const VIPM_CFG_PATH[] = "plugins/VipModular";
  *
  * @return  Кол-во записанных в буфер ячеек.
  */
-stock VipM_GetCfgPath(const sPath[], sOut[], const iOutLen){
+stock VipM_GetCfgPath(const sPath[] = "", sOut[], const iOutLen){
     static __amxx_configsdir[PLATFORM_MAX_PATH];
     if (!__amxx_configsdir[0]) {
         get_localinfo("amxx_configsdir", __amxx_configsdir, charsmax(__amxx_configsdir));
+    }
+
+    if (!sPath[0]) {
+        return formatex(sOut, iOutLen, "%s/%s", __amxx_configsdir, VIPM_CFG_PATH);
     }
     
     return (sPath[0] == '/')
@@ -45,7 +49,7 @@ stock VipM_GetCfgPath(const sPath[], sOut[], const iOutLen){
  *
  * @return  Полученный путь.
  */
-stock VipM_iGetCfgPath(const sPath[]) {
+stock VipM_iGetCfgPath(const sPath[] = "") {
     new sRetPath[PLATFORM_MAX_PATH];
     VipM_GetCfgPath(sPath, sRetPath, charsmax(sRetPath));
     return sRetPath;

@@ -7,6 +7,8 @@
 #include "VipM/Core/Objects/Param"
 
 API_Limits_Init() {
+    Natives_Init("VipM");
+
     Natives_Reg("Limits_RegisterType");
     Natives_Reg("Limits_AddTypeParams");
     Natives_Reg("Limits_RegisterTypeEvent");
@@ -20,7 +22,7 @@ API_Limits_Init() {
     Natives_Reg("Limits_ExecuteList");
 }
 
-// native VipM_Limits_RegisterType(const sName[], const bool:bForPlayer = true, const bool:bStatic = false);
+// native VipM_Limits_RegisterType(const sLimitTypeName[], const bool:bForPlayer = true, const bool:bStatic = false);
 T_LimitType:@_Limits_RegisterType() {
     enum {Arg_sLimitTypeName = 1, Arg_bForPlayer, Arg_bStatic}
 
@@ -39,16 +41,16 @@ T_LimitType:@_Limits_RegisterType() {
     return iLimitType;
 }
 
-// native VipM_Limits_AddTypeParams(const sName[], any:...);
+// native VipM_Limits_AddTypeParams(const sLimitTypeName[], any:...);
 @_Limits_AddTypeParams(const PluginId, const iParamsNum) {
-    enum {Arg_LimitName = 1, Arg_Params}
+    enum {Arg_sLimitTypeName = 1, Arg_Params}
 
-    new sName[VIPM_LIMITS_TYPE_NAME_MAX_LEN];
-    get_string(Arg_LimitName, sName, charsmax(sName));
+    new sLimitTypeName[VIPM_LIMITS_TYPE_NAME_MAX_LEN];
+    get_string(Arg_sLimitTypeName, sLimitTypeName, charsmax(sLimitTypeName));
 
-    new T_LimitType:iLimitType = LimitType_Find(sName);
+    new T_LimitType:iLimitType = LimitType_Find(sLimitTypeName);
     if (iLimitType == Invalid_LimitType) {
-        log_error(0, "Limit type '%s' not found.", sName);
+        log_error(0, "Limit type '%s' not found.", sLimitTypeName);
         return;
     }
 
@@ -57,40 +59,40 @@ T_LimitType:@_Limits_RegisterType() {
         return;
     }
 
-    LimitType_MergeParams(iLimitType, aParams);
+    LimitType_MergeParamsList(iLimitType, aParams);
 }
 
-// native VipM_Limits_RegisterTypeEvent(const sName[], const E_LimitEvent:iEvent, const sFunc[]);
+// native VipM_Limits_RegisterTypeEvent(const sLimitTypeName[], const E_LimitEvent:iEvent, const sFunc[]);
 @_Limits_RegisterTypeEvent(const PluginId) {
-    enum {Arg_LimitName = 1, Arg_Event, Arg_FuncName}
+    enum {Arg_sLimitTypeName = 1, Arg_iEvent, Arg_sFuncName}
 
-    new sName[VIPM_LIMITS_TYPE_NAME_MAX_LEN];
-    get_string(Arg_LimitName, sName, charsmax(sName));
+    new sLimitTypeName[VIPM_LIMITS_TYPE_NAME_MAX_LEN];
+    get_string(Arg_sLimitTypeName, sLimitTypeName, charsmax(sLimitTypeName));
 
-    new T_LimitType:iLimitType = LimitType_Find(sName);
+    new T_LimitType:iLimitType = LimitType_Find(sLimitTypeName);
     if (iLimitType == Invalid_LimitType) {
-        log_error(0, "Limit type '%s' not found.", sName);
+        log_error(0, "Limit type '%s' not found.", sLimitTypeName);
         return;
     }
 
-    new E_LimitEvent:iEvent = E_LimitEvent:get_param(Arg_Event);
+    new E_LimitEvent:iEvent = E_LimitEvent:get_param(Arg_iEvent);
 
-    new sFunc[64];
-    get_string(Arg_FuncName, sFunc, charsmax(sFunc));
+    new sFuncName[64];
+    get_string(Arg_sFuncName, sFuncName, charsmax(sFuncName));
     
-    LimitType_SetEventListener(iLimitType, iEvent, PluginId, sFunc);
+    LimitType_SetEventListener(iLimitType, iEvent, PluginId, sFuncName);
 }
 
-// native VipM_Limits_Execute(const sName[], const bool:bNewValue, const UserId = 0);
+// native VipM_Limits_Execute(const sLimitTypeName[], const bool:bNewValue, const UserId = 0);
 @_Limits_SetStaticValue() {
-    enum {Arg_LimitName = 1, Arg_NewValue, Arg_UserId}
+    enum {Arg_sLimitTypeName = 1, Arg_NewValue, Arg_UserId}
 
-    static sName[VIPM_LIMITS_TYPE_NAME_MAX_LEN];
-    get_string(Arg_LimitName, sName, charsmax(sName));
+    static sLimitTypeName[VIPM_LIMITS_TYPE_NAME_MAX_LEN];
+    get_string(Arg_sLimitTypeName, sLimitTypeName, charsmax(sLimitTypeName));
 
-    new T_LimitType:iLimitType = LimitType_Find(sName);
+    new T_LimitType:iLimitType = LimitType_Find(sLimitTypeName);
     if (iLimitType == Invalid_LimitType) {
-        log_error(0, "Limit type '%s' not found.", sName);
+        log_error(0, "Limit type '%s' not found.", sLimitTypeName);
         return;
     }
 

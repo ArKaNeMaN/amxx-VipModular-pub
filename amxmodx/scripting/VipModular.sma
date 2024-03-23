@@ -14,52 +14,34 @@ public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = _VIPM_PLUGIN_URL;
 public stock const PluginDescription[] = "Modular vip system";
 
-new Array:Vips; // S_CfgUnit
-new Trie:gUserVip[MAX_PLAYERS + 1] = {Invalid_Trie, ...}; // ModuleName => Trie:Params
-
-#include "VipM/Core/Modules/Main"
-#include "VipM/Core/Objects/Limits/Type"
-#include "VipM/Core/Configs/Main"
-#include "VipM/Core/Vips"
-
+#include "VipM/Core/Objects/Modules/Type"
+#include "VipM/Core/VipsManager"
 #include "VipM/Core/SrvCmds"
-#include "VipM/Core/Natives"
 
 public plugin_precache() {
     RegisterPluginByVars();
     register_library(VIPM_LIBRARY);
-    CreateConstCvar("vipm_version", VIPM_VERSION);
-    RegisterForwards();
+    CreateConstCvar("vipm_version", PluginVersion);
+
+    Forwards_Init("VipM");
+    Forwards_Reg("ReadUnit", ET_IGNORE, FP_CELL, FP_CELL);
+
+    VipsManager_Init();
     SrvCmds_Init();
-
-    LimitType_Init();
-    LimitUnit_Init();
-    Forwards_RegAndCall("InitLimits", ET_IGNORE);
     
-    Modules_Init();
-    Forwards_RegAndCall("InitModules", ET_IGNORE);
+    VipsManager_SetRootDir(VipM_iGetCfgPath(""));
+    VipsManager_LoadFromFile(VipM_iGetCfgPath("Vips.json"));
+    VipsManager_LoadFromFolder(VipM_iGetCfgPath("Vips"));
 
-    Vips = Cfg_LoadVipsConfigs();
+    ModuleType_ActivateUsed();
 
-    server_print("[%s v%s] Loaded %d config units.", PluginName, VIPM_VERSION, ArraySizeSafe(Vips));
     Forwards_RegAndCall("Loaded", ET_IGNORE);
-
-    Modules_EnableAllUsed();
-
+    server_print("[%s v%s] Loaded %d config units.", PluginName, PluginVersion, VipsManager_VipsCount());
     Dbg_PrintServer("Vip Modular run in debug mode!");
 }
 
-RegisterForwards() {
-    Forwards_Init("VipM");
-    Forwards_Reg("UserUpdated", ET_IGNORE, FP_CELL);
-    Forwards_Reg("ReadUnit", ET_IGNORE, FP_CELL, FP_CELL);
-    Forwards_Reg("ActivateModule", ET_STOP, FP_STRING);
-    Forwards_Reg("ReadModuleUnit", ET_IGNORE, FP_CELL, FP_CELL);
-    Forwards_Reg("ReadLimitUnit", ET_IGNORE, FP_CELL, FP_CELL);
-}
-
 public client_disconnected(UserId) {
-    Vips_Reset(UserId);
+    VipsManager_UserReset(UserId);
 }
 
 public client_putinserver(UserId) {
@@ -71,9 +53,16 @@ public client_putinserver(UserId) {
 }
 
 @CallUserUpdate(UserId) {
-    if (!is_user_connected(UserId)) {
-        return;
+    if (is_user_connected(UserId)) {
+        VipsManager_UserReload(UserId);
     }
+}
 
-    Vips_UserUpdate(UserId);
+#include "VipM/Core/API/Main"
+#include "VipM/Core/API/Limits"
+#include "VipM/Core/API/Modules"
+public plugin_natives() {
+    API_Main_Init();
+    API_Limits_Init();
+    API_Modules_Init();
 }
