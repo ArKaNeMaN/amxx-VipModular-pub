@@ -11,22 +11,22 @@
 
 
 #define TYPE_EXISTS(%1) \
-    ArrayMapHasKey(Types, %1)
+    ArrayMapKeyExists(Types, %1)
 
 #define GET_TYPE(%1,%2) \
-    ArrayMapGetArray(Types, %1, %2)
+    ArrayMapGetArrayByKey(Types, %1, %2)
 
 #define GET_TYPE_ID(%1) \
     ArrayMapGetIndex(Types, %1)
 
 #define GET_TYPE_BY_ID(%1,%2) \
-    ArrayMapGetiArray(Types, %1, %2)
+    ArrayMapGetArray(Types, %1, %2)
 
 #define GET_ITEM_TYPE(%1,%2) \
     GET_TYPE_BY_ID(%1[Item_Type], %2)
 
 #define SET_TYPE(%1) \
-    ArrayMapSetArray(Types, %1[ItemType_Name], %1)
+    ArrayMapSetArrayByKey(Types, %1[ItemType_Name], %1)
 
 #define ADD_TYPE(%1) \
     ArrayMapPushArray(Types, %1, %1[ItemType_Name])

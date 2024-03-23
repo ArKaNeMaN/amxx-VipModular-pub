@@ -7,7 +7,8 @@
 #include "VipM/ArrayTrieUtils"
 #include "VipM/ArrayMap"
 
-#include "VipM/Core/Modules/Main"
+#include "VipM/Core/Objects/Modules/Type"
+#include "VipM/Core/Objects/Modules/Unit"
 #include "VipM/Core/Objects/Limits/Type"
 #include "VipM/Core/Objects/Limits/Unit"
 #include "VipM/Core/Objects/Param"
@@ -38,13 +39,13 @@ SrvCmds_Init() {
     server_print("║ │");
     server_print("║ ├─Stats:");
     server_print("║ │ ├─Modules:");
-    server_print("║ │ │ ├─Modules count: %d", ArrayMapSize(Modules));
-    server_print("║ │ │ └─Module units count: %d", ArraySizeSafe(ModuleUnits));
+    server_print("║ │ │ ├─Modules count: %d", ModuleType_GetCount());
+    server_print("║ │ │ └─Module units count: %d", ModuleUnit_GetCount());
     server_print("║ │ ├─Limits:");
     server_print("║ │ │ ├─Types count: %d", LimitType_GetCount());
     server_print("║ │ │ └─Limit units count: %d", LimitUnit_GetCount());
     server_print("║ │ ├─Vips:");
-    server_print("║ │ │ └─Vips count: %d", ArraySizeSafe(Vips));
+    server_print("║ │ │ └─Vips count: %d", VipUnit_GetCount());
     server_print("║ │ └─Compiled by AmxModX v%s:", AMXX_VERSION_STR);
     server_print("║ │");
     server_print("║ └─GitHub repo: https://github.com/ArKaNeMaN/amxx-VipModular-pub");
@@ -55,26 +56,32 @@ SrvCmds_Init() {
     server_print("╔═════╤══════════════════════════════════╤════════╗");
     server_print("║  #  │ Module name                      │ Status ║");
     server_print("╟─────┼──────────────────────────────────┼────────╢");
-    ArrayMapForeachArray2 (Modules: i => Module[S_Module]) {
-        server_print("║ %03d │ %-32s │ %-6s ║", i + 1, Module[Module_Name], Module[Module_Enabled] ? "On" : "Off");
+    new Array:aModuleTypes = ModuleType_GetAll();
+    ArrayForeachArray2 (aModuleTypes: i => ModuleType[S_ModuleType]) {
+        server_print("║ %03d │ %-32s │ %-6s ║", i + 1, ModuleType[ModuleType_Name], ModuleType[ModuleType_Active] ? "On" : "Off");
     }
     server_print("╟─────┴──────────────────────────────────┴────────╢");
-    server_print("║ Total: %-5d                                    ║", ArrayMapSize(Modules));
+    server_print("║ Total: %-5d                                    ║", ModuleType_GetCount());
     server_print("╚═════════════════════════════════════════════════╝");
+
+    return PLUGIN_HANDLED;
 }
 
 @SrvCmd_ModuleParams() {
-    new Module[S_Module], ModuleName[32];
-    read_argv(1, ModuleName, charsmax(ModuleName));
+    new sModuleTypeName[VIPM_MODULES_TYPE_NAME_MAX_LEN];
+    read_argv(1, sModuleTypeName, charsmax(sModuleTypeName));
 
-    if (!MODULE_EXISTS(ModuleName)) {
-        server_print("Module `%s` not found.", ModuleName);
-        return;
+    new T_ModuleType:iModuleType = ModuleType_Find(sModuleTypeName);
+    if (iModuleType == Invalid_ModuleType) {
+        server_print("Module type '%s' not found.", sModuleTypeName);
+        return PLUGIN_HANDLED;
     }
-
-    GET_MODULE(ModuleName, Module);
     
-    PrintConfigParams(Module[Module_Params]);
+    new Array:aParams = ModuleType_GetParams(iModuleType);
+    PrintConfigParams(aParams);
+    ArrayDestroy(aParams);
+
+    return PLUGIN_HANDLED;
 }
 
 @SrvCmd_Limits() {
@@ -96,6 +103,8 @@ SrvCmds_Init() {
     server_print("╟─────┴──────────────────────────────────┴────────┴────────┴────────────╢");
     server_print("║ Total: %-5d                                                          ║", LimitType_GetCount());
     server_print("╚═══════════════════════════════════════════════════════════════════════╝");
+
+    return PLUGIN_HANDLED;
 }
 
 @SrvCmd_LimitParams() {

@@ -13,7 +13,7 @@
 
 enum _:S_LimitType {
     LimitType_Name[VIPM_LIMITS_TYPE_NAME_MAX_LEN],
-    Array:LimitType_Params, // S_CfgParam
+    Array:LimitType_Params, // S_CfgParam[]
 
     bool:LimitType_Static,
     LimitType_StaticValue,
@@ -28,9 +28,9 @@ enum T_LimitType { Invalid_LimitType = -1 }
 static ArrayMap(g_amLimitTypes); // S_LimitType
 
 LimitType_Init() {
-    if (!ArrayMapCreated(g_amLimitTypes)) {
-        InitArrayMap(g_amLimitTypes, S_LimitType);
-    }
+    CallOnce();
+
+    ArrayMapCreate(g_amLimitTypes, S_LimitType);
 }
 
 Array:LimitType_GetAll() {
@@ -48,7 +48,7 @@ T_LimitType:LimitType_Construct(const sName[], const bool:bForPlayer = false, co
     }
 
     if (LimitType_Find(sName) != Invalid_LimitType) {
-        abort(0, "Limit type '' already exists.", sName);
+        abort(0, "Limit type '%s' already exists.", sName);
         return Invalid_LimitType;
     }
 
@@ -68,15 +68,19 @@ T_LimitType:LimitType_Construct(const sName[], const bool:bForPlayer = false, co
 }
 
 T_LimitType:LimitType_Find(const sName[]) {
-    return T_LimitType:ArrayMapGetIndex(g_amLimitTypes, sName);
+    if (ArrayMapKeyExists(g_amLimitTypes, sName)) {
+        return T_LimitType:ArrayMapGetIndex(g_amLimitTypes, sName);
+    } else {
+        return Invalid_LimitType;
+    }
 }
 
 static LimitType__Get(const T_LimitType:iLimitType, LimitType[S_LimitType]) {
-    ArrayMapGetiArray(g_amLimitTypes, _:iLimitType, LimitType);
+    ArrayMapGetArray(g_amLimitTypes, _:iLimitType, LimitType);
 }
 
 static LimitType__Set(const LimitType[S_LimitType]) {
-    ArrayMapSetArray(g_amLimitTypes, LimitType[LimitType_Name], LimitType);
+    ArrayMapSetArrayByKey(g_amLimitTypes, LimitType[LimitType_Name], LimitType);
 }
 
 Array:LimitType_GetParams(const T_LimitType:iLimitType) {
@@ -90,7 +94,7 @@ Array:LimitType_GetParams(const T_LimitType:iLimitType) {
     return ArrayClone(LimitType[LimitType_Params]);
 }
 
-LimitType_MergeParams(const T_LimitType:iLimitType, const Array:aParams) {
+LimitType_MergeParamsList(const T_LimitType:iLimitType, const Array:aParams) {
     new LimitType[S_LimitType];
     LimitType__Get(iLimitType, LimitType);
 
@@ -156,6 +160,7 @@ static LimitType__MakeEventForward(const E_LimitEvent:iEvent, const PluginId, co
     switch (iEvent) {
         case Limit_OnRead: // (const JSON:jCfg, Trie:tParams)
             return CreateOneForward(PluginId, sFuncName, FP_CELL, FP_CELL);
+            
         case Limit_OnCheck: // (const Trie:tParams, const UserId)
             return CreateOneForward(PluginId, sFuncName, FP_CELL, FP_CELL);
     }

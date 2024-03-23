@@ -6,6 +6,7 @@
 
 #include <amxmodx>
 #include <VipM/Limits>
+#include "VipM/Utils"
 #include "VipM/ArrayMap"
 #include "VipM/ArrayTrieUtils"
 
@@ -21,11 +22,13 @@ enum _:S_LimitUnit {
 static Array:g_aLimitUnits = Invalid_Array;
 
 LimitUnit_Init() {
-    LimitType_Init();
+    CallOnce();
 
-    if (g_aLimitUnits == Invalid_Array) {
-        g_aLimitUnits = ArrayCreate(S_LimitUnit, 1);
-    }
+    LimitType_Init();
+    
+    g_aLimitUnits = ArrayCreate(S_LimitUnit, 1);
+    Forwards_Reg("ReadLimitUnit", ET_IGNORE, FP_CELL, FP_CELL); // TODO: call
+    Forwards_RegAndCall("InitLimits", ET_IGNORE);
 }
 
 LimitUnit_GetCount() {
@@ -34,7 +37,7 @@ LimitUnit_GetCount() {
 
 static T_LimitUnit:LimitUnit__Construct(const T_LimitType:iLimitType, const Trie:tParams) {
     if (g_aLimitUnits == Invalid_Array) {
-        abort(0, "Attempt to` create limit unit before init.");
+        abort(0, "Attempt to create limit unit before init.");
         return Invalid_LimitUnit;
     }
     
@@ -46,8 +49,17 @@ static T_LimitUnit:LimitUnit__Construct(const T_LimitType:iLimitType, const Trie
     return T_LimitUnit:ArrayPushArray(g_aLimitUnits, LimitUnit);
 }
 
-static LimitUnit__Get(const T_LimitUnit:iLimitUnit, LimitUnit[S_LimitUnit]) {
+static bool:LimitUnit__Get(const T_LimitUnit:iLimitUnit, LimitUnit[S_LimitUnit], const bool:bOrFail = true) {
+    if (_:iLimitUnit < 0 || _:iLimitUnit >= LimitUnit_GetCount()) {
+        if (bOrFail) {
+           abort(0, "Invalid limit unit index (%d).", iLimitUnit);
+        }
+        
+        return false;
+    }
+
     ArrayGetArray(g_aLimitUnits, _:iLimitUnit, LimitUnit);
+    return true;
 }
 
 static T_LimitType:LimitUnit__ReadType(const JSON:jLimitUnit) {
@@ -56,14 +68,14 @@ static T_LimitType:LimitUnit__ReadType(const JSON:jLimitUnit) {
     trim(sLimitTypeName);
 
     if (!sLimitTypeName[0]) {
-        Json_ErrorForFile(jLimitUnit, "ERROR", "Limit type name not specified.");
+        Json_ErrorForFile(jLimitUnit, "Limit type name not specified.");
         return Invalid_LimitType;
     }
 
     new T_LimitType:iLimitType = LimitType_Find(sLimitTypeName);
 
     if (iLimitType == Invalid_LimitType) {
-        Json_ErrorForFile(jLimitUnit, "ERROR", "Limit type '%s' not found.", sLimitTypeName);
+        Json_ErrorForFile(jLimitUnit, "Limit type '%s' not found.", sLimitTypeName);
         return Invalid_LimitType;
     }
 
@@ -105,6 +117,18 @@ Array:LimitUnit_ReadList(const JSON:jLimitUnits, &Array:aLimitUnits = Invalid_Ar
             json_free(jLimitUnit);
         }
     }
+
+    return aLimitUnits;
+}
+
+Array:JsonObject_GetLimitUnits(const JSON:jObj, const sKey[], const bool:bDotNot = false, &Array:aLimitUnits = Invalid_Array) {
+    if (!json_object_has_value(jObj, sKey, .dot_not = bDotNot)) {
+        return aLimitUnits;
+    }
+
+    new JSON:jLimitUnits = json_object_get_value(jObj, sKey, bDotNot);
+    aLimitUnits = LimitUnit_ReadList(jLimitUnits, aLimitUnits);
+    json_free(jLimitUnits);
 
     return aLimitUnits;
 }

@@ -13,11 +13,11 @@ public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = _VIPM_PLUGIN_URL;
 public stock const PluginDescription[] = "Vip Modular`s items controller";
 
-#include "VipM/ItemsController/Structs"
-#include "VipM/ItemsController/Utils"
-
 new ArrayMap(Types); // S_ItemType
 new Array:Items;
+
+#include "VipM/ItemsController/Structs"
+#include "VipM/ItemsController/Utils"
 
 public plugin_precache() {
     PluginInit();
@@ -34,7 +34,7 @@ PluginInit() {
     Forwards_Reg("GiveItem", ET_STOP, FP_CELL, FP_CELL);
     Forwards_Reg("ReadItem", ET_STOP, FP_CELL, FP_CELL);
 
-    InitArrayMap(Types, S_ItemType, 8);
+    ArrayMapCreate(Types, S_ItemType, 8);
     Forwards_RegAndCall("InitTypes", ET_IGNORE);
 
     Items = ArrayCreate(S_Item, 16);

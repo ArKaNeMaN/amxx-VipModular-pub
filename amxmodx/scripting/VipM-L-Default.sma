@@ -20,7 +20,7 @@ new Trie:g_tUsedInRound = Invalid_Trie;
 new Trie:g_tUsedInMap = Invalid_Trie;
 new Trie:g_tUsedInGame = Invalid_Trie;
 
-public VipM_OnInitModules(){
+public VipM_OnInitModules() {
     RegisterPluginByVars();
 
     VipM_Limits_RegisterType("ForAll", false, true);
@@ -137,7 +137,7 @@ public VipM_OnInitModules(){
     g_tUsedInGame = TrieCreate();
 }
 
-public client_authorized(UserId, const AuthId[]){
+public client_authorized(UserId, const AuthId[]) {
     VipM_Limits_SetStaticValue("Steam", is_user_steam(UserId), UserId);
     VipM_Limits_SetStaticValue("Bot", bool:is_user_bot(UserId), UserId);
 
