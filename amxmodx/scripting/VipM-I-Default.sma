@@ -26,7 +26,7 @@ new HookChain:g_iHook_Spawn_Pre = INVALID_HOOKCHAIN;
 public VipM_IC_OnInitTypes() {
     RegisterPluginByVars();
 
-    // Затычка для тех мест, где при отсутствии предметов вылезает ошибка/варн
+    // Затычка для тех мест, где при отсутствии предметов выоезает ошибка/варн
     VipM_IC_RegisterType("None");
 
     VipM_IC_RegisterType("Random");
@@ -155,10 +155,8 @@ public VipM_IC_OnInitTypes() {
     if (VipM_Params_GetBool(tParams, "SetHealth", false)) {
         set_entvar(UserId, var_health, VipM_Params_GetFloat(tParams, "Health"));
     } else {
-        new Float:fAddHealth = VipM_Params_GetFloat(tParams, "MaxHealth", 100.0) - (VipM_Params_GetFloat(tParams, "Health") + Float:get_entvar(UserId, var_health));
-        if (fAddHealth >= 0.0) {
-            ExecuteHamB(Ham_TakeHealth, UserId, fAddHealth, DMG_GENERIC);
-        }
+        new Float:fHealth = Float:get_entvar(UserId, var_health);
+        ExecuteHamB(Ham_TakeHealth, UserId, floatclamp(fHealth + VipM_Params_GetFloat(tParams, "Health"), 0.0, VipM_Params_GetFloat(tParams, "MaxHealth", 100.0)), DMG_GENERIC);
     }
 }
 
