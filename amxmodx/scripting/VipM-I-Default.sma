@@ -190,10 +190,9 @@ public VipM_IC_OnInitTypes() {
     if (VipM_Params_GetBool(tParams, "SetArmor", false)) {
         rg_set_user_armor(UserId, VipM_Params_GetInt(tParams, "Armor"), VipM_Params_GetBool(tParams, "Helmet", false) ? ARMOR_VESTHELM : ARMOR_KEVLAR);
     } else {
-        new iAddArmor = VipM_Params_GetInt(tParams, "MaxArmor", 100) - (VipM_Params_GetInt(tParams, "Armor") + rg_get_user_armor(UserId));
-        if (iAddArmor >= 0) {
-            rg_set_user_armor(UserId, iAddArmor, VipM_Params_GetBool(tParams, "Helmet", false) ? ARMOR_VESTHELM : ARMOR_KEVLAR);
-        }
+        new iSetArmor = min(rg_get_user_armor(UserId) + VipM_Params_GetInt(tParams, "Armor"), VipM_Params_GetInt(tParams, "MaxArmor", 100));
+
+        rg_set_user_armor(UserId, iSetArmor, VipM_Params_GetBool(tParams, "Helmet", false) ? ARMOR_VESTHELM : ARMOR_KEVLAR);
     }
 }
 
