@@ -156,7 +156,8 @@ public VipM_IC_OnInitTypes() {
         set_entvar(UserId, var_health, VipM_Params_GetFloat(tParams, "Health"));
     } else {
         new Float:fHealth = Float:get_entvar(UserId, var_health);
-        ExecuteHamB(Ham_TakeHealth, UserId, floatclamp(fHealth + VipM_Params_GetFloat(tParams, "Health"), 0.0, VipM_Params_GetFloat(tParams, "MaxHealth", 100.0)), DMG_GENERIC);
+        new Float:fAddHealth = floatclamp(fHealth + VipM_Params_GetFloat(tParams, "Health"), 0.0, VipM_Params_GetFloat(tParams, "MaxHealth", 100.0));
+        ExecuteHamB(Ham_TakeHealth, UserId, fAddHealth, DMG_GENERIC);
     }
 }
 
