@@ -156,9 +156,20 @@ public VipM_IC_OnInitTypes() {
         set_entvar(UserId, var_health, VipM_Params_GetFloat(tParams, "Health"));
     } else {
         new Float:fHealth = Float:get_entvar(UserId, var_health);
-        new Float:fAddHealth = floatclamp(VipM_Params_GetFloat(tParams, "Health"), 0.0, floatmax(0.0, VipM_Params_GetFloat(tParams, "MaxHealth", 100.0) - fHealth));
+        new Float:fMaxHealth = VipM_Params_GetFloat(tParams, "MaxHealth", 100.0);
+        new Float:fAddHealth = floatclamp(VipM_Params_GetFloat(tParams, "Health"), 0.0, floatmax(0.0, fMaxHealth - fHealth));
+        new Float:fMaxHealthCurrent = Float:get_entvar(UserId, var_max_health);
+        new bool:bNeedOverrideMaxHealth = (fHealth < fMaxHealth && fMaxHealthCurrent < fMaxHealth);
+
+        if (bNeedOverrideMaxHealth) {
+            set_entvar(UserId, var_max_health, fMaxHealth);
+        }
 
         ExecuteHamB(Ham_TakeHealth, UserId, fAddHealth, DMG_GENERIC);
+
+        if (bNeedOverrideMaxHealth) {
+            set_entvar(UserId, var_max_health, fMaxHealthCurrent);
+        }
     }
 }
 
