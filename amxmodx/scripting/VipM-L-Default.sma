@@ -20,6 +20,8 @@ new Trie:g_tUsedInRound = Invalid_Trie;
 new Trie:g_tUsedInMap = Invalid_Trie;
 new Trie:g_tUsedInGame = Invalid_Trie;
 
+new Float:g_fPlayerSpawnTime[MAX_PLAYERS + 1];
+
 public VipM_OnInitModules(){
     RegisterPluginByVars();
 
@@ -99,6 +101,13 @@ public VipM_OnInitModules(){
     );
     VipM_Limits_RegisterTypeEvent("RoundTime", Limit_OnCheck, "@OnRoundTimeCheck");
 
+    VipM_Limits_RegisterType("LifeTime", true, false);
+    VipM_Limits_AddTypeParams("LifeTime",
+        "Min", ptInteger, false,
+        "Max", ptInteger, false
+    );
+    VipM_Limits_RegisterTypeEvent("LifeTime", Limit_OnCheck, "@OnLifeTimeCheck");
+
     VipM_Limits_RegisterType("InFreezyTime", false, false);
     VipM_Limits_AddTypeParams("InFreezyTime",
         "Reverse", ptBoolean, false
@@ -131,6 +140,7 @@ public VipM_OnInitModules(){
     VipM_Limits_RegisterTypeEvent("Time", Limit_OnCheck, "@OnTimeCheck");
 
     RegisterHookChain(RG_CSGameRules_RestartRound, "@OnRestartRound", true);
+    RegisterHookChain(RG_CBasePlayer_Spawn, "@OnPlayerSpawn", true);
 
     g_tUsedInRound = TrieCreate();
     g_tUsedInMap = TrieCreate();
@@ -150,6 +160,10 @@ public client_authorized(UserId, const AuthId[]){
     if (get_member_game(m_bCompleteReset)) {
         TrieClear(g_tUsedInGame);
     }
+}
+
+@OnPlayerSpawn(const UserId) {
+    g_fPlayerSpawnTime[UserId] = get_gametime();
 }
 
 @OnTimeRead(const JSON:jCfg, const Trie:tParams) {
@@ -267,6 +281,17 @@ public client_authorized(UserId, const AuthId[]){
     return (
         (!iMin || iRoundTime >= iMin)
         && (!iMax || iRoundTime <= iMax)
+    );
+}
+
+@OnLifeTimeCheck(const Trie:Params, const UserId) {
+    new iMin = VipM_Params_GetInt(Params, "Min", 0);
+    new iMax = VipM_Params_GetInt(Params, "Max", 0);
+    new iLifeTime = floatround(get_gametime() - g_fPlayerSpawnTime[UserId]);
+
+    return (
+        (!iMin || iLifeTime >= iMin)
+        && (!iMax || iLifeTime <= iMax)
     );
 }
 
