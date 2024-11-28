@@ -78,11 +78,6 @@ jobs:
           GENERATE_PLUGINS_INI: ${{ env.GENERATE_PLUGINS_INI }}
           PLUGINS_INI_POSTFIX: ${{ env.PLUGINS_INI_POSTFIX }}
         run: |
-          if [ ! -z "${GENERATE_PLUGINS_INI}" ]; then
-            plugin_ini_path="../configs/plugins-${PLUGINS_INI_POSTFIX}.ini"
-            touch $plugin_ini_path
-          fi
-          
           compile() {
             sourcefile=$1
             amxxfile="$(echo $sourcefile | sed -e 's/\.sma$/.amxx/')"
@@ -97,6 +92,8 @@ jobs:
               -i"$PARAMS_CONRTOLLER_INCLUDE"
               
             if [ ! -z "${GENERATE_PLUGINS_INI}" ]; then
+              plugin_ini_path="../configs/plugins-${PLUGINS_INI_POSTFIX}.ini"
+              touch $plugin_ini_path
               echo $amxxfile >> $plugin_ini_path
             fi
           }
