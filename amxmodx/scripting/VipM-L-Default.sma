@@ -139,6 +139,20 @@ public VipM_OnInitModules(){
     VipM_Limits_RegisterTypeEvent("Time", Limit_OnRead, "@OnTimeRead");
     VipM_Limits_RegisterTypeEvent("Time", Limit_OnCheck, "@OnTimeCheck");
 
+    VipM_Limits_RegisterType("Frags", true, false);
+    VipM_Limits_AddTypeParams("Frags",
+        "Min", ptInteger, false,
+        "Max", ptInteger, false
+    );
+    VipM_Limits_RegisterTypeEvent("Frags", Limit_OnCheck, "@OnFragsCheck");
+
+    VipM_Limits_RegisterType("GameTime", true, false);
+    VipM_Limits_AddTypeParams("GameTime",
+        "Min", ptFloat, false,
+        "Max", ptFloat, false
+    );
+    VipM_Limits_RegisterTypeEvent("GameTime", Limit_OnCheck, "@OnGameTimeCheck");
+
     RegisterHookChain(RG_CSGameRules_RestartRound, "@OnRestartRound", true);
     RegisterHookChain(RG_CBasePlayer_Spawn, "@OnPlayerSpawn", true);
 
@@ -164,6 +178,38 @@ public client_authorized(UserId, const AuthId[]){
 
 @OnPlayerSpawn(const UserId) {
     g_fPlayerSpawnTime[UserId] = get_gametime();
+}
+
+@OnGameTimeCheck(const Trie:params) {
+    new Float:gameTime = get_gametime();
+
+    new Float:min;
+    if (TrieGetCell(params, "Min", min) && gameTime < min) {
+        return false;
+    }
+
+    new Float:max;
+    if (TrieGetCell(params, "Max", max) && gameTime > max) {
+        return false;
+    }
+
+    return true;
+}
+
+@OnFragsCheck(const Trie:params, const playerIndex) {
+    new frags = get_user_frags(playerIndex);
+
+    new min;
+    if (TrieGetCell(params, "Min", min) && frags < min) {
+        return false;
+    }
+
+    new max;
+    if (TrieGetCell(params, "Max", max) && frags > max) {
+        return false;
+    }
+
+    return true;
 }
 
 @OnTimeRead(const JSON:jCfg, const Trie:tParams) {
