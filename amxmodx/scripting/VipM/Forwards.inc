@@ -20,18 +20,19 @@ Functions & Macroses:
 #include amxmodx
 
 stock const FORWARDS_NAME_TEMPLATE[] = "%s_On%s";
+stock const FORWARDS_NAME_WITHOUT_PREFIX_TEMPLATE[] = "%s%s";
 
 stock Trie:Forwards_gMap = Invalid_Trie;
-stock Forwards_gPrefix[32];
+stock Forwards_gPrefix[32] = "";
 
-stock Forwards_Init(const sPrefix[]) {
+stock Forwards_Init(const sPrefix[] = "") {
     Forwards_gMap = TrieCreate();
     copy(Forwards_gPrefix, charsmax(Forwards_gPrefix), sPrefix);
 }
 
 // []Forwards_GetFullName(const sName[]);
 #define Forwards_GetFullName(%1) \
-    fmt(FORWARDS_NAME_TEMPLATE, Forwards_gPrefix, %1)
+    fmt(Forwards_gPrefix[0] == EOS ? FORWARDS_NAME_WITHOUT_PREFIX_TEMPLATE : FORWARDS_NAME_TEMPLATE, Forwards_gPrefix, %1)
 
 // Forwards_Reg(const sName[], const iStopType, const ...?param_types);
 #define Forwards_Reg(%1,%2) \

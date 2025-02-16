@@ -43,12 +43,12 @@ LimitType_GetCount() {
 
 T_LimitType:LimitType_Construct(const sName[], const bool:bForPlayer = false, const bool:bStatic = false) {
     if (!ArrayMapCreated(g_amLimitTypes)) {
-        abort(0, "Attempt to create limit type before limits controller init.");
+        abort(AMX_ERR_GENERAL, "Attempt to create limit type before limits controller init.");
         return Invalid_LimitType;
     }
 
     if (LimitType_Find(sName) != Invalid_LimitType) {
-        abort(0, "Limit type '%s' already exists.", sName);
+        abort(AMX_ERR_PARAMS, "Limit type '%s' already exists.", sName);
         return Invalid_LimitType;
     }
 
@@ -150,7 +150,7 @@ LimitType_SetEventListener(
     LimitType[LimitType_Events][iEvent] = LimitType__MakeEventForward(iEvent, PluginId, sFuncName);
 
     if (LimitType[LimitType_Events][iEvent] < 0) {
-        abort(0, "[ERROR] Can't create forward for func '%s' in plugin #%d.", sFuncName, PluginId);
+        abort(AMX_ERR_PARAMS, "[ERROR] Can't create forward for func '%s' in plugin #%d.", sFuncName, PluginId);
     }
 
     LimitType__Set(LimitType);
@@ -165,7 +165,7 @@ static LimitType__MakeEventForward(const E_LimitEvent:iEvent, const PluginId, co
             return CreateOneForward(PluginId, sFuncName, FP_CELL, FP_CELL);
     }
 
-    abort(0, "[ERROR] Invalid event index (%d).", iEvent);
+    abort(AMX_ERR_GENERAL, "[ERROR] Invalid event index (%d).", iEvent);
     return -1;
 }
 
@@ -174,7 +174,7 @@ LimitType_SetStaticValue(const T_LimitType:iLimitType, const bool:bValue, const 
     LimitType__Get(iLimitType, LimitType);
     
     if (!LimitType[LimitType_Static]) {
-        abort(0, "Trying to set static value for a non-static limit.");
+        abort(AMX_ERR_PARAMS, "Trying to set static value for a non-static limit.");
         return;
     }
 
@@ -200,7 +200,7 @@ bool:LimitType_Execute(const T_LimitType:iLimitType, const Trie:tParams, const U
         }
     } else {
         if (LimitType[LimitType_Events][Limit_OnCheck] < 0) {
-            abort(0, "'Limit_OnCheck' event listener for non-static limit type '%s' must be implemented.", LimitType[LimitType_Name]);
+            abort(AMX_ERR_GENERAL, "'Limit_OnCheck' event listener for non-static limit type '%s' must be implemented.", LimitType[LimitType_Name]);
             bRes = false;
         } else {
             ExecuteForward(LimitType[LimitType_Events][Limit_OnCheck], bRes, tParams, UserId);

@@ -13,6 +13,11 @@
 #include "VipM/Core/Objects/Limits/Unit"
 #include "VipM/Core/Objects/Param"
 
+// TODO: Дописать в параметрах компиляции в экшонах
+#if !defined VIPM_INFO_COMPILED_BY_GH_ACTIONS
+    #define VIPM_INFO_COMPILED_BY_GH_ACTIONS 0
+#endif
+
 SrvCmds_Init() {
     register_srvcmd("vipm_info", "@SrvCmd_Info");
     
@@ -24,17 +29,20 @@ SrvCmds_Init() {
 }
 
 @SrvCmd_Info() {
+    new sAmxxVersion[32];
+    get_amxx_verstring(sAmxxVersion, charmsax(sAmxxVersion));
+
     server_print("╓─────────");
     server_print("║ %s v%s by %s:", PluginName, VIPM_VERSION, PluginAuthor);
     server_print("║ │");
     server_print("║ ├─Contacts:");
     server_print("║ │ ├─GitHub: https://github.com/akraneman");
-    server_print("║ │ ├─DevCS: https://dev-cs.ru/members/949/");
+    server_print("║ │ ├─Dev-CS: https://dev-cs.ru/members/949/");
     server_print("║ │ ├─VK: https://vk.com/akraneman");
     server_print("║ │ └─TG: https://t.me/arkaneman");
     server_print("║ ├─Support:");
     server_print("║ │ ├─GitHub Issues: https://github.com/ArKaNeMaN/amxx-VipModular-pub/issues");
-    server_print("║ │ ├─DevCS Resource: https://dev-cs.ru/resources/1466/");
+    server_print("║ │ ├─Dev-CS Resource: https://dev-cs.ru/resources/1466/");
     server_print("║ │ └─TG Forum: https://t.me/arkanaplugins/5");
     server_print("║ │");
     server_print("║ ├─Stats:");
@@ -46,7 +54,9 @@ SrvCmds_Init() {
     server_print("║ │ │ └─Limit units count: %d", LimitUnit_GetCount());
     server_print("║ │ ├─Vips:");
     server_print("║ │ │ └─Vips count: %d", VipUnit_GetCount());
-    server_print("║ │ └─Compiled by AmxModX v%s:", AMXX_VERSION_STR);
+    server_print("║ │ ├─Compiled by AmxModX v%s", AMXX_VERSION_STR);
+    server_print("║ │ ├─Runned by AmxModX v%s", sAmxxVersion);
+    server_print("║ │ └─Builded by GitHub Actions?: %s", VIPM_INFO_COMPILED_BY_GH_ACTIONS ? "Yes" : "No");
     server_print("║ │");
     server_print("║ └─GitHub repo: https://github.com/ArKaNeMaN/amxx-VipModular-pub");
     server_print("╙─────────");

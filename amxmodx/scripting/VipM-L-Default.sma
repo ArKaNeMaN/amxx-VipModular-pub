@@ -227,7 +227,7 @@ public client_authorized(UserId, const AuthId[]) {
 @OnTimeCheck(const Trie:tParams) {
     new iBefore = VipM_Params_GetInt(tParams, "Before", 0);
     new iAfter = VipM_Params_GetInt(tParams, "After", 0);
-    new iCurrent = GetTime();
+    new iCurrent = GetDayTimeInSeconds();
 
     Dbg_Log("@OnTimeCheck(%d):", tParams);
     Dbg_Log("  iBefore = %d", iBefore);
@@ -411,7 +411,7 @@ bool:@OnFlagsCheck(const Trie:Params, const UserId) {
 
 @OnRoundCheck(const Trie:Params, const UserId){
     return (
-        GetRound() >= VipM_Params_GetInt(Params, "Min", -1)
-        && GetRound() <= VipM_Params_GetInt(Params, "Max", cellmax)
+        GetCurrentRoundNum() >= VipM_Params_GetInt(Params, "Min", -1)
+        && GetCurrentRoundNum() <= VipM_Params_GetInt(Params, "Max", cellmax)
     );
 }

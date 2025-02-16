@@ -40,7 +40,7 @@ static T_VipUnit:VipUnit__Construct(
     const Array:aModules
 ) {
     if (g_aVipUnits == Invalid_Array) {
-        abort(0, "Attempt to create vip unit before init.");
+        abort(AMX_ERR_GENERAL, "Attempt to create vip unit before init.");
         return Invalid_VipUnit;
     }
 

@@ -37,7 +37,7 @@ LimitUnit_GetCount() {
 
 static T_LimitUnit:LimitUnit__Construct(const T_LimitType:iLimitType, const Trie:tParams) {
     if (g_aLimitUnits == Invalid_Array) {
-        abort(0, "Attempt to create limit unit before init.");
+        abort(AMX_ERR_GENERAL, "Attempt to create limit unit before init.");
         return Invalid_LimitUnit;
     }
     
@@ -52,7 +52,7 @@ static T_LimitUnit:LimitUnit__Construct(const T_LimitType:iLimitType, const Trie
 static bool:LimitUnit__Get(const T_LimitUnit:iLimitUnit, LimitUnit[S_LimitUnit], const bool:bOrFail = true) {
     if (_:iLimitUnit < 0 || _:iLimitUnit >= LimitUnit_GetCount()) {
         if (bOrFail) {
-           abort(0, "Invalid limit unit index (%d).", iLimitUnit);
+           abort(AMX_ERR_NOTFOUND, "Invalid limit unit index (%d).", iLimitUnit);
         }
         
         return false;

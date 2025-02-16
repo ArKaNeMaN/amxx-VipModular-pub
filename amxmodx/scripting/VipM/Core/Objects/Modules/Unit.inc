@@ -36,7 +36,7 @@ ModuleUnit_GetCount() {
 
 static T_ModuleUnit:ModuleUnit__Construct(const T_ModuleType:iModuleType, const Trie:tParams) {
     if (g_aModuleUnits == Invalid_Array) {
-        abort(0, "Attempt to create module unit before init.");
+        abort(AMX_ERR_GENERAL, "Attempt to create module unit before init.");
         return Invalid_ModuleUnit;
     }
     

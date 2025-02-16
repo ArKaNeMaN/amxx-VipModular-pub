@@ -12,36 +12,44 @@
 #include reapi
 #include VipModular
 
-stock const __INT_TEMPLATE_STR[] = "%d";
 stock const __SLANG_TEMPLATE_STR[] = "%l";
 stock const __CLANG_TEMPLATE_STR[] = "%L";
 stock const __JSON_FILE_TEMPLATE_STR[] = "%s.json";
 stock const __USER_NAME_TEMPLATE_STR[] = "%n";
 stock const __LANG_MSG_LAYOUT_KEY[] = "MSG_LAYOUT";
 
+stock const bool:__CompositeMacros_AlwaysFalse = false;
 #define CompositeMacros(%1) \
-    do { %1 } while(is_linux_server() == 0xDEADBEEF)
+    do { %1 } while(__CompositeMacros_AlwaysFalse)
 
-#define GetRound() \
-    (get_member_game(m_iTotalRoundsPlayed) + 1)
+stock GetCurrentRoundNum() {
+    return get_member_game(m_iTotalRoundsPlayed) + 1;
+}
 
-#define IntToStr(%1) \
-    fmt(__INT_TEMPLATE_STR, %1)
+stock IntToStr(const int) {
+    new str[11];
+    num_to_str(int, str, charsmax(str));
 
-#define IsUserIdValid(%1) \
-    (%1 >= 1 && %1 <= 32)
+    return str;
+}
 
-#define IsUserValid(%1) \
-    ( \
-        IsUserIdValid(%1) \
-        && is_user_connected(%1) \
-    )
+stock IsPlayerIndexValid(const playerIndex) {
+    return playerIndex >= 1 && playerIndex <= 32;
+}
 
-#define IsUserValidA(%1) \
-    ( \
-        IsUserIdValid(%1) \
-        && is_user_alive(%1) \
-    )
+stock IsPlayerValid(const playerIndex) {
+    return (
+        IsPlayerIndexValid(playerIndex)
+        && is_user_connected(playerIndex)
+    );
+}
+
+stock IsPlayerAlive(const playerIndex) {
+    return (
+        IsPlayerIndexValid(playerIndex)
+        && is_user_alive(playerIndex)
+    );
+}
 
 #define Lang(%1) \
     fmt(__SLANG_TEMPLATE_STR, %1)
@@ -50,7 +58,7 @@ stock const __LANG_MSG_LAYOUT_KEY[] = "MSG_LAYOUT";
     fmt(__CLANG_TEMPLATE_STR, %1)
 
 #define ChatPrint(%1,%2) \
-    client_print_color(%1, print_team_default, __CLANG_TEMPLATE_STR, IsUserIdValid(%1) ? %1 : -1, __LANG_MSG_LAYOUT_KEY, fmt(%2))
+    client_print_color(%1, print_team_default, __CLANG_TEMPLATE_STR, IsPlayerIndexValid(%1) ? %1 : -1, __LANG_MSG_LAYOUT_KEY, fmt(%2))
 
 #define ChatPrintL(%1,%2) \
     ChatPrint(%1, __CLANG_TEMPLATE_STR, %1, %2)
@@ -254,13 +262,6 @@ stock RegisterPlugin(
     } \
 )
 
-// Надо чтобы переменные были определены раньше, что может быть неудобно:)
-// stock RegisterPluginByVars() {
-//     if (GetAmxxVersionNum() < 1100) {
-//         register_plugin(PluginName, PluginVersion, PluginAuthor);
-//     }
-// }
-
 stock ItemHasClip(const ItemId) {
     new WeaponIdType:WeaponId = get_member(ItemId, m_iId);
     switch (WeaponId) {
@@ -295,10 +296,10 @@ stock InstantReloadActiveWeapon(const UserId) {
     }
 }
 
-stock bool:StrEqualEx(const sA[], const sB[], const iCount = 0, const bool:bIgnoreCase = false) {
-    return bIgnoreCase
-        ? equali(sA, sB, iCount)
-        : equal(sA, sB, iCount);
+stock bool:StrEqualEx(const str1[], const str2[], const checkLength = 0, const bool:ignoreCase = false) {
+    return ignoreCase
+        ? equali(str1, str2, checkLength)
+        : equal(str1, str2, checkLength);
 }
 
 stock bool:IsUserInBuyZone(const UserId) {
@@ -314,6 +315,6 @@ stock ParseColonTime(const sTime[], const sColon[] = ":") {
     return ((clamp(str_to_num(sHours), 0, 23) * 60) + clamp(str_to_num(sMinutes), 0, 59)) * 60;
 }
 
-stock GetTime() {
+stock GetDayTimeInSeconds() {
     return get_systime() % (24 * 60 * 60);
 }

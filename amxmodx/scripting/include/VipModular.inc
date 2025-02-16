@@ -137,6 +137,6 @@ native VipM_Json_LogForFile(const JSON:jValue, const sPrefix[], const sMessage[]
 
 #include <VipM/Modules>
 #include <VipM/Limits>
-#include <VipM/ItemsController>
+#include <ItemsController>
 #include <VipM/Params>
 #include <VipM/M/WeaponMenu>

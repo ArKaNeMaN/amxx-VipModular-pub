@@ -44,12 +44,12 @@ ModuleType_GetCount() {
 
 T_ModuleType:ModuleType_Construct(const sName[]) {
     if (!ArrayMapCreated(g_amModuleTypes)) {
-        abort(0, "Attempt to create module type before modules init.");
+        abort(AMX_ERR_GENERAL, "Attempt to create module type before modules init.");
         return Invalid_ModuleType;
     }
 
     if (ModuleType_Find(sName) != Invalid_ModuleType) {
-        abort(0, "Module type '%s' already exists.", sName);
+        abort(AMX_ERR_PARAMS, "Module type '%s' already exists.", sName);
         return Invalid_ModuleType;
     }
 
@@ -174,7 +174,7 @@ ModuleType_SetEventListener(
     ModuleType[ModuleType_Events][iEvent] = ModuleType__MakeEventForward(iEvent, PluginId, sFuncName);
 
     if (ModuleType[ModuleType_Events][iEvent] < 0) {
-        abort(0, "[ERROR] Can't create forward for func '%s' in plugin #%d.", sFuncName, PluginId);
+        abort(AMX_ERR_PARAMS, "[ERROR] Can't create forward for func '%s' in plugin #%d.", sFuncName, PluginId);
         return;
     }
 
@@ -193,7 +193,7 @@ static ModuleType__MakeEventForward(const E_ModuleEvent:iEvent, const PluginId, 
             return CreateOneForward(PluginId, sFuncName, FP_CELL, FP_CELL);
     }
 
-    abort(0, "[ERROR] Invalid event index (%d).", iEvent);
+    abort(AMX_ERR_GENERAL, "[ERROR] Invalid event index (%d).", iEvent);
     return -1;
 }
 

@@ -123,7 +123,7 @@ public client_disconnected(UserId) {
 }
 
 @OnPlayerSpawn(const UserId) {
-    if (!IsUserValidA(UserId)) {
+    if (!IsPlayerAlive(UserId)) {
         Dbg_Log("@OnPlayerSpawn(%n): Invalid (or dead) player", UserId);
         return;
     }
@@ -201,7 +201,7 @@ AbortAutoCloseMenu(const UserId) {
 }
 
 _Cmd_Menu(const UserId, const bool:bSilent = false) {
-    if (!IsUserValid(UserId)) {
+    if (!IsPlayerValid(UserId)) {
         Dbg_Log("_Cmd_Menu(%d, %s): Invalid player", UserId, bSilent ? "true" : "false");
         return;
     }
