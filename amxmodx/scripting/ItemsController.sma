@@ -10,6 +10,7 @@ public stock const PluginURL[] = "https://github.com/ArKaNeMaN/amxx-VipModular-p
 public stock const PluginDescription[] = "Unified interface for items giving.";
 
 #include "ItemsController/Objects/Items/Instance"
+#include "ItemsController/DefaultObjects/Regsitrar"
 
 public plugin_precache() {
     PluginInit();
@@ -24,6 +25,7 @@ PluginInit() {
     Forwards_Init();
     
     ItemInstance_Init();
+    DefaultObjects_RegisterAll();
     Forwards_RegAndCall("VipM_IC_OnInitTypes", ET_IGNORE); // deprecated
 }
 

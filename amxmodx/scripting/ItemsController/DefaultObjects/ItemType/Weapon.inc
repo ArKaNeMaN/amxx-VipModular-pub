@@ -1,0 +1,91 @@
+#include <amxmodx>
+#include <reapi>
+#include <json>
+#include <ItemsController>
+
+DefaultObjects_ItemType_Weapon_Register() {
+    IC_ItemType_SimpleRegister(
+        .name = "Weapon",
+        .onRead = "@OnWeaponRead",
+        .onGive = "@OnWeaponGive"
+    );
+}
+
+@OnWeaponRead(const JSON:instanceJson, const Trie:p) {
+    new Name[32];
+    json_object_get_string(instanceJson, "Name", Name, charsmax(Name));
+
+    // if(get_weaponid(Name) == 0){
+    //     log_amx("[WARNING] Weapon `%s` not found.", Name);
+    //     return IC_RET_READ_FAIL;
+    // }
+
+    TrieSetCell(p, "GiveType", _:Json_Object_GetGiveType(instanceJson, "GiveType"));
+
+    if (json_object_has_value(instanceJson, "BpAmmo", JSONNumber)) {
+        TrieSetCell(p, "BpAmmo", json_object_get_number(instanceJson, "BpAmmo"));
+    }
+
+    TrieSetString(p, "Name", Name);
+
+    return IC_RET_READ_SUCCESS;
+}
+
+@OnWeaponGive(const playerIndex, const Trie:p) {
+    static WeaponName[32];
+    VipM_Params_GetStr(p, "Name", WeaponName, charsmax(WeaponName));
+    if (!WeaponName[0]) {
+        return IC_RET_GIVE_FAIL;
+    }
+    
+    if (!get_weaponid(WeaponName)) {
+        log_amx("[WARNING] Default weapon `%s` not found.", WeaponName);
+        return IC_RET_GIVE_FAIL;
+    }
+    
+    new GiveType:iGiveType = GiveType:VipM_Params_GetInt(p, "GiveType", _:GT_DROP_AND_REPLACE);
+    new iBpAmmo = VipM_Params_GetInt(p, "BpAmmo", -1);
+
+    new ItemId = rg_give_item(playerIndex, WeaponName, iGiveType);
+    if (ItemId < 0) {
+        return IC_RET_GIVE_FAIL;
+    }
+
+    new WeaponIdType:iWpnId = rg_get_weapon_info(WeaponName, WI_ID);
+    new iWpnSlot = rg_get_iteminfo(ItemId, ItemInfo_iSlot);
+
+    if (
+        iBpAmmo < 0
+        && !(
+            iWpnSlot == 0
+            || iWpnSlot == 1
+        )
+    ) {
+        return IC_RET_GIVE_SUCCESS;
+    }
+
+    new def_BpAmmo = (rg_get_weapon_info(iWpnId, WI_MAX_ROUNDS));
+    if (def_BpAmmo >= 0) {
+        rg_set_user_bpammo(playerIndex, iWpnId, iBpAmmo < 0 ? def_BpAmmo : iBpAmmo);
+    }
+
+    return IC_RET_GIVE_SUCCESS;
+}
+
+GiveType:Json_Object_GetGiveType(const JSON:Obj, const Key[], const bool:DotNot = false) {
+    new Str[32];
+    json_object_get_string(Obj, Key, Str, charsmax(Str), DotNot);
+    return StrToGiveType(Str);
+}
+
+GiveType:StrToGiveType(const Str[]) {
+    if (equali(Str, "GT_APPEND") || equali(Str, "Append") || equali(Str, "Add")) {
+        return GT_APPEND;
+    } else if (equali(Str, "GT_REPLACE") || equali(Str, "Replace")) {
+        return GT_REPLACE;
+    } else if (equali(Str, "GT_DROP_AND_REPLACE") || equali(Str, "Drop") || equali(Str, "DropAndReplace")) {
+        return GT_DROP_AND_REPLACE;
+    } else {
+        return GT_DROP_AND_REPLACE;
+    }
+}
