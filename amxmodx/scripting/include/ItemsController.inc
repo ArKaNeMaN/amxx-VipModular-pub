@@ -332,11 +332,11 @@ stock bool:VipM_IC_GiveItems(const UserId, const Array:aItems) {
 }
 
 stock bool:VipM_Params_GiveItems(const UserId, const Trie:tParams, const sParam[]) {
-    return VipM_IC_GiveItems(UserId, VipM_Params_GetArr(tParams, sParam));
+    return IC_Item_GiveArray(UserId, VipM_Params_GetArr(tParams, sParam));
 }
 
 stock bool:VipM_Params_GiveItem(const UserId, const Trie:tParams, const sParam[]) {
-    return VipM_IC_GiveItems(UserId, VipM_Params_GetCell(tParams, sParam));
+    return IC_Item_Give(UserId, VipM_Params_GetCell(tParams, sParam));
 }
 
 #pragma deprecated Use Json_Object_IC_GetItems() instead.
