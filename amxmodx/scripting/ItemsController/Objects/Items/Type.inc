@@ -126,6 +126,11 @@ bool:ItemType_ReadParamsFromJsonObject(const T_IC_ItemType:type, const JSON:para
 
     // TODO: Использовать ParamsController
 
+    // deprecated
+    new nameParam[256];
+    json_object_get_string(paramsJson, "Name", nameParam, charsmax(nameParam));
+    TrieSetString(params, "Name", nameParam);
+
     if (typeObject[ItemType_Events][ItemType_OnRead] != INVALID_HANDLE) {
         new ret = IC_RET_READ_SUCCESS;
         ExecuteForward(typeObject[ItemType_Events][ItemType_OnRead], ret, paramsJson, params);
