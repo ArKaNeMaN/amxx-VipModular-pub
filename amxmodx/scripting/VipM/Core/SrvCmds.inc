@@ -30,7 +30,7 @@ SrvCmds_Init() {
 
 @SrvCmd_Info() {
     new sAmxxVersion[32];
-    get_amxx_verstring(sAmxxVersion, charmsax(sAmxxVersion));
+    get_amxx_verstring(sAmxxVersion, charsmax(sAmxxVersion));
 
     server_print("╓─────────");
     server_print("║ %s v%s by %s:", PluginName, VIPM_VERSION, PluginAuthor);
