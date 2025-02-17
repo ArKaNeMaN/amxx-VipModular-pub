@@ -35,7 +35,7 @@ DefaultObjects_ItemType_Random_Register() {
 @OnRandomGive(const playerIndex, const Trie:p) {
     new Array:aItems = VipM_Params_GetArr(p, "Items");
     new iRandomIndex = random_num(0, ArraySizeSafe(aItems) - 1);
-    new VipM_IC_T_Item:iRandomItem = ArrayGetCell(aItems, iRandomIndex);
+    new T_IC_Item:iRandomItem = ArrayGetCell(aItems, iRandomIndex);
 
     return IC_Item_Give(playerIndex, iRandomItem) ? IC_RET_GIVE_SUCCESS : IC_RET_GIVE_FAIL;
 }

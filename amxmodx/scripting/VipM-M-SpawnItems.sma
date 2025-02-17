@@ -8,9 +8,6 @@
 #include "VipM/Utils"
 #include "VipM/ArrayTrieUtils"
 
-#pragma semicolon 1
-#pragma compress 1
-
 public stock const PluginName[] = "[VipM-M] Spawn Items";
 public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
@@ -19,10 +16,9 @@ public stock const PluginDescription[] = "Vip modular`s module - Spawn Items";
 
 new const MODULE_NAME[] = "SpawnItems";
 
-public VipM_OnInitModules(){
-    RegisterPluginByVars();
-
-    VipM_IC_Init();
+public VipM_OnInitModules() {
+    register_plugin(PluginName, PluginVersion, PluginAuthor);
+    IC_Init();
     
     VipM_Modules_Register(MODULE_NAME, true);
     VipM_Modules_AddParams(MODULE_NAME,
@@ -33,17 +29,17 @@ public VipM_OnInitModules(){
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnActivated, "@OnModuleActivate");
 }
 
-@OnReadConfig(const JSON:jCfg, Trie:Params){
-    if(!json_object_has_value(jCfg, "Items")){
+@OnReadConfig(const JSON:jCfg, Trie:Params) {
+    if (!json_object_has_value(jCfg, "Items")) {
         log_amx("[WARNING] Field `Items` required.");
         return VIPM_STOP;
     }
     
     new JSON:jItems = json_object_get_value(jCfg, "Items");
-    new Array:aItems = VipM_IC_JsonGetItems(jItems);
+    new Array:aItems = IC_Item_ReadArrayFromJson(jItems);
     json_free(jItems);
 
-    if(ArraySizeSafe(aItems) < 1){
+    if (ArraySizeSafe(aItems) < 1) {
         ArrayDestroySafe(aItems);
         log_amx("[WARNING] Field `Items` is empty.");
         return VIPM_STOP;
@@ -53,11 +49,11 @@ public VipM_OnInitModules(){
     return VIPM_CONTINUE;
 }
 
-@OnModuleActivate(){
+@OnModuleActivate() {
     RegisterHookChain(RG_CBasePlayer_Spawn, "@OnPlayerSpawned", true);
 }
 
-@OnPlayerSpawned(const UserId){
+@OnPlayerSpawned(const UserId) {
     RequestFrame("@GivePlayerItems", UserId);
 }
 
@@ -83,7 +79,7 @@ public VipM_OnInitModules(){
         return;
     }
     
-    if (VipM_IC_GiveItems(UserId, aItems)) {
+    if (IC_Item_GiveArray(UserId, aItems)) {
         Dbg_Log("@GivePlayerItems(%n) Items given", UserId);
     } else {
         Dbg_Log("@GivePlayerItems(%n) Items not given", UserId);

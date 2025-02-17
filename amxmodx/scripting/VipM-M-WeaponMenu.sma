@@ -44,7 +44,7 @@ new gUserExpireStatus[MAX_PLAYERS + 1][VIPM_M_WEAPONMENU_EXPIRE_STATUS_MAX_LEN];
 public VipM_OnInitModules() {
     RegisterPluginByVars();
     register_dictionary("VipM-WeaponMenu.ini");
-    VipM_IC_Init();
+    IC_Init();
 
     VipM_Modules_Register(MODULE_NAME, true);
     VipM_Modules_AddParams(MODULE_NAME,
@@ -308,7 +308,7 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
     }
     
     if (
-        VipM_IC_GiveItems(UserId, MenuItem[MenuItem_Items])
+        IC_Item_GiveArray(UserId, MenuItem[MenuItem_Items])
         && MenuItem[MenuItem_UseCounter]
     ) {
         gUserLeftItems[UserId]--;

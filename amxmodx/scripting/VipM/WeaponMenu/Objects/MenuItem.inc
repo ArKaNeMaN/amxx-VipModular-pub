@@ -17,7 +17,7 @@ enum _:S_MenuItem {
     MenuItemType:MenuItem_Type,
 
     MenuItem_Title[64],
-    Array:MenuItem_Items, // VipM_IC_T_Item[]
+    Array:MenuItem_Items, // T_IC_Item[]
     bool:MenuItem_UseCounter,
     bool:MenuItem_FakeInactive,
     
@@ -40,7 +40,7 @@ bool:MenuItem_Read(const JSON:jMenuItem, MenuItem[S_MenuItem]) {
         return true;
     }
 
-    MenuItem[MenuItem_Items] = Json_Object_GetItemsIC(jMenuItem, "Items");
+    MenuItem[MenuItem_Items] = Json_Object_IC_GetItems(jMenuItem, "Items");
 
     if (MenuItem[MenuItem_Items] == Invalid_Array) {
         MenuItem[MenuItem_Type] = MenuItemType_Text;
