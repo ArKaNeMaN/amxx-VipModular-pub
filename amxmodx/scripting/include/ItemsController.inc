@@ -168,6 +168,19 @@ stock Array:Json_Object_IC_GetItems(const JSON:jObj, const sKey[], const bool:bD
 native bool:IC_Item_Give(const playerIndex, const T_IC_Item:item);
 
 /**
+ * Удаление экземпляра предмета из памяти (освобождение хендлера).
+ * 
+ * @note На данный момент может вызывать утечку памяти при некоторых обстоятельствах.
+ *       Если в параметрах предмета находятся хендлеры каких-либо хранилищ (Array, Trie и т.п.), они не будут очищены.
+ *       В будущем планируется решить это через ParamsController, но там пока нет нужного функционала.
+ *
+ * @param item        Хендлер экземпляра предмета. Значение будет изменено на Invalid_IC_Item.
+ *
+ * @return Всегда Invalid_IC_Item.
+ */
+native T_IC_Item:IC_Item_Free(&T_IC_Item:item);
+
+/**
  * Выдача игроку всех предметов из массива.
  *
  * @param playerIndex Индекс игрока.

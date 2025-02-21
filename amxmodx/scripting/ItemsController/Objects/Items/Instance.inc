@@ -82,7 +82,6 @@ bool:ItemInstance_Give(const playerIndex, const T_IC_Item:instance) {
     return ItemType_Give(playerIndex, instanceObject[Item_Type], instanceObject[Item_Params]);
 }
 
-#pragma unused ItemInstance_Free
 T_IC_Item:ItemInstance_Free(&T_IC_Item:instance, const bool:orFail = false) {
     new instanceObject[S_ItemInstance];
     if (!ItemInstance_Get(instance, instanceObject, .orFail = orFail)) {

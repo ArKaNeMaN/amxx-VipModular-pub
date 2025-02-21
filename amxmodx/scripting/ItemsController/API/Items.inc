@@ -12,6 +12,7 @@ API_Items_Register() {
     register_native("IC_Item_ReadFromJson", "@_Item_ReadFromJson");
     register_native("IC_Item_ReadArrayFromJson", "@_Item_ReadArrayFromJson");
     register_native("IC_Item_Give", "@_Item_Give");
+    register_native("IC_Item_Free", "@_Item_Free");
 }
 
 T_IC_ItemType:@_ItemType_Register() {
@@ -64,4 +65,13 @@ bool:@_Item_Give() {
     new T_IC_Item:item = T_IC_Item:get_param(Arg_Item);
 
     return ItemInstance_Give(playerIndex, item);
+}
+
+
+bool:@_Item_Free() {
+    enum {Arg_Item = 1}
+
+    new T_IC_Item:item = T_IC_Item:get_param(Arg_Item);
+
+    return ItemInstance_Free(item);
 }
