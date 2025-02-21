@@ -35,6 +35,7 @@ DefaultObjects_ItemType_Command_Register() {
     VipM_Params_GetStr(p, "Command", Command, charsmax(Command));
     new bool:ByServer = VipM_Params_GetBool(p, "ByServer", false);
 
+    replace_all(Command, charsmax(Command), "{UserId}", IntToStr(playerIndex));
     replace_all(Command, charsmax(Command), "{playerIndex}", IntToStr(playerIndex));
 
     if (ByServer) {

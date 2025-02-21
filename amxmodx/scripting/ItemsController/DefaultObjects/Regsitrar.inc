@@ -13,6 +13,7 @@
 #include "ItemsController/DefaultObjects/ItemType/RefillBpAmmo"
 #include "ItemsController/DefaultObjects/ItemType/Speed"
 #include "ItemsController/DefaultObjects/ItemType/Weapon"
+#include "ItemsController/DefaultObjects/ItemType/CustomWeapon"
 
 DefaultObjects_RegisterAll() {
     // Затычка для тех мест, где при отсутствии предметов вылезает ошибка/варн
@@ -31,4 +32,5 @@ DefaultObjects_RegisterAll() {
     DefaultObjects_ItemType_RefillBpAmmo_Register();
     DefaultObjects_ItemType_Speed_Register();
     DefaultObjects_ItemType_Weapon_Register();
+    DefaultObjects_ItemType_CustomWeapon_Register();
 }

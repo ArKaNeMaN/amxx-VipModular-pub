@@ -33,6 +33,8 @@ PluginInit() {
 #include "ItemsController/API/Compat"
 
 public plugin_natives() {
+    set_native_filter("@NativeFilter");
+
     register_native("IC_Init", "@_Init");
     register_native("VipM_IC_Init", "@_Init"); // deprecated
 
@@ -42,4 +44,12 @@ public plugin_natives() {
 
 @_Init() {
     PluginInit();
+}
+
+@NativeFilter(const name[], index, trap) {
+    if (DefaultObjects_ItemType_CustomWeapon_NativeFilter(name, trap)) {
+        return PLUGIN_HANDLED;
+    }
+
+    return PLUGIN_CONTINUE;
 }

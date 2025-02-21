@@ -75,10 +75,10 @@ DefaultObjects_ItemType_Weapon_Register() {
 GiveType:Json_Object_GetGiveType(const JSON:Obj, const Key[], const bool:DotNot = false) {
     new Str[32];
     json_object_get_string(Obj, Key, Str, charsmax(Str), DotNot);
-    return StrToGiveType(Str);
+    return ItemType_Weapon_StrToGiveType(Str);
 }
 
-GiveType:StrToGiveType(const Str[]) {
+GiveType:ItemType_Weapon_StrToGiveType(const Str[]) {
     if (equali(Str, "GT_APPEND") || equali(Str, "Append") || equali(Str, "Add")) {
         return GT_APPEND;
     } else if (equali(Str, "GT_REPLACE") || equali(Str, "Replace")) {
