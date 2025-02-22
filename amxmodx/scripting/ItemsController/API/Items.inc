@@ -68,7 +68,7 @@ bool:@_Item_Give() {
 }
 
 
-bool:@_Item_Free() {
+T_IC_Item:@_Item_Free() {
     enum {Arg_Item = 1}
 
     new T_IC_Item:item = T_IC_Item:get_param(Arg_Item);
