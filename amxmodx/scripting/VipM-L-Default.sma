@@ -22,6 +22,18 @@ new Trie:g_tUsedInGame = Invalid_Trie;
 
 new Float:g_fPlayerSpawnTime[MAX_PLAYERS + 1];
 
+new bool:IsSteamLimitAvailable = false;
+
+public plugin_natives() {
+    set_native_filter("@NativeFilter");
+}
+
+@NativeFilter(const name[], const index, const bool:trap) {
+    if (equal(name, "REU_GetAuthtype")) {
+        IsSteamLimitAvailable = trap;
+    }
+}
+
 public VipM_OnInitModules() {
     RegisterPluginByVars();
 
@@ -162,7 +174,12 @@ public VipM_OnInitModules() {
 }
 
 public client_authorized(UserId, const AuthId[]) {
-    VipM_Limits_SetStaticValue("Steam", is_user_steam(UserId), UserId);
+    if (IsSteamLimitAvailable) {
+        VipM_Limits_SetStaticValue("Steam", is_user_steam(UserId), UserId);
+    } else {
+        VipM_Limits_SetStaticValue("Steam", true, UserId);
+    }
+
     VipM_Limits_SetStaticValue("Bot", bool:is_user_bot(UserId), UserId);
 
     copy(g_sSteamIds[UserId], charsmax(g_sSteamIds[]), AuthId);
