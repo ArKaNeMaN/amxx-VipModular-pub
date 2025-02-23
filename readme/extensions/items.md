@@ -10,7 +10,7 @@ TODO: Переписать
 
 ```jsonc
 {
-    "Type": "<ItemType>",
+    "Item": "<ItemType>",
 
     "<ParamKey1>": "<ParamValue1>",
     // ...

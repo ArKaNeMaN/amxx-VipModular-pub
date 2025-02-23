@@ -6,7 +6,7 @@
 
 ```jsonc
 {
-    "Type": "DefuseKit"
+    "Item": "DefuseKit"
 }
 ```
 

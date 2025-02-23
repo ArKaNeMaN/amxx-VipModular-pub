@@ -6,17 +6,17 @@
 
 ```jsonc
 {
-    "Type": "ItemsList",
+    "Item": "ItemsList",
 
     "Items": [
         {
-            "Type": "Cwapi",
+            "Item": "Cwapi",
 
             "Name": "Vip_Ak47",
             "GiveType": "Replace"
         },
         {
-            "Type": "Cwapi",
+            "Item": "Cwapi",
 
             "Name": "Vip_Deagle",
             "GiveType": "Replace"

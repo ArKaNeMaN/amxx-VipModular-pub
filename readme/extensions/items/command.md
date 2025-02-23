@@ -17,7 +17,7 @@ _\* - если указано "-", то параметр является обя
 
 ```jsonc
 {
-  "Type": "Command",
+  "Item": "Command",
 
   "Command": "HealthNade_Give {UserId}",
   "ByServer": true

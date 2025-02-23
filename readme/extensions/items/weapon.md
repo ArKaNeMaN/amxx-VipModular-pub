@@ -6,7 +6,7 @@
 
 ```jsonc
 {
-    "Type": "Weapon",
+    "Item": "Weapon",
 
     "Name": "weapon_ak47",
     "GiveType": "Replace",
