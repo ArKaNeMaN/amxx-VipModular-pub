@@ -52,6 +52,9 @@ bool:DefaultObjects_ItemType_CustomWeapon_NativeFilter(const name[], const trap)
         AvailableControllers[ItemType_CustomWeapon_Controller_Cwapi] = !!trap;
         return true;
     }
+    if (equal(name, "CWAPI_Weapons_Find")) {
+        return true;
+    }
 
     if (equal(name, "__auw__native__auw_give_weapon")) {
         AvailableControllers[ItemType_CustomWeapon_Controller_Auw] = !!trap;
