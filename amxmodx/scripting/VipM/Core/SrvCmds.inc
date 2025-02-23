@@ -15,7 +15,9 @@
 
 // TODO: Дописать в параметрах компиляции в экшонах
 #if !defined VIPM_INFO_COMPILED_BY_GH_ACTIONS
-    #define VIPM_INFO_COMPILED_BY_GH_ACTIONS 0
+new bool:__VIPM_INFO_COMPILED_BY_GH_ACTIONS = false;
+#else
+new bool:__VIPM_INFO_COMPILED_BY_GH_ACTIONS = bool:(VIPM_INFO_COMPILED_BY_GH_ACTIONS);
 #endif
 
 SrvCmds_Init() {
@@ -56,7 +58,7 @@ SrvCmds_Init() {
     server_print("║ │ │ └─Vips count: %d", VipUnit_GetCount());
     server_print("║ │ ├─Compiled by AmxModX v%s", AMXX_VERSION_STR);
     server_print("║ │ ├─Runned by AmxModX v%s", sAmxxVersion);
-    server_print("║ │ └─Builded by GitHub Actions?: %s", VIPM_INFO_COMPILED_BY_GH_ACTIONS ? "Yes" : "No");
+    server_print("║ │ └─Builded by GitHub Actions?: %s", __VIPM_INFO_COMPILED_BY_GH_ACTIONS ? "Yes" : "No");
     server_print("║ │");
     server_print("║ └─GitHub repo: https://github.com/ArKaNeMaN/amxx-VipModular-pub");
     server_print("╙─────────");
