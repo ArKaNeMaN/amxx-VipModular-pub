@@ -27,7 +27,10 @@ T_IC_ItemType:@_VipM_IC_RegisterType() {
 @_VipM_IC_RegisterTypeEvent(const pluginIndex) {
     enum {Arg_Type = 1, Arg_Event, Arg_FuncName}
 
-    new T_IC_ItemType:type = T_IC_ItemType:get_param(Arg_Type);
+    new typeName[IC_ITEM_TYPE_NAME_MAX_LEN];
+    T_IC_ItemType:get_string(Arg_Type, typeName, charsmax(typeName));
+    new T_IC_ItemType:type = ItemType_Find(typeName, .orFail = true);
+
     new E_ItemTypeEvent:event = E_ItemTypeEvent:get_param(Arg_Event);
     new funcName[IC_EVENT_LISTENER_FUNCTION_NAME_MAX_LEN];
     get_string(Arg_FuncName, funcName, charsmax(funcName));
