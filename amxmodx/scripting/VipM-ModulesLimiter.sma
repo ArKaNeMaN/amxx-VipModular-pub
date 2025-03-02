@@ -44,7 +44,7 @@ public VipM_OnActivateModule(const sModuleName[]) {
 Trie:LoadModulesLimitsFromFile(const sFileName[], Trie:tModules = Invalid_Trie) {
     TrieCreateIfNotCreated(tModules);
 
-    new JSON:jFile = PCJson_ParseFile(sFileName);
+    new JSON:jFile = PCJson_ParseFile(GET_FILE_JSON_PATH(sFileName));
     if (jFile == Invalid_JSON) {
         log_error(0, "Invalid JSON syntax. File `%s`.", GET_FILE_JSON_PATH(sFileName));
         return tModules;
