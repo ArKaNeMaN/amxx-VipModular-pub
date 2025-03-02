@@ -15,7 +15,7 @@ DefaultObjects_ItemType_Command_Register() {
     TrieDeleteKey(p, "Name");
 
     if (!json_object_has_value(instanceJson, "Command", JSONString)) {
-        Json_LogForFile(instanceJson, "ERROR", "Param `Command` required for item `Command`.");
+        PCJson_LogForFile(instanceJson, "ERROR", "Param `Command` required for item `Command`.");
         return IC_RET_READ_FAIL;
     }
     

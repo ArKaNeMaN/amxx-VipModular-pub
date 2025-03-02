@@ -16,13 +16,13 @@ DefaultObjects_ItemType_Random_Register() {
 
     // TODO: Сделать как-то разные шансы
     if (!json_object_has_value(instanceJson, "Items")) {
-        Json_LogForFile(instanceJson, "ERROR", "Param `Items` required for item `Random`.");
+        PCJson_LogForFile(instanceJson, "ERROR", "Param `Items` required for item `Random`.");
         return IC_RET_READ_FAIL;
     }
     
     new Array:aItems = Json_Object_IC_GetItems(instanceJson, "Items");
     if (ArraySizeSafe(aItems) <= 1) {
-        Json_LogForFile(instanceJson, "ERROR", "Param `Items` must have >1 items.");
+        PCJson_LogForFile(instanceJson, "ERROR", "Param `Items` must have >1 items.");
         ArrayDestroy(aItems);
         return IC_RET_READ_FAIL;
     }

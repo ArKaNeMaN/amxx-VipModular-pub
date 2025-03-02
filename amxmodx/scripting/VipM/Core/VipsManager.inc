@@ -36,7 +36,7 @@ bool:VipsManager_LoadFromFile(const sFilePath[]) {
         return false;
     }
 
-    new JSON:jVipUnits = Json_ParseFromFileEx(sFilePath, g_sRootDir);
+    new JSON:jVipUnits = PCJson_ParseFile(sFilePath, g_sRootDir);
     g_aVips = VipUnit_ReadList(jVipUnits, g_aVips);
     Json_FreeEx(jVipUnits);
 

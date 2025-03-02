@@ -24,7 +24,7 @@ DefaultObjects_ItemType_Speed_Register() {
     TrieDeleteKey(p, "Name");
 
     if (!json_object_has_value(instanceJson, "Multiplier", JSONNumber)) {
-        Json_LogForFile(instanceJson, "ERROR", "Param `Multiplier` required for item `Speed`.");
+        PCJson_LogForFile(instanceJson, "ERROR", "Param `Multiplier` required for item `Speed`.");
         return IC_RET_READ_FAIL;
     }
     TrieSetCell(p, "Multiplier", json_object_get_real(instanceJson, "Multiplier"));

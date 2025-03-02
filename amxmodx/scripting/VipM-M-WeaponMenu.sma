@@ -71,7 +71,7 @@ public VipM_OnInitModules() {
 
 @OnReadConfig(const JSON:jCfg, Trie:tParams) {
     if (!json_object_has_value(jCfg, "Menus")) {
-        Json_LogForFile(jCfg, "WARNING", "Param 'Menus' required for module '%s'.", MODULE_NAME);
+        PCJson_LogForFile(jCfg, "WARNING", "Param 'Menus' required for module '%s'.", MODULE_NAME);
         return VIPM_STOP;
     }
     

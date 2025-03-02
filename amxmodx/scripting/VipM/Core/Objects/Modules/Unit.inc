@@ -64,14 +64,14 @@ static T_ModuleType:ModuleUnit__ReadType(const JSON:jModuleUnit) {
     trim(sModuleTypeName);
 
     if (!sModuleTypeName[0]) {
-        Json_ErrorForFile(jModuleUnit, "Module type name not specified.");
+        PCJson_ErrorForFile(jModuleUnit, "Module type name not specified.");
         return Invalid_ModuleType;
     }
 
     new T_ModuleType:iModuleType = ModuleType_Find(sModuleTypeName);
 
     if (iModuleType == Invalid_ModuleType) {
-        Json_ErrorForFile(jModuleUnit, "Module type '%s' not found.", sModuleTypeName);
+        PCJson_ErrorForFile(jModuleUnit, "Module type '%s' not found.", sModuleTypeName);
         return Invalid_ModuleType;
     }
 

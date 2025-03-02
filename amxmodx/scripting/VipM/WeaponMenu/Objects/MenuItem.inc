@@ -30,7 +30,7 @@ bool:MenuItem_Read(const JSON:jMenuItem, MenuItem[S_MenuItem]) {
     new bool:bIsRef, JSON:jRefed = Json_GetRefValue(jMenuItem, .bIsRef = bIsRef);
 
     if (!json_is_object(jRefed)) {
-        Json_LogForFile(jRefed, "WARNING", "Invalid menu item format.");
+        PCJson_LogForFile(jRefed, "WARNING", "Invalid menu item format.");
         return false;
     }
 
@@ -78,7 +78,7 @@ Array:MenuItem_ReadList(const JSON:jMenuItems, &Array:aMenuItems = Invalid_Array
             }
         }
         default: {
-            Json_LogForFile(jRefed, "WARNING", "Invalid menu items format.");
+            PCJson_LogForFile(jRefed, "WARNING", "Invalid menu items format.");
         }
     }
 

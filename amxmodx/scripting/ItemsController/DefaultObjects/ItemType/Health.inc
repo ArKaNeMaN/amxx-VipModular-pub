@@ -16,7 +16,7 @@ DefaultObjects_ItemType_Health_Register() {
     TrieDeleteKey(p, "Name");
 
     if (!json_object_has_value(instanceJson, "Health", JSONNumber)) {
-        Json_LogForFile(instanceJson, "ERROR", "Param `Health` required for `Health` item.");
+        PCJson_LogForFile(instanceJson, "ERROR", "Param `Health` required for `Health` item.");
         return IC_RET_READ_FAIL;
     }
     TrieSetCell(p, "Health", json_object_get_real(instanceJson, "Health"));

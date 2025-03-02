@@ -6,6 +6,7 @@
 
 #include <amxmodx>
 #include <ItemsController>
+#include <ParamsController>
 #include "VipM/Forwards"
 #include "VipM/Utils"
 #include "VipM/JsonUtils"
@@ -100,7 +101,7 @@ T_IC_Item:ItemInstance_Free(&T_IC_Item:instance, const bool:orFail = false) {
 
 T_IC_Item:ItemInstance_ReadFromJsonObject(const JSON:instanceJson) {
     if (!json_is_object(instanceJson)) {
-        Json_ErrorForFile(instanceJson, "Invalid item object (json value is not an object).");
+        PCJson_ErrorForFile(instanceJson, "Invalid item object (json value is not an object).");
         return Invalid_IC_Item;
     }
 
@@ -108,22 +109,22 @@ T_IC_Item:ItemInstance_ReadFromJsonObject(const JSON:instanceJson) {
     if (json_object_has_value(instanceJson, "Item", JSONString)) {
         json_object_get_string(instanceJson, "Item", typeName, charsmax(typeName));
     } else if (json_object_has_value(instanceJson, "Type", JSONString)) {
-        Json_LogForFile(instanceJson, "WARNING", "Item object with field `Type` is deprecated, use `Item` field instead.");
+        PCJson_LogForFile(instanceJson, "WARNING", "Item object with field `Type` is deprecated, use `Item` field instead.");
         json_object_get_string(instanceJson, "Type", typeName, charsmax(typeName));
     } else {
-        Json_ErrorForFile(instanceJson, "Invalid item object (must contains `Item` field).");
+        PCJson_ErrorForFile(instanceJson, "Invalid item object (must contains `Item` field).");
         return Invalid_IC_Item;
     }
 
     trim(typeName);
     if (!typeName[0]) {
-        Json_ErrorForFile(instanceJson, "Item type is empty.");
+        PCJson_ErrorForFile(instanceJson, "Item type is empty.");
         return Invalid_IC_Item;
     }
 
     new T_IC_ItemType:type = ItemType_Find(typeName);
     if (type == Invalid_IC_ItemType) {
-        Json_ErrorForFile(instanceJson, "Item type '%s' not found.", typeName);
+        PCJson_ErrorForFile(instanceJson, "Item type '%s' not found.", typeName);
         return Invalid_IC_Item;
     }
 
@@ -137,33 +138,29 @@ T_IC_Item:ItemInstance_ReadFromJsonObject(const JSON:instanceJson) {
 }
 
 Array:ItemInstance_ReadArrayFromJsonValue(const JSON:instancesJson, &Array:array = Invalid_Array) {
-    if (json_is_array(instancesJson)) {
-        if (array == Invalid_Array) {
-            array = ArrayCreate(1, json_array_get_count(instancesJson));
-        }
+    if (array == Invalid_Array) {
+        array = ArrayCreate(1, 1);
+    }
 
-        for (new i = 0, ii = json_array_get_count(instancesJson); i < ii; i++) {
-            new JSON:instanceJson = json_array_get_value(instancesJson, i);
+    new JSON:linkedJson;
+    PCJson_HandleLinkedValue(instancesJson, linkedJson);
 
-            new T_IC_Item:instance = ItemInstance_ReadFromJsonObject(instanceJson);
-            if (instance != Invalid_IC_Item) {
-                ArrayPushCell(array, instance);
-            }
-
+    if (json_is_array(linkedJson)) {
+        for (new i = 0, ii = json_array_get_count(linkedJson); i < ii; i++) {
+            new JSON:instanceJson = json_array_get_value(linkedJson, i);
+            ItemInstance_ReadArrayFromJsonValue(instanceJson, array);
             json_free(instanceJson);
         }
-    } else if (json_is_object(instancesJson)) {
-        if (array == Invalid_Array) {
-            array = ArrayCreate(1, 1);
-        }
-
-        new T_IC_Item:instance = ItemInstance_ReadFromJsonObject(instancesJson);
+    } else if (json_is_object(linkedJson)) {
+        new T_IC_Item:instance = ItemInstance_ReadFromJsonObject(linkedJson);
         if (instance != Invalid_IC_Item) {
             ArrayPushCell(array, instance);
         }
     } else {
-        Json_ErrorForFile(instancesJson, "Json value must be an array or an object.");
+        PCJson_ErrorForFile(linkedJson, "Json value must be an array or an object.");
     }
+
+    PCJson_FreeLinked(linkedJson);
     
     return array;
 }

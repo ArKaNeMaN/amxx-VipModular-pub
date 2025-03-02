@@ -73,7 +73,7 @@ stock IsPlayerAlive(const playerIndex) {
     GET_FILE(fmt(__JSON_FILE_TEMPLATE_STR, %1))
 
 #define GET_FILE_JSON(%1) \
-    Json_ParseFromFileEx(GET_FILE_JSON_PATH(%1), GET_FILE(""))
+    PCJson_ParseFile(GET_FILE_JSON_PATH(%1), GET_FILE(""))
 
 #define JSON_FILE_EXTSTS(%1) \
     file_exists(GET_FILE_JSON_PATH(%1))

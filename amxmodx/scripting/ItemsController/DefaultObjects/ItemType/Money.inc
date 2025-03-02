@@ -15,7 +15,7 @@ DefaultObjects_ItemType_Money_Register() {
     TrieDeleteKey(p, "Name");
 
     if (!json_object_has_value(instanceJson, "Amount", JSONNumber)) {
-        Json_LogForFile(instanceJson, "ERROR", "Param `Amount` required for item `Money`.");
+        PCJson_LogForFile(instanceJson, "ERROR", "Param `Amount` required for item `Money`.");
         return IC_RET_READ_FAIL;
     }
     TrieSetCell(p, "Amount", json_object_get_number(instanceJson, "Amount"));
@@ -25,7 +25,7 @@ DefaultObjects_ItemType_Money_Register() {
         json_object_get_string(instanceJson, "GiveType", sBuffer, charsmax(sBuffer));
         new accountSet = ItemType_Money_StrToAccountSet(sBuffer);
         if (accountSet < 0) {
-            Json_LogForFile(instanceJson, "ERROR", "Invalid `GiveType` value (%s). Expected `Set` or `Add`.", sBuffer);
+            PCJson_LogForFile(instanceJson, "ERROR", "Invalid `GiveType` value (%s). Expected `Set` or `Add`.", sBuffer);
         } else {
             TrieSetCell(p, "GiveType", accountSet);
         }

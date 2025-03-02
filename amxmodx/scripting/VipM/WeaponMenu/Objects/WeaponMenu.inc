@@ -43,7 +43,7 @@ bool:WeaponMenu_Read(&JSON:jMenu, Menu[S_WeaponMenu]) {
     
     Menu[WeaponMenu_Items] = Json_Object_GetMenuItemsList(jRefed, "Items");
     if (Menu[WeaponMenu_Items] == Invalid_Array) {
-        Json_LogForFile(jRefed, "WARNING", "Menu items list are empty.");
+        PCJson_LogForFile(jRefed, "WARNING", "Menu items list are empty.");
         Json_FreeExIf(jRefed, bIsRef);
         return false;
     }
@@ -78,7 +78,7 @@ Array:WeaponMenu_ReadList(const JSON:jWeaponMenus, &Array:aWeaponMenus = Invalid
             }
         }
         default: {
-            Json_LogForFile(jRefed, "WARNING", "Invalid weapon menus format.");
+            PCJson_LogForFile(jRefed, "WARNING", "Invalid weapon menus format.");
         }
     }
 

@@ -15,7 +15,7 @@ DefaultObjects_ItemType_ItemsList_Register() {
     TrieDeleteKey(p, "Name");
 
     if (!json_object_has_value(instanceJson, "Items")) {
-        Json_LogForFile(instanceJson, "ERROR", "Param `Items` required for item `ItemsList`.");
+        PCJson_LogForFile(instanceJson, "ERROR", "Param `Items` required for item `ItemsList`.");
         return IC_RET_READ_FAIL;
     }
 

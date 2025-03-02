@@ -22,12 +22,12 @@ public IC_ItemType_OnInited() {
 
 @OnIfRead(const JSON:instanceJson, const Trie:p) {
     if (!json_object_has_value(instanceJson, "Items")) {
-        Json_LogForFile(instanceJson, "ERROR", "Param `Items` required for item `If`.");
+        PCJson_LogForFile(instanceJson, "ERROR", "Param `Items` required for item `If`.");
         return IC_RET_READ_FAIL;
     }
 
     if (!json_object_has_value(instanceJson, "Limits")) {
-        Json_LogForFile(instanceJson, "ERROR", "Limits `Items` required for item `If`.");
+        PCJson_LogForFile(instanceJson, "ERROR", "Limits `Items` required for item `If`.");
         return IC_RET_READ_FAIL;
     }
     

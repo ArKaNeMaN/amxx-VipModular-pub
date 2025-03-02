@@ -68,14 +68,14 @@ static T_LimitType:LimitUnit__ReadType(const JSON:jLimitUnit) {
     trim(sLimitTypeName);
 
     if (!sLimitTypeName[0]) {
-        Json_ErrorForFile(jLimitUnit, "Limit type name not specified.");
+        PCJson_ErrorForFile(jLimitUnit, "Limit type name not specified.");
         return Invalid_LimitType;
     }
 
     new T_LimitType:iLimitType = LimitType_Find(sLimitTypeName);
 
     if (iLimitType == Invalid_LimitType) {
-        Json_ErrorForFile(jLimitUnit, "Limit type '%s' not found.", sLimitTypeName);
+        PCJson_ErrorForFile(jLimitUnit, "Limit type '%s' not found.", sLimitTypeName);
         return Invalid_LimitType;
     }
 

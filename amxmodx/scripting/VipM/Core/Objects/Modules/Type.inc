@@ -115,7 +115,7 @@ Trie:ModuleType_ReadParams(const T_ModuleType:iModuleType, const JSON:jParams) {
 
     new sErrParam[VIPM_PARAM_NAME_MAX_LEN];
     if (!CfgParam_ReadList(jParams, tParams, ModuleType[ModuleType_Params], sErrParam, charsmax(sErrParam))) {
-        Json_ErrorForFile(jParams, "Param '%s' required for '%s' module.", sErrParam, ModuleType[ModuleType_Name]);
+        PCJson_ErrorForFile(jParams, "Param '%s' required for '%s' module.", sErrParam, ModuleType[ModuleType_Name]);
         TrieDestroy(tParams);
         return Invalid_Trie;
     }

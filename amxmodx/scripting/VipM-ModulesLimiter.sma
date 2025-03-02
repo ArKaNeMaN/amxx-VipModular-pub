@@ -44,21 +44,21 @@ public VipM_OnActivateModule(const sModuleName[]) {
 Trie:LoadModulesLimitsFromFile(const sFileName[], Trie:tModules = Invalid_Trie) {
     TrieCreateIfNotCreated(tModules);
 
-    new JSON:jFile = Json_ParseFromFileEx(sFileName);
+    new JSON:jFile = PCJson_ParseFile(sFileName);
     if (jFile == Invalid_JSON) {
         log_error(0, "Invalid JSON syntax. File `%s`.", GET_FILE_JSON_PATH(sFileName));
         return tModules;
     }
 
     if (!json_is_array(jFile)) {
-        Json_LogForFile(jFile, "WARNING", "Root value must be an array.");
+        PCJson_LogForFile(jFile, "WARNING", "Root value must be an array.");
         Json_FreeEx(jFile);
         return tModules;
     }
 
     json_array_foreach_value (jFile: i => jItem) {
         if (!json_is_object(jItem)) {
-            Json_LogForFile(jItem, "WARNING", "Array item #%d isn`t object.", i);
+            PCJson_LogForFile(jItem, "WARNING", "Array item #%d isn`t object.", i);
             json_free(jItem);
             continue;
         }
@@ -67,20 +67,20 @@ Trie:LoadModulesLimitsFromFile(const sFileName[], Trie:tModules = Invalid_Trie) 
         new Array:aLimits = VipM_Limits_ReadListFromJson(jLimits);
         json_free(jLimits);
         if (!ArraySizeSafe(aLimits)) {
-            Json_LogForFile(jItem, "WARNING", "Field `Limits` must have 1 or more items.");
+            PCJson_LogForFile(jItem, "WARNING", "Field `Limits` must have 1 or more items.");
             json_free(jItem);
             continue;
         }
 
         new Array:aModuleNames = json_object_get_strings_list(jItem, "Modules", VIPM_MODULES_TYPE_NAME_MAX_LEN);
         if (!ArraySizeSafe(aModuleNames)) {
-            Json_LogForFile(jItem, "WARNING", "Field `Modules` must have 1 or more items.");
+            PCJson_LogForFile(jItem, "WARNING", "Field `Modules` must have 1 or more items.");
             continue;
         }
 
         ArrayForeachString (aModuleNames: j => sModuleName[VIPM_MODULES_TYPE_NAME_MAX_LEN]) {
             if (TrieKeyExists(tModules, sModuleName)) {
-                Json_LogForFile(jItem, "WARNING", "Duplicate limits for module `%s`.", sModuleName);
+                PCJson_LogForFile(jItem, "WARNING", "Duplicate limits for module `%s`.", sModuleName);
                 continue;
             }
 

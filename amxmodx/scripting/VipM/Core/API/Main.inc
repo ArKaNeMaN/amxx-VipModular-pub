@@ -30,5 +30,5 @@ API_Main_Init() {
     vdformat(sMessage, charsmax(sMessage), Arg_sMessage, Arg_fmtArgs);
     get_string(Arg_sPrefix, sPrefix, charsmax(sPrefix));
 
-    Json_LogForFile(JSON:get_param(Arg_jValue), sPrefix, sMessage);
+    PCJson_LogForFile(JSON:get_param(Arg_jValue), sPrefix, sMessage);
 }

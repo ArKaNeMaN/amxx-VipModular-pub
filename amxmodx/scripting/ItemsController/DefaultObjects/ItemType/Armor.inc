@@ -15,7 +15,7 @@ DefaultObjects_ItemType_Armor_Register() {
     TrieDeleteKey(p, "Name");
 
     if (!json_object_has_value(instanceJson, "Armor", JSONNumber)) {
-        Json_LogForFile(instanceJson, "ERROR", "Param `Armor` required for `Armor` item.");
+        PCJson_LogForFile(instanceJson, "ERROR", "Param `Armor` required for `Armor` item.");
         return IC_RET_READ_FAIL;
     }
     TrieSetCell(p, "Armor", json_object_get_number(instanceJson, "Armor"));

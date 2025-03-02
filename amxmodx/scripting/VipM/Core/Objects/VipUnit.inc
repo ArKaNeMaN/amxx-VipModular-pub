@@ -90,11 +90,11 @@ T_VipUnit:VipUnit_Read(const JSON:jVipUnit) {
     {
         new Array:aAccess = JsonObject_GetLimitUnits(jVipUnit, "Access");
         if (aAccess == Invalid_Array) {
-            Json_LogForFile(jVipUnit, "ERROR", "Field 'Access' is required in vip object.");
+            PCJson_LogForFile(jVipUnit, "ERROR", "Field 'Access' is required in vip object.");
         } else {
             new Array:aModules = JsonObject_GetModuleUnits(jVipUnit, "Modules");
             if (aModules == Invalid_Array) {
-                Json_LogForFile(jVipUnit, "ERROR", "Field 'Modules' is required in vip object.");
+                PCJson_LogForFile(jVipUnit, "ERROR", "Field 'Modules' is required in vip object.");
             } else {
                 iVipUnit = VipUnit__Construct(aAccess, aModules);
             }

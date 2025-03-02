@@ -5,46 +5,18 @@
 
 #include <amxmodx>
 #include <json>
-
-// Метка для распознавания обёрток
-stock static const __JSON_WRAPPER_MARK_KEY[] = "!@#--some-random-string-for-identify-wrapper--!@#";
-
-// Путь до директории, откуда начинать считать ссылки
-stock static const __JSON_WRAPPER_FIELD_WORKDIR[] = "_work_dir";
-
-// Файл, из которого было прочитано значение
-stock static const __JSON_WRAPPER_FIELD_FILE[] = "_file";
-
-// Само значение
-stock static const __JSON_WRAPPER_FIELD_VALUE[] = "_value";
-
-// Корневой хендлер обёртки (c m_bMustBeFreed == true)
-stock static const __JSON_WRAPPER_FIELD_HANDLER[] = "_handler";
-
-// Префикс ссылки на файл
-stock static const __JSON_WRAPPER_REF_FILE_PREFIX[] = "File:";
+#include <ParamsController>
 
 #define JSON_UTILS__MAX_KEY_LENGTH 128
 #define JSON_UTILS__MAX_STRING_LENGTH 256
 #define JSON_UTILS__MAX_REF_LENGTH 128
-
-#define Json__CompositeMacros(%1) \
-    do { %1 } while(is_linux_server() == 0xDEADBEEF)
-
-#define Json__VFormatEx(%1,%2,%3) Json__CompositeMacros( \
-    if (numargs() >= %3) { \
-        vformat(%1, charsmax(%1), %2, %3); \
-    } else { \
-        copy(%1, charsmax(%1), %2); \
-    } \
-)
 
 static stock Json__IsWrapper(const JSON:jValue) {
     if (jValue == Invalid_JSON || !json_is_object(jValue)) {
         return false;
     }
 
-    if (!json_object_has_value(jValue, __JSON_WRAPPER_MARK_KEY, JSONString)) {
+    if (!json_object_has_value(jValue, PC_JSON_WRAPPER_FIELD_ROOT, JSONBoolean)) {
         return false;
     }
 
@@ -79,7 +51,7 @@ static stock JSON:Json__FreeWrapper(&JSON:jWrapper, const bool:bFreeIfNotWrapper
         return jWrapper;
     }
 
-    new JSON:iRootWrapperHandler = JSON:json_object_get_number(jWrapper, __JSON_WRAPPER_FIELD_HANDLER);
+    new JSON:iRootWrapperHandler = JSON:json_object_get_number(jWrapper, PC_JSON_WRAPPER_FIELD_HANDLER);
     if (iRootWrapperHandler != jWrapper) {
         json_free(jWrapper);
     }
@@ -114,7 +86,7 @@ static stock Json__GetWrapperPathValue(
 
 static stock Json__GetFilePath(const JSON:jValue, sOut[] = "", const iOutLen = 0, const sDefault[] = "") {
     new sPath[PLATFORM_MAX_PATH];
-    Json__GetWrapperPathValue(jValue, __JSON_WRAPPER_FIELD_FILE, sPath, charsmax(sPath), sDefault);
+    Json__GetWrapperPathValue(jValue, PC_JSON_WRAPPER_FIELD_FILE, sPath, charsmax(sPath), sDefault);
     
     copy(sOut, iOutLen, sPath);
     return sPath;
@@ -122,7 +94,7 @@ static stock Json__GetFilePath(const JSON:jValue, sOut[] = "", const iOutLen = 0
 
 static stock Json__GetWorkDir(const JSON:jValue, sOut[] = "", const iOutLen = 0, const sDefault[] = "") {
     new sPath[PLATFORM_MAX_PATH];
-    Json__GetWrapperPathValue(jValue, __JSON_WRAPPER_FIELD_WORKDIR, sPath, charsmax(sPath), sDefault);
+    Json__GetWrapperPathValue(jValue, PC_JSON_WRAPPER_FIELD_WORKDIR, sPath, charsmax(sPath), sDefault);
 
     copy(sOut, iOutLen, sPath);
     return sPath;
@@ -159,44 +131,6 @@ static stock Json__GetFileDir(const sFile[]) {
     }
 
     return sDir;
-}
-
-/**
- * Парсит JSON-значение из файла, добавляя обёртку для расширения функционала.
- *
- * @param sPath     Путь до файла.
- * @param sWorkDir  Корневая директория для ссылок. По умолчанию будет директория, в которой лежит читаемый файл.
- *
- * @note            Полученные из этой функции хендлеры обязательно должны освобождаться при помощи Json_FreeEx.
- *                  Иначе, из-за обёртки, данные останутся в памяти.
- *
- * @return          Хендлер прочитанного из файла значения.
- */
-stock JSON:Json_ParseFromFileEx(const sPath[], const sWorkDir[] = "", const bool:bWithComments = true) {
-    if (!file_exists(sPath)) {
-        log_amx("[ERROR] File '%s' not found.", sPath);
-        return Invalid_JSON;
-    }
-
-    new JSON:jFile = json_parse(sPath, true, bWithComments);
-    if (jFile == Invalid_JSON) {
-        log_amx("[ERROR] Can't read JSON from file '%s'.", sPath);
-        return Invalid_JSON;
-    }
-
-    new JSON:jWrapper = json_init_object();
-    json_object_set_string(jWrapper, __JSON_WRAPPER_MARK_KEY, __JSON_WRAPPER_MARK_KEY);
-    json_object_set_string(jWrapper, __JSON_WRAPPER_FIELD_FILE, sPath);
-    json_object_set_value(jWrapper, __JSON_WRAPPER_FIELD_VALUE, jFile);
-    json_object_set_number(jWrapper, __JSON_WRAPPER_FIELD_HANDLER, _:jWrapper);
-
-    if (sWorkDir[0]) {
-        json_object_set_string(jWrapper, __JSON_WRAPPER_FIELD_WORKDIR, sWorkDir);
-    } else {
-        json_object_set_string(jWrapper, __JSON_WRAPPER_FIELD_WORKDIR, Json__GetFileDir(sPath));
-    }
-
-    return jFile;
 }
 
 stock JSON:Json_FreeEx(&JSON:jValue) {
@@ -246,32 +180,6 @@ static stock JSON:Json__GetRoot(const JSON:jValue) {
     return jIterator;
 }
 
-new stock const __Json_LogForFile_templateFile[] = "[JSON][%s] File: %s";
-new stock const __Json_LogForFile_templateMessage[] = "[JSON][%s] Message: %s";
-stock Json_LogForFile(const JSON:jValue, const sPrefix[], const sMessage[], any:...) {
-    static sFormattedMessage[1024];
-    Json__VFormatEx(sFormattedMessage, sMessage, 4);
-    
-    log_amx(__Json_LogForFile_templateFile, sPrefix, Json__GetFilePath(jValue, .sDefault="*unknown file*"));
-    log_amx(__Json_LogForFile_templateMessage, sPrefix, sFormattedMessage);
-}
-
-new stock const __Json_ErrorForFile_template[] = "[JSON][ERROR] %s: %s";
-stock Json_ErrorForFile(const JSON:jValue, const sMessage[], any:...) {
-    static sFormattedMessage[1024];
-    Json__VFormatEx(sFormattedMessage, sMessage, 3);
-
-    abort(0, __Json_ErrorForFile_template, Json__GetFilePath(jValue, .sDefault="*unknown file*"), sFormattedMessage);
-}
-
-new stock const __Json_FatalErrorForFile_template[] = "[JSON] %s: %s";
-stock Json_FatalErrorForFile(const JSON:jValue, const sMessage[], any:...) {
-    static sFormattedMessage[1024];
-    Json__VFormatEx(sFormattedMessage, sMessage, 3);
-
-    set_fail_state(__Json_FatalErrorForFile_template, Json__GetFilePath(jValue, .sDefault="*unknown file*"), sFormattedMessage);
-}
-
 /**
  * Проверяет, является ли значение ссылкой.
  *
@@ -290,12 +198,12 @@ stock bool:Json_IsRef(const JSON:jValue, sFileName[] = "", const iLen = 0) {
 
     new Str[JSON_UTILS__MAX_REF_LENGTH];
     json_get_string(jValue, Str, charsmax(Str));
-    if (!equali(__JSON_WRAPPER_REF_FILE_PREFIX, Str, charsmax(__JSON_WRAPPER_REF_FILE_PREFIX))) {
+    if (!equali(PC_JSON_WRAPPER_LINK_PREFIX_FILE, Str, charsmax(PC_JSON_WRAPPER_LINK_PREFIX_FILE))) {
         return false;
     }
 
     if (iLen > 0) {
-        copy(sFileName, iLen, Str[charsmax(__JSON_WRAPPER_REF_FILE_PREFIX)]);
+        copy(sFileName, iLen, Str[charsmax(PC_JSON_WRAPPER_LINK_PREFIX_FILE)]);
     }
     
     return true;
@@ -351,7 +259,7 @@ stock JSON:Json_GetRefValue(
     }
 
     bIsRef = true;
-    return Json_ParseFromFileEx(sFileName, sWorkDir);
+    return PCJson_ParseFile(sFileName, sWorkDir);
 }
 
 stock Trie:Json_ReadObjectToTrie(const JSON:jObject, &Trie:tTrie = Invalid_Trie) {
@@ -361,7 +269,7 @@ stock Trie:Json_ReadObjectToTrie(const JSON:jObject, &Trie:tTrie = Invalid_Trie)
     
     if (!json_is_object(jObject)) {
         // А надо ли ошибку бросать?
-        Json_ErrorForFile(jObject, "Json_ReadObjectToTrie: JSON-value must be an object.");
+        PCJson_ErrorForFile(jObject, "Json_ReadObjectToTrie: JSON-value must be an object.");
         return tTrie;
     }
     

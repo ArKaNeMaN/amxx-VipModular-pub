@@ -116,7 +116,7 @@ Trie:LimitType_ReadParams(const T_LimitType:iLimitType, const JSON:jParams) {
 
     new sErrParam[VIPM_PARAM_NAME_MAX_LEN];
     if (!CfgParam_ReadList(jParams, tParams, LimitType[LimitType_Params], sErrParam, charsmax(sErrParam))) {
-        Json_ErrorForFile(jParams, "Param '%s' required for '%s' limit.", sErrParam, LimitType[LimitType_Name]);
+        PCJson_ErrorForFile(jParams, "Param '%s' required for '%s' limit.", sErrParam, LimitType[LimitType_Name]);
         TrieDestroy(tParams);
         return Invalid_Trie;
     }
