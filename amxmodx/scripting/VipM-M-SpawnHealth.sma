@@ -8,7 +8,7 @@
 #pragma semicolon 1
 #pragma compress 1
 
-public stock const PluginName[] = "[VipM][M] Spawn Health";
+public stock const PluginName[] = "[VipM-M] Spawn Health";
 public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = _VIPM_PLUGIN_URL;
@@ -17,7 +17,7 @@ public stock const PluginDescription[] = "Vip modular`s module - SpawnHealth";
 new const MODULE_NAME[] = "SpawnHealth";
 
 public VipM_OnInitModules(){
-    RegisterPluginByVars();
+    register_plugin(PluginName, PluginVersion, PluginAuthor);
 
     VipM_Modules_Register(MODULE_NAME, true);
     VipM_Modules_AddParams(MODULE_NAME,

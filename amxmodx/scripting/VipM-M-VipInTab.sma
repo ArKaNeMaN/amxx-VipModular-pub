@@ -21,7 +21,7 @@ new const MODULE_NAME[] = "VipInTab";
 new bool:gHasTag[MAX_PLAYERS + 1][E_ModuleParams];
 
 public VipM_OnInitModules() {
-    RegisterPluginByVars();
+    register_plugin(PluginName, PluginVersion, PluginAuthor);
 
     VipM_Modules_Register(MODULE_NAME, true);
     VipM_Modules_AddParams(MODULE_NAME,

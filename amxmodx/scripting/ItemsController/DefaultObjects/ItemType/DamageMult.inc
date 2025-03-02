@@ -31,8 +31,6 @@ DefaultObjects_ItemType_DamageMult_Register() {
     if (json_object_has_value(instanceJson, "Taken", JSONNumber)) {
         TrieSetCell(p, "Taken", json_object_get_real(instanceJson, "Taken"));
     }
-
-    CallOnceR(IC_RET_READ_SUCCESS); // Чтобы лишний раз не дёргать натив активации хука
     
     EnableHookChain(PlayerSpawnPreHookChain);
     EnableHookChain(PlayerTakeDamagePreHookChain);

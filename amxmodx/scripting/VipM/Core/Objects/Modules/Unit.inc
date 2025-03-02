@@ -78,7 +78,7 @@ static T_ModuleType:ModuleUnit__ReadType(const JSON:jModuleUnit) {
     return iModuleType;
 }
 
-T_ModuleUnit:ModuleUnit_Read(const JSON:jModuleUnit) {
+T_ModuleUnit:ModuleUnit_Read(const JSON:valueJson) {
     static Trie:cache = Invalid_Trie;
     TrieCreateIfNotCreated(cache);
     
@@ -87,13 +87,13 @@ T_ModuleUnit:ModuleUnit_Read(const JSON:jModuleUnit) {
         return cached;
     }
 
-    new T_LimitType:type = ModuleUnit__ReadType(linked);
+    new T_ModuleType:type = ModuleUnit__ReadType(linked);
     if (type == Invalid_ModuleType) {
         PCJson_FreeLinked(linked);
         return Invalid_ModuleUnit;
     }
 
-    new Trie:p = LimitType_ReadParams(type, linked);
+    new Trie:p = ModuleType_ReadParams(type, linked);
     if (p == Invalid_Trie) {
         PCJson_FreeLinked(linked);
         return Invalid_ModuleUnit;

@@ -6,6 +6,7 @@
 #include <amxmodx>
 #include <json>
 #include <VipModular>
+#include <ParamsController>
 #include "VipM/JsonUtils"
 
 #include "VipM/WeaponMenu/Objects/MenuItem"
@@ -29,60 +30,63 @@ enum _:S_WeaponMenu {
 }
 
 bool:WeaponMenu_Read(&JSON:jMenu, Menu[S_WeaponMenu]) {
-    new bool:bIsRef, JSON:jRefed = Json_GetRefValue(jMenu, .bIsRef = bIsRef);
-    
-    Json_Object_GetString(jRefed, "Name", Menu[WeaponMenu_Name], charsmax(Menu[WeaponMenu_Name]));
+    new JSON:linkedJson;
+    PCJson_HandleLinkedValue(jMenu, linkedJson);
+
+    Json_Object_GetString(linkedJson, "Name", Menu[WeaponMenu_Name], charsmax(Menu[WeaponMenu_Name]));
 
     if (Json_Object_GetColoredChatMessage(
-        jRefed, "FakeMessage",
+        linkedJson, "FakeMessage",
         Menu[WeaponMenu_FakeMessage], charsmax(Menu[WeaponMenu_FakeMessage])
     )) {
-        Json_FreeExIf(jRefed, bIsRef);
+        PCJson_FreeLinked(linkedJson);
         return true;
     }
     
-    Menu[WeaponMenu_Items] = Json_Object_GetMenuItemsList(jRefed, "Items");
+    Menu[WeaponMenu_Items] = Json_Object_GetMenuItemsList(linkedJson, "Items");
     if (Menu[WeaponMenu_Items] == Invalid_Array) {
-        PCJson_LogForFile(jRefed, "WARNING", "Menu items list are empty.");
-        Json_FreeExIf(jRefed, bIsRef);
+        PCJson_LogForFile(linkedJson, "WARNING", "Menu items list are empty.");
+        PCJson_FreeLinked(linkedJson);
         return false;
     }
 
-    Json_Object_GetString(jRefed, "Title", Menu[WeaponMenu_Title], charsmax(Menu[WeaponMenu_Title]), Menu[WeaponMenu_Name]);
+    Json_Object_GetString(linkedJson, "Title", Menu[WeaponMenu_Title], charsmax(Menu[WeaponMenu_Title]), Menu[WeaponMenu_Name]);
 
-    Menu[WeaponMenu_Count] = Json_Object_GetInt(jRefed, "Count", -1);
-    Menu[WeaponMenu_BackOnExit] = Json_Object_GetBool(jRefed, "BackOnExit", false);
-    Menu[WeaponMenu_PerPage] = Json_Object_GetInt(jRefed, "PerPage", -1);
-    Menu[WeaponMenu_ShowPage] = Json_Object_GetBool(jRefed, "ShowPage", true);
-    Menu[WeaponMenu_Limits] = Json_Object_GetLimits(jRefed, "Limits");
+    Menu[WeaponMenu_Count] = Json_Object_GetInt(linkedJson, "Count", -1);
+    Menu[WeaponMenu_BackOnExit] = Json_Object_GetBool(linkedJson, "BackOnExit", false);
+    Menu[WeaponMenu_PerPage] = Json_Object_GetInt(linkedJson, "PerPage", -1);
+    Menu[WeaponMenu_ShowPage] = Json_Object_GetBool(linkedJson, "ShowPage", true);
+    Menu[WeaponMenu_Limits] = Json_Object_GetLimits(linkedJson, "Limits");
 
-    Json_FreeExIf(jRefed, bIsRef);
+    PCJson_FreeLinked(linkedJson);
     return true;
 }
 
 Array:WeaponMenu_ReadList(const JSON:jWeaponMenus, &Array:aWeaponMenus = Invalid_Array) {
     ArrayCreateIfNotCreated(aWeaponMenus, S_WeaponMenu, 1);
 
-    new bool:bIsRef, JSON:jRefed = Json_GetRefValue(jWeaponMenus, .bIsRef = bIsRef);
-    switch (json_get_type(jRefed)) {
+    new JSON:linkedJson;
+    PCJson_HandleLinkedValue(jWeaponMenus, linkedJson);
+
+    switch (json_get_type(linkedJson)) {
         case JSONObject: {
             new WeaponMenu[S_WeaponMenu];
-            if (WeaponMenu_Read(jRefed, WeaponMenu)) {
+            if (WeaponMenu_Read(linkedJson, WeaponMenu)) {
                 ArrayPushArray(aWeaponMenus, WeaponMenu);
             }
         }
         case JSONArray: {
-            json_array_foreach_value (jRefed: i => jWeaponMenu) {
+            json_array_foreach_value (linkedJson: i => jWeaponMenu) {
                 aWeaponMenus = WeaponMenu_ReadList(jWeaponMenu, aWeaponMenus);
                 json_free(jWeaponMenu);
             }
         }
         default: {
-            PCJson_LogForFile(jRefed, "WARNING", "Invalid weapon menus format.");
+            PCJson_LogForFile(linkedJson, "WARNING", "Invalid weapon menus format.");
         }
     }
 
-    Json_FreeExIf(jRefed, bIsRef);
+    PCJson_FreeLinked(linkedJson);
     return aWeaponMenus;
 }
 

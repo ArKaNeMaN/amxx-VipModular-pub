@@ -6,7 +6,7 @@
 #pragma semicolon 1
 #pragma compress 1
 
-public stock const PluginName[] = "[VipM][M] Vampire";
+public stock const PluginName[] = "[VipM-M] Vampire";
 public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = _VIPM_PLUGIN_URL;
@@ -15,7 +15,7 @@ public stock const PluginDescription[] = "Vip modular`s module - Vampire";
 new const MODULE_NAME[] = "Vampire";
 
 public VipM_OnInitModules(){
-    RegisterPluginByVars();
+    register_plugin(PluginName, PluginVersion, PluginAuthor);
     register_dictionary("VipM-Vampire.ini");
 
     VipM_Modules_Register(MODULE_NAME, true);

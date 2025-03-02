@@ -5,13 +5,13 @@
 #pragma semicolon 1
 #pragma compress 1
 
-public stock const PluginName[] = "[VipM][L] Logic";
+public stock const PluginName[] = "[VipM-L] Logic";
 public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = _VIPM_PLUGIN_URL;
 
 public VipM_OnInitModules(){
-    RegisterPluginByVars();
+    register_plugin(PluginName, PluginVersion, PluginAuthor);
 
     VipM_Limits_RegisterType("Logic-OR", false, false);
     VipM_Limits_AddTypeParams("Logic-OR",

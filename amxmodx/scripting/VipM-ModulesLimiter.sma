@@ -15,7 +15,7 @@ new const MODULES_CONFIG_FILE[] = "Modules";
 new Trie:g_tModulesLimits = Invalid_Trie;
 
 public VipM_OnLoaded() {
-    RegisterPluginByVars();
+    register_plugin(PluginName, PluginVersion, PluginAuthor);
     
     g_tModulesLimits = LoadModulesLimitsFromFile(MODULES_CONFIG_FILE, g_tModulesLimits);
 }

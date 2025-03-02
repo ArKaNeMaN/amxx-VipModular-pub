@@ -7,7 +7,7 @@
 #pragma semicolon 1
 #pragma compress 1
 
-public stock const PluginName[] = "[VipM][L] Default";
+public stock const PluginName[] = "[VipM-L] Default";
 public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = _VIPM_PLUGIN_URL;
@@ -35,7 +35,7 @@ public plugin_natives() {
 }
 
 public VipM_OnInitModules() {
-    RegisterPluginByVars();
+    register_plugin(PluginName, PluginVersion, PluginAuthor);
 
     VipM_Limits_RegisterType("ForAll", false, true);
     VipM_Limits_SetStaticValue("ForAll", true);

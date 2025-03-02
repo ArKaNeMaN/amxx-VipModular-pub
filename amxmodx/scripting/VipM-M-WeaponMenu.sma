@@ -10,7 +10,7 @@
 #pragma semicolon 1
 #pragma compress 1
 
-public stock const PluginName[] = "[VipM][M] Weapon Menu";
+public stock const PluginName[] = "[VipM-M] Weapon Menu";
 public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = _VIPM_PLUGIN_URL;
@@ -42,7 +42,7 @@ new gUserExpireStatus[MAX_PLAYERS + 1][VIPM_M_WEAPONMENU_EXPIRE_STATUS_MAX_LEN];
 #include "VipM/WeaponMenu/Menus"
 
 public VipM_OnInitModules() {
-    RegisterPluginByVars();
+    register_plugin(PluginName, PluginVersion, PluginAuthor);
     register_dictionary("VipM-WeaponMenu.ini");
     IC_Init();
 
@@ -88,6 +88,7 @@ public VipM_OnInitModules() {
     RegisterHookChain(RG_CBasePlayer_Spawn, "@OnPlayerSpawn", true);
     RegisterHookChain(RG_CSGameRules_RestartRound, "@OnRestartRound", false);
     
+    // TODO: Use CommandAliases plugin
     CommandAliases_Open(GET_FILE_JSON_PATH("Cmds/WeaponMenu"), true);
     CommandAliases_RegisterClient(CMD_WEAPON_MENU, "@Cmd_Menu"); // vipmenu <menu-id> <item-id>
     CommandAliases_RegisterClient(CMD_WEAPON_MENU_SILENT, "@Cmd_MenuSilent");

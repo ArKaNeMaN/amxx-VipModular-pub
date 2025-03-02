@@ -7,15 +7,14 @@
 #include "VipM/ArrayTrieUtils"
 #include "VipM/JsonUtils"
 
-#include amxmodx
-#include json
-#include reapi
-#include VipModular
+#include <amxmodx>
+#include <json>
+#include <reapi>
+#include <VipModular>
 
 stock const __SLANG_TEMPLATE_STR[] = "%l";
 stock const __CLANG_TEMPLATE_STR[] = "%L";
 stock const __JSON_FILE_TEMPLATE_STR[] = "%s.json";
-stock const __USER_NAME_TEMPLATE_STR[] = "%n";
 stock const __LANG_MSG_LAYOUT_KEY[] = "MSG_LAYOUT";
 
 stock const bool:__CompositeMacros_AlwaysFalse = false;
@@ -66,17 +65,8 @@ stock IsPlayerAlive(const playerIndex) {
 #define ChatPrintLIf(%3,%1,%2) \
     ((%3) && ChatPrint(%1, __CLANG_TEMPLATE_STR, %1, %2))
 
-#define GET_FILE(%1) \
-    VipM_iGetCfgPath(%1)
-
 #define GET_FILE_JSON_PATH(%1) \
-    GET_FILE(fmt(__JSON_FILE_TEMPLATE_STR, %1))
-
-#define GET_FILE_JSON(%1) \
-    PCJson_ParseFile(GET_FILE_JSON_PATH(%1), GET_FILE(""))
-
-#define JSON_FILE_EXTSTS(%1) \
-    file_exists(GET_FILE_JSON_PATH(%1))
+    VipM_iGetCfgPath(fmt(__JSON_FILE_TEMPLATE_STR, %1))
 
 
 stock __CMD_NULL_ARG = 0;
@@ -171,13 +161,15 @@ stock bool:HasBits(const bits, const bitSearch, const bool:bStrict = false) {
         : bitRes != 0
 }
 
-// []GetUserName(const UserId)
-#define GetUserName(%1) \
-    fmt(__USER_NAME_TEMPLATE_STR,%1)
+stock GetUserName(const playerIndex) {
+    new name[32];
+    get_user_name(playerIndex, name, charsmax(name));
+    return name;
+}
 
-// bool:IsEqualUserName(const UserId, const sName[])
-#define IsEqualUserName(%1,%2) \
-    equal(GetUserName(%1), %2)
+stock IsEqualUserName(const playerIndex, const name[]) {
+    return equal(GetUserName(playerIndex), name);
+}
 
 stock GetWeekDayIdByName(const sWeekDayName[]) {
     if (equali("Вс", sWeekDayName) || equali("Воскресенье", sWeekDayName) || equali("Sun", sWeekDayName) || equali("Sunday", sWeekDayName)) {
@@ -207,59 +199,6 @@ stock CreateConstCvar(const sCvarName[], const sCvarValue[], const iFlags = FCVA
     static bool:__CallOnce_bCalled; \
     if (__CallOnce_bCalled) return; \
     __CallOnce_bCalled = true; \
-)
-
-#define CallOnceR(%1) CompositeMacros( \
-    static bool:__CallOnce_bCalled; \
-    if (__CallOnce_bCalled) return %1; \
-    __CallOnce_bCalled = true; \
-)
-
-// https://github.com/Nord1cWarr1or/Universal-AFK-Manager/blob/6272afbb8c27f8b7ad770e3036b5960042001e6b/scripting/UAFKManager.sma#L298-L321
-stock GetAmxxVersionNum() {
-    static iRes;
-    if (iRes) {
-        return iRes;
-    }
-
-    new sAmxxVer[16];
-    get_amxx_verstring(sAmxxVer, charsmax(sAmxxVer));
-
-    if (strfind(sAmxxVer, "1.10.0") != -1) {
-        iRes = 1100;
-    } else if (strfind(sAmxxVer, "1.9.0") != -1) {
-        iRes = 190;
-    } else if (strfind(sAmxxVer, "1.8.3") != -1) {
-        iRes = 183;
-    } else if (strfind(sAmxxVer, "1.8.2") != -1) {
-        iRes = 182;
-    } else {
-        iRes = 1;
-    }
-
-    return iRes;
-}
-
-stock RegisterPlugin(
-    const sName[],
-    const sVersion[],
-    const sAuthor[],
-    const sUrl[] = "",
-    const sDescription[] = ""
-) {
-    #if AMXX_VERSION_NUM >= 1100
-    if (GetAmxxVersionNum() >= 1100) {
-        register_plugin(sName, sVersion, sAuthor, sUrl, sDescription);
-        return;
-    }
-    #endif
-    register_plugin(sName, sVersion, sAuthor);
-}
-
-#define RegisterPluginByVars() CompositeMacros( \
-    if (GetAmxxVersionNum() < 1100) { \
-        register_plugin(PluginName, PluginVersion, PluginAuthor); \
-    } \
 )
 
 stock ItemHasClip(const ItemId) {
