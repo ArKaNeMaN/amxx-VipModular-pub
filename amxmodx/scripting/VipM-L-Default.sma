@@ -165,6 +165,30 @@ public VipM_OnInitModules() {
     );
     VipM_Limits_RegisterTypeEvent("GameTime", Limit_OnCheck, "@OnGameTimeCheck");
 
+    VipM_Limits_RegisterType("Logic-OR", false, false);
+    VipM_Limits_AddTypeParams("Logic-OR",
+        "Limits", ptLimits, true
+    );
+    VipM_Limits_RegisterTypeEvent("Logic-OR", Limit_OnCheck, "@OnOrCheck");
+
+    VipM_Limits_RegisterType("Logic-XOR", false, false);
+    VipM_Limits_AddTypeParams("Logic-XOR",
+        "Limits", ptLimits, true
+    );
+    VipM_Limits_RegisterTypeEvent("Logic-XOR", Limit_OnCheck, "@OnXorCheck");
+
+    VipM_Limits_RegisterType("Logic-AND", false, false);
+    VipM_Limits_AddTypeParams("Logic-AND",
+        "Limits", ptLimits, true
+    );
+    VipM_Limits_RegisterTypeEvent("Logic-AND", Limit_OnCheck, "@OnAndCheck");
+
+    VipM_Limits_RegisterType("Logic-NOT", false, false);
+    VipM_Limits_AddTypeParams("Logic-NOT",
+        "Limits", ptLimits, true
+    );
+    VipM_Limits_RegisterTypeEvent("Logic-NOT", Limit_OnCheck, "@OnNotCheck");
+
     RegisterHookChain(RG_CSGameRules_RestartRound, "@OnRestartRound", true);
     RegisterHookChain(RG_CBasePlayer_Spawn, "@OnPlayerSpawn", true);
 
@@ -431,4 +455,20 @@ bool:@OnFlagsCheck(const Trie:Params, const UserId) {
         GetCurrentRoundNum() >= VipM_Params_GetInt(Params, "Min", -1)
         && GetCurrentRoundNum() <= VipM_Params_GetInt(Params, "Max", cellmax)
     );
+}
+
+@OnOrCheck(const Trie:Params, const UserId){
+    return VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_OR);
+}
+
+@OnXorCheck(const Trie:Params, const UserId){
+    return VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_XOR);
+}
+
+@OnAndCheck(const Trie:Params, const UserId){
+    return VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_AND);
+}
+
+@OnNotCheck(const Trie:Params, const UserId){
+    return !VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_AND);
 }
