@@ -82,25 +82,34 @@ static T_LimitType:LimitUnit__ReadType(const JSON:jLimitUnit) {
     return iLimitType;
 }
 
-T_LimitUnit:LimitUnit_Read(const JSON:jLimitUnit) {
-    static Trie:tCache = Invalid_Trie;
-    TrieCreateIfNotCreated(tCache);
-
-    new JSON:jRefed, T_LimitUnit:iLimitUnit = Invalid_LimitUnit;
-    Json_GetCachedRefValue_Begin(jLimitUnit, tCache, iLimitUnit, jRefed)
-    {
-        new T_LimitType:iLimitType = LimitUnit__ReadType(jRefed);
-        new Trie:tParams = Invalid_Trie;
-
-        if (iLimitType != Invalid_LimitType) {
-            tParams = LimitType_ReadParams(iLimitType, jRefed);
-        }
-
-        if (tParams != Invalid_Trie) {
-            iLimitUnit = LimitUnit__Construct(iLimitType, tParams);
-        }
+T_LimitUnit:LimitUnit_Read(const JSON:valueJson) {
+    static Trie:cache = Invalid_Trie;
+    TrieCreateIfNotCreated(cache);
+    
+    new JSON:linked, T_LimitUnit:cached = Invalid_LimitUnit, linkPath[PLATFORM_MAX_PATH];
+    if (PCJson_HandleCachedLinkedValue(cache, valueJson, linked, cached, linkPath, charsmax(linkPath)) == PCJson_CachedLinkedValue_Cached) {
+        return cached;
     }
-    Json_GetCachedRefValue_End(jLimitUnit, tCache, iLimitUnit, jRefed)
+
+    new T_LimitType:type = LimitUnit__ReadType(linked);
+    if (type == Invalid_LimitType) {
+        PCJson_FreeLinked(linked);
+        return Invalid_LimitUnit;
+    }
+
+    new Trie:p = LimitType_ReadParams(type, linked);
+    if (p == Invalid_Trie) {
+        PCJson_FreeLinked(linked);
+        return Invalid_LimitUnit;
+    }
+
+    cached = LimitUnit__Construct(type, p);
+    if (linkPath[0] != EOS && cached != Invalid_LimitUnit) {
+        TrieSetCell(cache, linkPath, cached);
+    }
+
+    PCJson_FreeLinked(linked);
+    return cached;
 }
 
 Array:LimitUnit_ReadList(const JSON:jLimitUnits, &Array:aLimitUnits = Invalid_Array) {

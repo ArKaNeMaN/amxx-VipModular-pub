@@ -52,7 +52,7 @@ Trie:LoadModulesLimitsFromFile(const sFileName[], Trie:tModules = Invalid_Trie) 
 
     if (!json_is_array(jFile)) {
         PCJson_LogForFile(jFile, "WARNING", "Root value must be an array.");
-        Json_FreeEx(jFile);
+        PCJson_Free(jFile);
         return tModules;
     }
 
@@ -91,6 +91,6 @@ Trie:LoadModulesLimitsFromFile(const sFileName[], Trie:tModules = Invalid_Trie) 
         ArrayDestroy(aModuleNames);
     }
 
-    Json_FreeEx(jFile);
+    PCJson_Free(jFile);
     return tModules;
 }

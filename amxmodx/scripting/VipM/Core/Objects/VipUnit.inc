@@ -81,26 +81,36 @@ Array:VipUnit_GetModules(const T_VipUnit:iVipUnit) {
     return VipUnit__GetValue(iVipUnit, VipUnit_Modules);
 }
 
-T_VipUnit:VipUnit_Read(const JSON:jVipUnit) {
-    static Trie:tCache = Invalid_Trie;
-    TrieCreateIfNotCreated(tCache);
-
-    new JSON:jRefed, T_VipUnit:iVipUnit = Invalid_VipUnit;
-    Json_GetCachedRefValue_Begin(jVipUnit, tCache, iVipUnit, jRefed)
-    {
-        new Array:aAccess = JsonObject_GetLimitUnits(jVipUnit, "Access");
-        if (aAccess == Invalid_Array) {
-            PCJson_LogForFile(jVipUnit, "ERROR", "Field 'Access' is required in vip object.");
-        } else {
-            new Array:aModules = JsonObject_GetModuleUnits(jVipUnit, "Modules");
-            if (aModules == Invalid_Array) {
-                PCJson_LogForFile(jVipUnit, "ERROR", "Field 'Modules' is required in vip object.");
-            } else {
-                iVipUnit = VipUnit__Construct(aAccess, aModules);
-            }
-        }
+T_VipUnit:VipUnit_Read(const JSON:valueJson) {
+    static Trie:cache = Invalid_Trie;
+    TrieCreateIfNotCreated(cache);
+    
+    new JSON:linked, T_VipUnit:cached = Invalid_VipUnit, linkPath[PLATFORM_MAX_PATH];
+    if (PCJson_HandleCachedLinkedValue(cache, valueJson, linked, cached, linkPath, charsmax(linkPath)) == PCJson_CachedLinkedValue_Cached) {
+        return cached;
     }
-    Json_GetCachedRefValue_End(jVipUnit, tCache, iVipUnit, jRefed)
+    
+    new Array:aAccess = JsonObject_GetLimitUnits(linked, "Access");
+    if (aAccess == Invalid_Array) {
+        PCJson_ErrorForFile(linked, "Field 'Access' is required in vip object.");
+        PCJson_FreeLinked(linked);
+        return Invalid_VipUnit;
+    }
+
+    new Array:aModules = JsonObject_GetModuleUnits(linked, "Modules");
+    if (aModules == Invalid_Array) {
+        PCJson_ErrorForFile(linked, "Field 'Modules' is required in vip object.");
+        PCJson_FreeLinked(linked);
+        return Invalid_VipUnit;
+    }
+
+    cached = VipUnit__Construct(aAccess, aModules);
+    if (linkPath[0] != EOS && cached != Invalid_VipUnit) {
+        TrieSetCell(cache, linkPath, cached);
+    }
+
+    PCJson_FreeLinked(linked);
+    return cached;
 }
 
 Array:VipUnit_ReadList(const JSON:jVipUnits, &Array:aVipUnits = Invalid_Array) {

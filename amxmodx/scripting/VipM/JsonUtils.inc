@@ -11,173 +11,12 @@
 #define JSON_UTILS__MAX_STRING_LENGTH 256
 #define JSON_UTILS__MAX_REF_LENGTH 128
 
-static stock Json__IsWrapper(const JSON:jValue) {
-    if (jValue == Invalid_JSON || !json_is_object(jValue)) {
-        return false;
-    }
-
-    if (!json_object_has_value(jValue, PC_JSON_WRAPPER_FIELD_ROOT, JSONBoolean)) {
-        return false;
-    }
-
-    new JSON:jParent = json_get_parent(jValue);
-    if (jParent != Invalid_JSON) {
-        json_free(jParent);
-        return false;
-    }
-
-    return true;
-}
-
-static stock JSON:Json__GetWrapper(const JSON:jValue) {
-    new JSON:jRoot = Json__GetRoot(jValue);
-
-    if (jRoot == jValue) {
-        return Invalid_JSON;
-    }
-
-    if (!Json__IsWrapper(jRoot)) {
-        json_free(jRoot);
-        
-        return Invalid_JSON;
-    }
-
-    return jRoot;
-}
-
-static stock JSON:Json__FreeWrapper(&JSON:jWrapper, const bool:bFreeIfNotWrapper = false) {
-    if (!Json__IsWrapper(jWrapper)) {
-        Json_FreeIf(jWrapper, bFreeIfNotWrapper);
-        return jWrapper;
-    }
-
-    new JSON:iRootWrapperHandler = JSON:json_object_get_number(jWrapper, PC_JSON_WRAPPER_FIELD_HANDLER);
-    if (iRootWrapperHandler != jWrapper) {
-        json_free(jWrapper);
-    }
-    json_free(iRootWrapperHandler);
-
-    return Invalid_JSON;
-}
-
-static stock Json__GetWrapperPathValue(
-    const JSON:jValue,
-    const sKey[],
-    sOut[] = "",
-    const iOutLen = 0,
-    const sDefault[] = ""
-) {
-    new JSON:jWrapper = Json__GetWrapper(jValue);
-
-    new sPath[PLATFORM_MAX_PATH];
-    if (jWrapper == Invalid_JSON) {
-        copy(sPath, charsmax(sPath), sDefault);
-    } else {
-        json_object_get_string(jWrapper, sKey, sPath, charsmax(sPath));
-        json_free(jWrapper);
-    }
-
-    if (iOutLen) {
-        copy(sOut, iOutLen, sPath);
-    }
-
-    return sPath;
-}
-
-static stock Json__GetFilePath(const JSON:jValue, sOut[] = "", const iOutLen = 0, const sDefault[] = "") {
-    new sPath[PLATFORM_MAX_PATH];
-    Json__GetWrapperPathValue(jValue, PC_JSON_WRAPPER_FIELD_FILE, sPath, charsmax(sPath), sDefault);
-    
-    copy(sOut, iOutLen, sPath);
-    return sPath;
-}
-
-static stock Json__GetWorkDir(const JSON:jValue, sOut[] = "", const iOutLen = 0, const sDefault[] = "") {
-    new sPath[PLATFORM_MAX_PATH];
-    Json__GetWrapperPathValue(jValue, PC_JSON_WRAPPER_FIELD_WORKDIR, sPath, charsmax(sPath), sDefault);
-
-    copy(sOut, iOutLen, sPath);
-    return sPath;
-}
-
-static stock Json__GetRootConfigsPath(sOut[] = "", const iOutLen = 0) {
-    static sPath[PLATFORM_MAX_PATH];
-
-    if (!sPath[0]) {
-        get_localinfo("amxx_configsdir", sPath, charsmax(sPath));
-    }
-
-    if (iOutLen) {
-        copy(sOut, iOutLen, sPath);
-    }
-
-    return sPath;
-}
-
-static stock Json__GetFileDir(const sFile[]) {
-    new sDir[PLATFORM_MAX_PATH];
-    copy(sDir, charsmax(sDir), sFile);
-
-    new i = 0, iLastSlash = -1;
-    while (sDir[i]) {
-        if (sDir[i] == '/' || sDir[i] == '\') {
-            iLastSlash = i;
-        }
-        ++i;
-    }
-
-    if (iLastSlash >= 0) {
-        sDir[max(iLastSlash - 1, 0)] = 0; // EOS
-    }
-
-    return sDir;
-}
-
-stock JSON:Json_FreeEx(&JSON:jValue) {
-    new JSON:jParent = json_get_parent(jValue);
-    Json__FreeWrapper(jParent, false);
-    json_free(jValue);
-    
-    return jValue;
-}
-
 stock JSON:Json_FreeExIf(&JSON:jValue, const bool:bIf) {
     if (bIf) {
-        Json_FreeEx(jValue);
+        PCJson_Free(jValue);
     }
 
     return jValue;
-}
-
-/**
- * Получение хендлера корневого JSON-значения.
- *
- * @param jValue JSON-хендлер, для которого надо найти корневое значение.
- *
- * @return JSON-хендлер найденного корневого значения.
- */
-static stock JSON:Json__GetRoot(const JSON:jValue) {
-    if (jValue == Invalid_JSON) {
-        return Invalid_JSON;
-    }
-
-    new JSON:jParent;
-    new JSON:jIterator = json_get_parent(jValue);
-    if (jIterator == Invalid_JSON) {
-        return jValue;
-    }
-
-    while (jIterator != Invalid_JSON) {
-        jParent = json_get_parent(jIterator);
-        
-        if (jParent == Invalid_JSON) {
-            break;
-        }
-        json_free(jIterator);
-        jIterator = jParent;
-    }
-
-    return jIterator;
 }
 
 /**
@@ -238,28 +77,18 @@ stock JSON:Json_GetRefValue(
     }
 
     new sFileName[PLATFORM_MAX_PATH];
-    new sWorkDir[PLATFORM_MAX_PATH];
-
-    if (sRefFilePath[0] == '/') {
-        // Если ссылка начинается со слеша, считать её от amxmodx/configs/
-        Json__GetRootConfigsPath(sWorkDir, charsmax(sWorkDir));
-    } else {
-        Json__GetWorkDir(jValue, sWorkDir, charsmax(sWorkDir));
-        if (!sWorkDir[0]) {
-            // Если у относительной ссылки нет workdir, значит ссылаться некуда)
-            return jValue;
-        }
-    }
-    
-    Json__RightTrim(sWorkDir, '/');
-    formatex(sFileName, charsmax(sFileName), "%s/%s.json", sWorkDir, sRefFilePath);
+    PCPath_MakePath(
+        sRefFilePath, sFileName, charsmax(sFileName),
+        .absolutePrefix = PCJson_GetWrapperWorkdir(jValue),
+        .forceFileExtension = "json"
+    );
 
     if (iOutLen) {
         copy(sOut, iOutLen, sFileName);
     }
 
     bIsRef = true;
-    return PCJson_ParseFile(sFileName, sWorkDir);
+    return PCJson_ParseFile(sFileName, PCJson_GetWrapperWorkdir(jValue));
 }
 
 stock Trie:Json_ReadObjectToTrie(const JSON:jObject, &Trie:tTrie = Invalid_Trie) {
@@ -295,34 +124,6 @@ stock Trie:Json_ReadObjectToTrie(const JSON:jObject, &Trie:tTrie = Invalid_Trie)
     }
 
     return tTrie;
-}
-
-stock bool:Json_FreeIf(&JSON:jValue, const bool:bIf) {
-    if (bIf) {
-        json_free(jValue);
-    }
-    return bIf;
-}
-
-static stock Json__RightTrim(sStr[], const cTrim = ' ') {
-    new iLen = Json__StrLen(sStr);
-    if (iLen <= 0) {
-        return;
-    }
-
-    while (sStr[iLen - 1] == cTrim) {
-        --iLen;
-    }
-
-    sStr[iLen] = 0;
-}
-
-static stock Json__StrLen(const sStr[]) {
-    new iLen = 0;
-    while (sStr[iLen]) {
-        ++iLen;
-    }
-    return iLen;
 }
 
 stock bool:Json_Object_GetBool(const JSON:jObj, const sKey[], const bool:bDefault = false, const bool:bDotNot = false) {
@@ -387,48 +188,3 @@ stock Json_Object_GetColoredChatMessage(
 
     return iRes;
 }
-
-/*
-Обёртка для кеширования ссылок.
-! Очень извращённая штука, делал чисто под конкретные задачи !
-! Но в целом, наверное, можно ещё где-то использовать !
-
-Пример использования:
-
-* new JSON:jRefed, T_ModuleUnit:iUnit = Invalid_ModuleUnit;
-* Json_GetCachedRefValue_Begin(jModuleUnit, __cache_ModuleUnits, iUnit, jRefed)
-* {
-*     new sModuleUnit[S_ModuleUnit];
-*     if (ModuleUnits_ReadFromJson(jRefed, sModuleUnit)) {
-*         iUnit = ModuleUnits_Push(sModuleUnit);
-*     }
-* }
-* Json_GetCachedRefValue_End(jModuleUnit, __cache_ModuleUnits, iUnit, jRefed)
-
-Между *_Begin и *_End должен быть расположен код разбора
-содержимого файла с последующей записью кешируемого значения.
-
-Обе части в ходе выполнения могут прервать выполнение функции,
-при чём вторая часть делает это в любом случае.
-Также, это значит что код рабора файла может быть не вызван вовсе.
-
-На строках обёртки ставить ; не надо.
-*/
-
-// (const JSON:jValue, const Trie:tCache, &any:iCachedValue, &JSON:jRefed)
-#define Json_GetCachedRefValue_Begin(%1,%2,%3,%4) \
-    new __Json_GetCachedRefValue_sJsonRef[PLATFORM_MAX_PATH]; \
-    if ( \
-        Json_IsRef(%1, __Json_GetCachedRefValue_sJsonRef, charsmax(__Json_GetCachedRefValue_sJsonRef)) \
-        && TrieGetCell(%2, __Json_GetCachedRefValue_sJsonRef, %3) \
-        || ((%4 = Json_GetRefValue(%1)) ? false : false) \
-    ) { \
-        return %3; \
-    }
-
-// (const JSON:jValue, const Trie:tCache, &any:iCachedValue, &JSON:jRefed)
-#define Json_GetCachedRefValue_End(%1,%2,%3,%4) \
-    (__Json_GetCachedRefValue_sJsonRef[0] \
-        && TrieSetCell(%2, __Json_GetCachedRefValue_sJsonRef, %3)); \
-    Json_FreeExIf(%4, bool:__Json_GetCachedRefValue_sJsonRef[0]); \
-    return %3;

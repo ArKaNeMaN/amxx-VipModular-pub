@@ -79,24 +79,33 @@ static T_ModuleType:ModuleUnit__ReadType(const JSON:jModuleUnit) {
 }
 
 T_ModuleUnit:ModuleUnit_Read(const JSON:jModuleUnit) {
-    static Trie:tCache = Invalid_Trie;
-    TrieCreateIfNotCreated(tCache);
-
-    new JSON:jRefed, T_ModuleUnit:iModuleUnit = Invalid_ModuleUnit;
-    Json_GetCachedRefValue_Begin(jModuleUnit, tCache, iModuleUnit, jRefed)
-    {
-        new T_ModuleType:iModuleType = ModuleUnit__ReadType(jRefed);
-        new Trie:tParams = Invalid_Trie;
-
-        if (iModuleType != Invalid_ModuleType) {
-            tParams = ModuleType_ReadParams(iModuleType, jRefed);
-        }
-
-        if (tParams != Invalid_Trie) {
-            iModuleUnit = ModuleUnit__Construct(iModuleType, tParams);
-        }
+    static Trie:cache = Invalid_Trie;
+    TrieCreateIfNotCreated(cache);
+    
+    new JSON:linked, T_ModuleUnit:cached = Invalid_ModuleUnit, linkPath[PLATFORM_MAX_PATH];
+    if (PCJson_HandleCachedLinkedValue(cache, valueJson, linked, cached, linkPath, charsmax(linkPath)) == PCJson_CachedLinkedValue_Cached) {
+        return cached;
     }
-    Json_GetCachedRefValue_End(jModuleUnit, tCache, iModuleUnit, jRefed)
+
+    new T_LimitType:type = ModuleUnit__ReadType(linked);
+    if (type == Invalid_ModuleType) {
+        PCJson_FreeLinked(linked);
+        return Invalid_ModuleUnit;
+    }
+
+    new Trie:p = LimitType_ReadParams(type, linked);
+    if (p == Invalid_Trie) {
+        PCJson_FreeLinked(linked);
+        return Invalid_ModuleUnit;
+    }
+
+    cached = ModuleUnit__Construct(type, p);
+    if (linkPath[0] != EOS && cached != Invalid_ModuleUnit) {
+        TrieSetCell(cache, linkPath, cached);
+    }
+
+    PCJson_FreeLinked(linked);
+    return cached;
 }
 
 Array:ModuleUnit_ReadList(const JSON:jModuleUnits, &Array:aModuleUnits = Invalid_Array) {
