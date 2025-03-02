@@ -21,7 +21,7 @@ public VipM_OnLoaded() {
     #endif
     
     #if RELOAD_ON_ROUND_START
-        RegisterHookChain(RG_CSGameRules_RestartRound, "@OnPlayerSpawned", false);
+        RegisterHookChain(RG_CSGameRules_RestartRound, "@ReloadAllPlayers", false);
     #endif
     
     #if RELOAD_ON_ROUND_END
