@@ -28,7 +28,7 @@ T_IC_ItemType:@_VipM_IC_RegisterType() {
     enum {Arg_Type = 1, Arg_Event, Arg_FuncName}
 
     new typeName[IC_ITEM_TYPE_NAME_MAX_LEN];
-    T_IC_ItemType:get_string(Arg_Type, typeName, charsmax(typeName));
+    get_string(Arg_Type, typeName, charsmax(typeName));
     new T_IC_ItemType:type = ItemType_Find(typeName, .orFail = true);
 
     new E_ItemTypeEvent:event = E_ItemTypeEvent:get_param(Arg_Event);

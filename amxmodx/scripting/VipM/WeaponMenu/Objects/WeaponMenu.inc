@@ -29,36 +29,30 @@ enum _:S_WeaponMenu {
     WeaponMenu_FakeMessage[256],
 }
 
-bool:WeaponMenu_Read(&JSON:jMenu, Menu[S_WeaponMenu]) {
-    new JSON:linkedJson;
-    PCJson_HandleLinkedValue(jMenu, linkedJson);
-
-    Json_Object_GetString(linkedJson, "Name", Menu[WeaponMenu_Name], charsmax(Menu[WeaponMenu_Name]));
+bool:WeaponMenu_Read(const JSON:menuJson, Menu[S_WeaponMenu]) {
+    Json_Object_GetString(menuJson, "Name", Menu[WeaponMenu_Name], charsmax(Menu[WeaponMenu_Name]));
 
     if (Json_Object_GetColoredChatMessage(
-        linkedJson, "FakeMessage",
+        menuJson, "FakeMessage",
         Menu[WeaponMenu_FakeMessage], charsmax(Menu[WeaponMenu_FakeMessage])
     )) {
-        PCJson_FreeLinked(linkedJson);
         return true;
     }
     
-    Menu[WeaponMenu_Items] = Json_Object_GetMenuItemsList(linkedJson, "Items");
+    Menu[WeaponMenu_Items] = Json_Object_GetMenuItemsList(menuJson, "Items");
     if (Menu[WeaponMenu_Items] == Invalid_Array) {
-        PCJson_LogForFile(linkedJson, "WARNING", "Menu items list are empty.");
-        PCJson_FreeLinked(linkedJson);
+        PCJson_LogForFile(menuJson, "WARNING", "Menu items list are empty.");
         return false;
     }
 
-    Json_Object_GetString(linkedJson, "Title", Menu[WeaponMenu_Title], charsmax(Menu[WeaponMenu_Title]), Menu[WeaponMenu_Name]);
+    Json_Object_GetString(menuJson, "Title", Menu[WeaponMenu_Title], charsmax(Menu[WeaponMenu_Title]), Menu[WeaponMenu_Name]);
 
-    Menu[WeaponMenu_Count] = Json_Object_GetInt(linkedJson, "Count", -1);
-    Menu[WeaponMenu_BackOnExit] = Json_Object_GetBool(linkedJson, "BackOnExit", false);
-    Menu[WeaponMenu_PerPage] = Json_Object_GetInt(linkedJson, "PerPage", -1);
-    Menu[WeaponMenu_ShowPage] = Json_Object_GetBool(linkedJson, "ShowPage", true);
-    Menu[WeaponMenu_Limits] = Json_Object_GetLimits(linkedJson, "Limits");
+    Menu[WeaponMenu_Count] = Json_Object_GetInt(menuJson, "Count", -1);
+    Menu[WeaponMenu_BackOnExit] = Json_Object_GetBool(menuJson, "BackOnExit", false);
+    Menu[WeaponMenu_PerPage] = Json_Object_GetInt(menuJson, "PerPage", -1);
+    Menu[WeaponMenu_ShowPage] = Json_Object_GetBool(menuJson, "ShowPage", true);
+    Menu[WeaponMenu_Limits] = Json_Object_GetLimits(menuJson, "Limits");
 
-    PCJson_FreeLinked(linkedJson);
     return true;
 }
 
