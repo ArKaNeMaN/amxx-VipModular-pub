@@ -11,8 +11,6 @@
 
 #include "VipM/WeaponMenu/Objects/MenuItem"
 
-// TODO: Мб на хендлеры переделать?)
-
 enum _:S_WeaponMenu {
     WeaponMenu_Name[64],
     WeaponMenu_Title[128],

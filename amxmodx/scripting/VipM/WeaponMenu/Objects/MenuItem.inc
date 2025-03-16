@@ -27,58 +27,52 @@ enum _:S_MenuItem {
     Array:MenuItem_Limits, // T_LimitUnit[]
 }
 
-bool:MenuItem_Read(const JSON:jMenuItem, MenuItem[S_MenuItem]) {
-    new JSON:linkedJson;
-    PCJson_HandleLinkedValue(jMenuItem, linkedJson);
-
-    if (!json_is_object(linkedJson)) {
-        PCJson_LogForFile(linkedJson, "WARNING", "Invalid menu item format.");
+bool:MenuItem_Read(const JSON:itemJson, item[S_MenuItem]) {
+    if (!json_is_object(itemJson)) {
+        PCJson_LogForFile(itemJson, "WARNING", "Invalid menu item format.");
         return false;
     }
 
-    if (!json_object_get_string(linkedJson, "Title", MenuItem[MenuItem_Title], charsmax(MenuItem[MenuItem_Title]))) {
-        MenuItem[MenuItem_Type] = MenuItemType_Blank;
-        PCJson_FreeLinked(linkedJson);
+    if (!json_object_get_string(itemJson, "Title", item[MenuItem_Title], charsmax(item[MenuItem_Title]))) {
+        item[MenuItem_Type] = MenuItemType_Blank;
         return true;
     }
 
-    MenuItem[MenuItem_Items] = Json_Object_IC_GetItems(linkedJson, "Items");
+    item[MenuItem_Items] = Json_Object_IC_GetItems(itemJson, "Items");
 
-    if (MenuItem[MenuItem_Items] == Invalid_Array) {
-        MenuItem[MenuItem_Type] = MenuItemType_Text;
-        PCJson_FreeLinked(linkedJson);
+    if (item[MenuItem_Items] == Invalid_Array) {
+        item[MenuItem_Type] = MenuItemType_Text;
         return true;
     }
     
-    MenuItem[MenuItem_Type] = MenuItemType_Default;
+    item[MenuItem_Type] = MenuItemType_Default;
 
-    MenuItem[MenuItem_ShowLimits] = Json_Object_GetLimits(linkedJson, "ShowLimits");
-    MenuItem[MenuItem_ActiveLimits] = Json_Object_GetLimits(linkedJson, "ActiveLimits");
-    MenuItem[MenuItem_Limits] = Json_Object_GetLimits(linkedJson, "Limits");
-    MenuItem[MenuItem_FakeInactive] = Json_Object_GetBool(linkedJson, "FakeInactive", false);
-    MenuItem[MenuItem_UseCounter] = Json_Object_GetBool(linkedJson, "UseCounter", true);
+    item[MenuItem_ShowLimits] = Json_Object_GetLimits(itemJson, "ShowLimits");
+    item[MenuItem_ActiveLimits] = Json_Object_GetLimits(itemJson, "ActiveLimits");
+    item[MenuItem_Limits] = Json_Object_GetLimits(itemJson, "Limits");
+    item[MenuItem_FakeInactive] = Json_Object_GetBool(itemJson, "FakeInactive", false);
+    item[MenuItem_UseCounter] = Json_Object_GetBool(itemJson, "UseCounter", true);
 
-    PCJson_FreeLinked(linkedJson);
     return true;
 }
 
-Array:MenuItem_ReadList(const JSON:jMenuItems, &Array:aMenuItems = Invalid_Array) {
-    ArrayCreateIfNotCreated(aMenuItems, S_MenuItem, 1);
+Array:MenuItem_ReadList(const JSON:itemsJson, &Array:items = Invalid_Array) {
+    ArrayCreateIfNotCreated(items, S_MenuItem, 1);
     
     new JSON:linkedJson;
-    PCJson_HandleLinkedValue(jMenuItems, linkedJson);
+    PCJson_HandleLinkedValue(itemsJson, linkedJson);
 
     switch (json_get_type(linkedJson)) {
         case JSONObject: {
             new MenuItem[S_MenuItem];
             if (MenuItem_Read(linkedJson, MenuItem)) {
-                ArrayPushArray(aMenuItems, MenuItem);
+                ArrayPushArray(items, MenuItem);
             }
         }
         case JSONArray: {
-            json_array_foreach_value (linkedJson: i => jMenuItem) {
-                MenuItem_ReadList(jMenuItem, aMenuItems);
-                json_free(jMenuItem);
+            json_array_foreach_value (linkedJson: i => itemJson) {
+                MenuItem_ReadList(itemJson, items);
+                json_free(itemJson);
             }
         }
         default: {
@@ -87,7 +81,7 @@ Array:MenuItem_ReadList(const JSON:jMenuItems, &Array:aMenuItems = Invalid_Array
     }
 
     PCJson_FreeLinked(linkedJson);
-    return aMenuItems;
+    return items;
 }
 
 Array:Json_Object_GetMenuItemsList(
