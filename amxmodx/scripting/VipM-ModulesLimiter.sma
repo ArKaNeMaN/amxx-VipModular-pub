@@ -42,7 +42,9 @@ public VipM_OnActivateModule(const sModuleName[]) {
 }
 
 Trie:LoadModulesLimitsFromFile(const sFileName[], Trie:tModules = Invalid_Trie) {
-    TrieCreateIfNotCreated(tModules);
+    if (tModules == Invalid_Trie) {
+        tModules = TrieCreate();
+    }
 
     new JSON:jFile = PCJson_ParseFile(GET_FILE_JSON_PATH(sFileName));
     if (jFile == Invalid_JSON) {

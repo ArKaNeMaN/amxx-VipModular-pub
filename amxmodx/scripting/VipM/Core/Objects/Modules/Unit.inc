@@ -54,7 +54,7 @@ static T_ModuleUnit:ModuleUnit__Construct(const T_ModuleType:iModuleType, const 
 //     ArrayGetArray(g_aModuleUnits, _:iModuleUnit, ModuleUnit);
 // }
 
-static any:ModuleType__GetValue(const T_ModuleUnit:iModuleUnit, const iCell) {
+static any:ModuleUnit__GetValue(const T_ModuleUnit:iModuleUnit, const iCell) {
     return ArrayGetCell(g_aModuleUnits, _:iModuleUnit, iCell);
 }
 
@@ -139,11 +139,11 @@ Array:JsonObject_GetModuleUnits(const JSON:jObj, const sKey[], const bool:bDotNo
 }
 
 Trie:ModuleUnit_GetParams(const T_ModuleUnit:iModuleUnit) {
-    return ModuleType__GetValue(iModuleUnit, ModuleUnit_Params);
+    return ModuleUnit__GetValue(iModuleUnit, ModuleUnit_Params);
 }
 
 ModuleUnit_GetTypeName(const T_ModuleUnit:iModuleUnit, sOut[], const iOutLen) {
-    return ModuleType_GetName(ModuleType__GetValue(iModuleUnit, ModuleUnit_Type), sOut, iOutLen);
+    return ModuleType_GetName(ModuleUnit__GetValue(iModuleUnit, ModuleUnit_Type), sOut, iOutLen);
 }
 
 // ModuleUnit_iGetTypeName(const T_ModuleUnit:iModuleUnit) {
@@ -165,5 +165,5 @@ Trie:ModuleUnit_FreeParamsIfTemp(&Trie:tParams) {
 }
 
 Trie:ModuleUnit_Merge(const T_ModuleUnit:iModuleUnit, const Trie:tParams1, const Trie:tParams2) {
-    return ModuleType_MergeParams(ModuleType__GetValue(iModuleUnit, ModuleUnit_Type), tParams1, tParams2);
+    return ModuleType_MergeParams(ModuleUnit__GetValue(iModuleUnit, ModuleUnit_Type), tParams1, tParams2);
 }
