@@ -32,8 +32,8 @@ DefaultObjects_ItemType_Command_Register() {
 
 @OnCommandGive(const playerIndex, const Trie:p) {
     static Command[128];
-    VipM_Params_GetStr(p, "Command", Command, charsmax(Command));
-    new bool:ByServer = VipM_Params_GetBool(p, "ByServer", false);
+    PCGet_Str(p, "Command", Command, charsmax(Command));
+    new bool:ByServer = PCGet_Bool(p, "ByServer", false);
 
     replace_all(Command, charsmax(Command), "{UserId}", IntToStr(playerIndex));
     replace_all(Command, charsmax(Command), "{playerIndex}", IntToStr(playerIndex));

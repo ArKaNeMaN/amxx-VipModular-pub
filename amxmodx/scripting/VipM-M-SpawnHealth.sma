@@ -16,7 +16,7 @@ public stock const PluginDescription[] = "Vip modular`s module - SpawnHealth";
 
 new const MODULE_NAME[] = "SpawnHealth";
 
-public VipM_OnInitModules(){
+public VipM_Modules_OnInited(){
     register_plugin(PluginName, PluginVersion, PluginAuthor);
 
     VipM_Modules_Register(MODULE_NAME, true);
@@ -51,7 +51,7 @@ public VipM_OnInitModules(){
         return;
     }
     
-    Dbg_Log("@Event_PlayerSpawned(%d): Limits Count = %d", UserId, ArraySizeSafe(VipM_Params_GetCell(Params, "Limits", Invalid_Array)));
+    Dbg_Log("@Event_PlayerSpawned(%d): Limits Count = %d", UserId, ArraySizeSafe(PCGet_Cell(Params, "Limits", Invalid_Array)));
     if (!VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_AND)) {
         return;
     }
@@ -59,7 +59,7 @@ public VipM_OnInitModules(){
 
     new Health;
     if (TrieGetCell(Params, "Health", Health) && Health > 0) {
-        if (!VipM_Params_GetBool(Params, "SetHealth", true)) {
+        if (!PCGet_Bool(Params, "SetHealth", true)) {
             Health += floatround(get_entvar(UserId, var_health));
 
             new MaxHealth;
@@ -72,7 +72,7 @@ public VipM_OnInitModules(){
 
     new Armor;
     if (TrieGetCell(Params, "Armor", Armor) && Armor > 0) {
-        if (!VipM_Params_GetBool(Params, "SetArmor", true)) {
+        if (!PCGet_Bool(Params, "SetArmor", true)) {
             Health += rg_get_user_armor(UserId);
 
             new MaxHealth;
@@ -80,6 +80,6 @@ public VipM_OnInitModules(){
                 Health = min(Health, MaxHealth);
             }
         }
-        rg_set_user_armor(UserId, Armor, VipM_Params_GetBool(Params, "Helmet", false) ? ARMOR_VESTHELM : ARMOR_KEVLAR);
+        rg_set_user_armor(UserId, Armor, PCGet_Bool(Params, "Helmet", false) ? ARMOR_VESTHELM : ARMOR_KEVLAR);
     }
 }

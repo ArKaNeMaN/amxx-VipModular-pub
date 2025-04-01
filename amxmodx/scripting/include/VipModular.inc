@@ -76,7 +76,7 @@ enum _:VipM_FwdReturn{
  *
  * @noreturn
  */
-#pragma deprecated Use VipM_Modules_OnActivate() or VipM_Limits_OnInited() instead.
+#pragma deprecated Use VipM_Modules_OnInited() or VipM_Limits_OnInited() instead.
 forward VipM_OnInitModules();
 
 /**

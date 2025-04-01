@@ -39,8 +39,8 @@ DefaultObjects_ItemType_DamageMult_Register() {
 }
 
 @ItemType_DamageMult_OnGive(const playerIndex, const Trie:p) {
-    PlayerGivenDmgMult[playerIndex] = VipM_Params_GetFloat(p, "Given", 1.0);
-    PlayerTakenDmgMult[playerIndex] = VipM_Params_GetFloat(p, "Taken", 1.0);
+    PlayerGivenDmgMult[playerIndex] = PCGet_Float(p, "Given", 1.0);
+    PlayerTakenDmgMult[playerIndex] = PCGet_Float(p, "Taken", 1.0);
 }
 
 @ItemType_DamageMult_OnPlayerSpawnPre(const playerIndex) {

@@ -20,7 +20,7 @@ new const MODULE_NAME[] = "VipInTab";
 
 new bool:gHasTag[MAX_PLAYERS + 1][E_ModuleParams];
 
-public VipM_OnInitModules() {
+public VipM_Modules_OnInited() {
     register_plugin(PluginName, PluginVersion, PluginAuthor);
 
     VipM_Modules_Register(MODULE_NAME, true);
@@ -34,8 +34,8 @@ public VipM_OnInitModules() {
 public VipM_OnUserUpdated(const UserId) {
     new Trie:Params = VipM_Modules_GetParams(MODULE_NAME, UserId);
 
-    gHasTag[UserId][Param_Enabled] = VipM_Params_GetBool(Params, "Enabled", false);
-    gHasTag[UserId][Param_Override] = VipM_Params_GetBool(Params, "Override", false);
+    gHasTag[UserId][Param_Enabled] = PCGet_Bool(Params, "Enabled", false);
+    gHasTag[UserId][Param_Override] = PCGet_Bool(Params, "Override", false);
 }
 
 @OnModuleActivate() {

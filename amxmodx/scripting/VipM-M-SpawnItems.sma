@@ -16,7 +16,7 @@ public stock const PluginDescription[] = "Vip modular`s module - Spawn Items";
 
 new const MODULE_NAME[] = "SpawnItems";
 
-public VipM_OnInitModules() {
+public VipM_Modules_OnInited() {
     register_plugin(PluginName, PluginVersion, PluginAuthor);
     IC_Init();
     
@@ -73,7 +73,7 @@ public VipM_OnInitModules() {
         return;
     }
 
-    new Array:aItems = Array:VipM_Params_GetInt(Params, "Items", _:Invalid_Array);
+    new Array:aItems = Array:PCGet_Int(Params, "Items", _:Invalid_Array);
     if (aItems == Invalid_Array) {
         Dbg_Log("@GivePlayerItems(%n) Items array is empty", UserId);
         return;

@@ -25,7 +25,7 @@ DefaultObjects_ItemType_ItemsList_Register() {
 }
 
 @OnItemsListGive(const playerIndex, const Trie:p) {
-    new Array:aItems = VipM_Params_GetCell(p, "Items", Invalid_Array);
+    new Array:aItems = PCGet_Cell(p, "Items", Invalid_Array);
 
     return IC_Item_GiveArray(playerIndex, aItems) ? IC_RET_GIVE_SUCCESS : IC_RET_GIVE_FAIL;
 }

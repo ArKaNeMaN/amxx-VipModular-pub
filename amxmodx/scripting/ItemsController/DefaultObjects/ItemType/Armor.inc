@@ -36,11 +36,11 @@ DefaultObjects_ItemType_Armor_Register() {
 }
 
 @OnArmorGive(const playerIndex, const Trie:p) {
-    if (VipM_Params_GetBool(p, "SetArmor", false)) {
-        rg_set_user_armor(playerIndex, VipM_Params_GetInt(p, "Armor"), VipM_Params_GetBool(p, "Helmet", false) ? ARMOR_VESTHELM : ARMOR_KEVLAR);
+    if (PCGet_Bool(p, "SetArmor", false)) {
+        rg_set_user_armor(playerIndex, PCGet_Int(p, "Armor"), PCGet_Bool(p, "Helmet", false) ? ARMOR_VESTHELM : ARMOR_KEVLAR);
     } else {
-        new iSetArmor = min(rg_get_user_armor(playerIndex) + VipM_Params_GetInt(p, "Armor"), VipM_Params_GetInt(p, "MaxArmor", 100));
+        new iSetArmor = min(rg_get_user_armor(playerIndex) + PCGet_Int(p, "Armor"), PCGet_Int(p, "MaxArmor", 100));
 
-        rg_set_user_armor(playerIndex, iSetArmor, VipM_Params_GetBool(p, "Helmet", false) ? ARMOR_VESTHELM : ARMOR_KEVLAR);
+        rg_set_user_armor(playerIndex, iSetArmor, PCGet_Bool(p, "Helmet", false) ? ARMOR_VESTHELM : ARMOR_KEVLAR);
     }
 }

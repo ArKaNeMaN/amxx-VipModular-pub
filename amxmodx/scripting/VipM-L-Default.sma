@@ -34,7 +34,7 @@ public plugin_natives() {
     }
 }
 
-public VipM_OnInitModules() {
+public VipM_Limits_OnInited() {
     register_plugin(PluginName, PluginVersion, PluginAuthor);
 
     VipM_Limits_RegisterType("ForAll", false, true);
@@ -266,8 +266,8 @@ public client_authorized(UserId, const AuthId[]) {
 }
 
 @OnTimeCheck(const Trie:tParams) {
-    new iBefore = VipM_Params_GetInt(tParams, "Before", 0);
-    new iAfter = VipM_Params_GetInt(tParams, "After", 0);
+    new iBefore = PCGet_Int(tParams, "Before", 0);
+    new iAfter = PCGet_Int(tParams, "After", 0);
     new iCurrent = GetDayTimeInSeconds();
 
     Dbg_Log("@OnTimeCheck(%d):", tParams);
@@ -352,17 +352,17 @@ public client_authorized(UserId, const AuthId[]) {
 
 @OnInBuyZoneCheck(const Trie:Params, const UserId) {
     new bool:bInBuyZone = IsUserInBuyZone(UserId);
-    return VipM_Params_GetBool(Params, "Reverse", false) ? !bInBuyZone : bInBuyZone;
+    return PCGet_Bool(Params, "Reverse", false) ? !bInBuyZone : bInBuyZone;
 }
 
 @OnInFreezyTimeCheck(const Trie:Params) {
     new bool:bFreezyPeriod = get_member_game(m_bFreezePeriod);
-    return VipM_Params_GetBool(Params, "Reverse", false) ? !bFreezyPeriod : bFreezyPeriod;
+    return PCGet_Bool(Params, "Reverse", false) ? !bFreezyPeriod : bFreezyPeriod;
 }
 
 @OnRoundTimeCheck(const Trie:Params) {
-    new iMin = VipM_Params_GetInt(Params, "Min", 0);
-    new iMax = VipM_Params_GetInt(Params, "Max", 0);
+    new iMin = PCGet_Int(Params, "Min", 0);
+    new iMax = PCGet_Int(Params, "Max", 0);
     new iRoundTime = floatround(get_gametime() - Float:get_member_game(m_fRoundStartTime));
 
     return (
@@ -372,8 +372,8 @@ public client_authorized(UserId, const AuthId[]) {
 }
 
 @OnLifeTimeCheck(const Trie:Params, const UserId) {
-    new iMin = VipM_Params_GetInt(Params, "Min", 0);
-    new iMax = VipM_Params_GetInt(Params, "Max", 0);
+    new iMin = PCGet_Int(Params, "Min", 0);
+    new iMax = PCGet_Int(Params, "Max", 0);
     new iLifeTime = floatround(get_gametime() - g_fPlayerSpawnTime[UserId]);
 
     return (
@@ -398,7 +398,7 @@ public client_authorized(UserId, const AuthId[]) {
 @OnWeekDayCheck(const Trie:Params) {
     new sWeekDay[4];
     get_time("%w", sWeekDay, charsmax(sWeekDay));
-    return str_to_num(sWeekDay) == VipM_Params_GetInt(Params, "Day", -1);
+    return str_to_num(sWeekDay) == PCGet_Int(Params, "Day", -1);
 }
 
 @OnAliveCheck(const Trie:Params, const UserId) {
@@ -406,37 +406,37 @@ public client_authorized(UserId, const AuthId[]) {
 }
 
 @OnNameCheck(const Trie:Params, const UserId) {
-    return IsEqualUserName(UserId, VipM_Params_GetStri(Params, "Name"));
+    return IsEqualUserName(UserId, PCGet_iStr(Params, "Name"));
 }
 
 bool:@OnFlagsCheck(const Trie:Params, const UserId) {
     static sFlags[16];
-    VipM_Params_GetStr(Params, "Flags", sFlags, charsmax(sFlags));
+    PCGet_Str(Params, "Flags", sFlags, charsmax(sFlags));
 
-    return HasUserFlagsStr(UserId, sFlags, VipM_Params_GetBool(Params, "Strict", false));
+    return HasUserFlagsStr(UserId, sFlags, PCGet_Bool(Params, "Strict", false));
 }
 
 @OnSteamIdCheck(const Trie:Params, const UserId) {
     static sSteamId[64];
-    VipM_Params_GetStr(Params, "SteamId", sSteamId, charsmax(sSteamId));
+    PCGet_Str(Params, "SteamId", sSteamId, charsmax(sSteamId));
 
     return equali(g_sSteamIds[UserId], sSteamId);
 }
 
 @OnIpCheck(const Trie:Params, const UserId) {
     static sIp[32];
-    VipM_Params_GetStr(Params, "SteamId", sIp, charsmax(sIp));
+    PCGet_Str(Params, "SteamId", sIp, charsmax(sIp));
 
     return equali(g_sIps[UserId], sIp);
 }
 
 @OnMapCheck(const Trie:Params) {
     static sMap[32];
-    VipM_Params_GetStr(Params, "Map", sMap, charsmax(sMap));
+    PCGet_Str(Params, "Map", sMap, charsmax(sMap));
 
-    new iCount = VipM_Params_GetBool(Params, "Prefix", false) ? strlen(sMap) : 0;
+    new iCount = PCGet_Bool(Params, "Prefix", false) ? strlen(sMap) : 0;
 
-    if (VipM_Params_GetBool(Params, "Real", false)) {
+    if (PCGet_Bool(Params, "Real", false)) {
         return equali(sMap, g_sRealMapName, iCount);
     } else {
         static sSetMapName[32];
@@ -447,13 +447,13 @@ bool:@OnFlagsCheck(const Trie:Params, const UserId) {
 
 @OnHasPrimaryWeaponCheck(const Trie:Params, const UserId) {
     new bool:res = get_member(UserId, m_bHasPrimary);
-    return VipM_Params_GetBool(Params, "HasNot", false) ? !res : res;
+    return PCGet_Bool(Params, "HasNot", false) ? !res : res;
 }
 
 @OnRoundCheck(const Trie:Params, const UserId){
     return (
-        GetCurrentRoundNum() >= VipM_Params_GetInt(Params, "Min", -1)
-        && GetCurrentRoundNum() <= VipM_Params_GetInt(Params, "Max", cellmax)
+        GetCurrentRoundNum() >= PCGet_Int(Params, "Min", -1)
+        && GetCurrentRoundNum() <= PCGet_Int(Params, "Max", cellmax)
     );
 }
 

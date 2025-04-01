@@ -209,7 +209,7 @@ stock bool:IC_Item_GiveArray(const playerIndex, const Array:array) {
 /**
  * Вызывается в момент инициалзиации типов предметов.
  *
- * @note Вызывается из VipM_OnInitModules
+ * @note Вызывается не позже plugin_precache.
  *
  * @noreturn
  * 
@@ -349,7 +349,7 @@ stock bool:VipM_Params_GiveItems(const UserId, const Trie:tParams, const sParam[
 }
 
 stock bool:VipM_Params_GiveItem(const UserId, const Trie:tParams, const sParam[]) {
-    return IC_Item_Give(UserId, VipM_Params_GetCell(tParams, sParam));
+    return IC_Item_Give(UserId, PCGet_Cell(tParams, sParam));
 }
 
 #pragma deprecated Use Json_Object_IC_GetItems() instead.

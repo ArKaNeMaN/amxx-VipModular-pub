@@ -41,7 +41,7 @@ new gUserExpireStatus[MAX_PLAYERS + 1][VIPM_M_WEAPONMENU_EXPIRE_STATUS_MAX_LEN];
 #include "VipM/WeaponMenu/KeyValueCounter"
 #include "VipM/WeaponMenu/Menus"
 
-public VipM_OnInitModules() {
+public VipM_Modules_OnInited() {
     register_plugin(PluginName, PluginVersion, PluginAuthor);
     register_dictionary("VipM-WeaponMenu.ini");
     IC_Init();
@@ -99,7 +99,7 @@ public VipM_OnInitModules() {
 ResetUserMenuCounters(const UserId) {
     new Trie:Params = VipM_Modules_GetParams(MODULE_NAME, UserId);
 
-    gUserLeftItems[UserId] = VipM_Params_GetInt(Params, "Count", -1);
+    gUserLeftItems[UserId] = PCGet_Int(Params, "Count", -1);
     g_tUserMenuItemsCounter[UserId] = KeyValueCounter_Reset(g_tUserMenuItemsCounter[UserId]);
 
     gUserShouldResetCounters[UserId] = false;
@@ -151,15 +151,15 @@ public client_disconnected(UserId) {
         return;
     }
 
-    set_task(VipM_Params_GetFloat(Params, "AutoopenDelay", 0.0), "@Task_AutoOpen", TASK_OFFSET_AUTO_OPEN + UserId);
+    set_task(PCGet_Float(Params, "AutoopenDelay", 0.0), "@Task_AutoOpen", TASK_OFFSET_AUTO_OPEN + UserId);
 }
 
 @Task_AutoOpen(UserId) {
     UserId -= TASK_OFFSET_AUTO_OPEN;
 
     new Trie:tParams = VipM_Modules_GetParams(MODULE_NAME, UserId);
-    new Float:fAutoCloseDelay = VipM_Params_GetFloat(tParams, "AutoopenCloseDelay", 0.0);
-    new iMenuNum = VipM_Params_GetInt(tParams, "AutoopenMenuNum", -1);
+    new Float:fAutoCloseDelay = PCGet_Float(tParams, "AutoopenCloseDelay", 0.0);
+    new iMenuNum = PCGet_Int(tParams, "AutoopenMenuNum", -1);
 
     if (iMenuNum > 0) {
         CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU_SILENT, IntToStr(iMenuNum - 1));
@@ -238,7 +238,7 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
             CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU, "0");
         } else {
             static MainMenuTitle[128];
-            VipM_Params_GetStr(Params, "MainMenuTitle", MainMenuTitle, charsmax(MainMenuTitle));
+            PCGet_Str(Params, "MainMenuTitle", MainMenuTitle, charsmax(MainMenuTitle));
             Menu_MainMenu(UserId, MainMenuTitle, aMenus);
         }
         return;
@@ -320,9 +320,9 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
     }
 
     if (
-        VipM_Params_GetBool(Params, "StayOpen", false)
+        PCGet_Bool(Params, "StayOpen", false)
         && (
-            !VipM_Params_GetBool(Params, "StayOpen_CheckCounter", true)
+            !PCGet_Bool(Params, "StayOpen_CheckCounter", true)
             || iItemsLeft != 0
         )
     ) {

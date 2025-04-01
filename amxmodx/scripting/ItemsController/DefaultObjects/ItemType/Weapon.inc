@@ -33,7 +33,7 @@ DefaultObjects_ItemType_Weapon_Register() {
 
 @OnWeaponGive(const playerIndex, const Trie:p) {
     static WeaponName[32];
-    VipM_Params_GetStr(p, "Name", WeaponName, charsmax(WeaponName));
+    PCGet_Str(p, "Name", WeaponName, charsmax(WeaponName));
     if (!WeaponName[0]) {
         return IC_RET_GIVE_FAIL;
     }
@@ -43,8 +43,8 @@ DefaultObjects_ItemType_Weapon_Register() {
         return IC_RET_GIVE_FAIL;
     }
     
-    new GiveType:iGiveType = GiveType:VipM_Params_GetInt(p, "GiveType", _:GT_DROP_AND_REPLACE);
-    new iBpAmmo = VipM_Params_GetInt(p, "BpAmmo", -1);
+    new GiveType:iGiveType = GiveType:PCGet_Int(p, "GiveType", _:GT_DROP_AND_REPLACE);
+    new iBpAmmo = PCGet_Int(p, "BpAmmo", -1);
 
     new ItemId = rg_give_item(playerIndex, WeaponName, iGiveType);
     if (ItemId < 0) {

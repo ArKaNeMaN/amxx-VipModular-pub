@@ -41,9 +41,9 @@ DefaultObjects_ItemType_Money_Register() {
 @OnMoneyGive(const playerIndex, const Trie:p) {
     rg_add_account(
         playerIndex,
-        VipM_Params_GetInt(p, "Amount"),
-        VipM_Params_GetCell(p, "GiveType", AS_ADD),
-        VipM_Params_GetBool(p, "TrackChanges", true)
+        PCGet_Int(p, "Amount"),
+        PCGet_Cell(p, "GiveType", AS_ADD),
+        PCGet_Bool(p, "TrackChanges", true)
     );
 }
 

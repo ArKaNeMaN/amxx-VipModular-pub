@@ -36,7 +36,7 @@ DefaultObjects_ItemType_Speed_Register() {
 }
 
 @ItemType_Speed_OnGive(const playerIndex, const Trie:p) {
-    PlayerSpeedMult[playerIndex] = VipM_Params_GetFloat(p, "Multiplier", 1.0);
+    PlayerSpeedMult[playerIndex] = PCGet_Float(p, "Multiplier", 1.0);
     ItemType_Speed_MultUserSpeed(playerIndex, PlayerSpeedMult[playerIndex]);
 }
 

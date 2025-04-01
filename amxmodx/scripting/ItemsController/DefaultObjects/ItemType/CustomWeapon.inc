@@ -106,13 +106,13 @@ DefaultObjects_ItemType_CustomWeapon_Register() {
     }
 
     static name[32];
-    VipM_Params_GetStr(p, "Name", name, charsmax(name));
+    PCGet_Str(p, "Name", name, charsmax(name));
     if (!name[0]) {
         log_amx("[WARNING] Custom weapon name is empty.");
         return IC_RET_GIVE_FAIL;
     }
     
-    new E_ItemType_CustomWeapon_GiveType:giveType = E_ItemType_CustomWeapon_GiveType:VipM_Params_GetInt(p, "GiveType", _:ItemType_CustomWeapon_GiveType_Default);
+    new E_ItemType_CustomWeapon_GiveType:giveType = E_ItemType_CustomWeapon_GiveType:PCGet_Int(p, "GiveType", _:ItemType_CustomWeapon_GiveType_Default);
 
     new bool:res = false;
     switch (UsingController) {

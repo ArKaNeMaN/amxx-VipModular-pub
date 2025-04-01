@@ -14,7 +14,7 @@ public stock const PluginDescription[] = "Vip modular`s module - Vampire";
 
 new const MODULE_NAME[] = "Vampire";
 
-public VipM_OnInitModules(){
+public VipM_Modules_OnInited(){
     register_plugin(PluginName, PluginVersion, PluginAuthor);
     register_dictionary("VipM-Vampire.ini");
 
@@ -50,17 +50,17 @@ public VipM_OnInitModules(){
         return;
     }
 
-    if (!VipM_Limits_ExecuteList(VipM_Params_GetCell(Params, "Limits", Invalid_Array), UserId)) {
+    if (!VipM_Limits_ExecuteList(PCGet_Cell(Params, "Limits", Invalid_Array), UserId)) {
         return;
     }
 
-    new MaxHealth = VipM_Params_GetInt(Params, "MaxHealth", 100);
+    new MaxHealth = PCGet_Int(Params, "MaxHealth", 100);
     new Health = floatround(get_entvar(UserId, var_health));
     if (Health >= MaxHealth) {
         return;
     }
     
-    new ByKill = VipM_Params_GetInt(Params, "ByKill", 0);
+    new ByKill = PCGet_Int(Params, "ByKill", 0);
     new VampHealth = 0;
     new ActiveItem; ActiveItem = get_member(UserId, m_pActiveItem);
     if (
@@ -68,11 +68,11 @@ public VipM_OnInitModules(){
         && is_entity(ActiveItem)
         && rg_get_iteminfo(ActiveItem, ItemInfo_iId) == CSW_KNIFE
     ) {
-        VampHealth = VipM_Params_GetInt(Params, "ByKnife", ByKill);
+        VampHealth = PCGet_Int(Params, "ByKnife", ByKill);
     } else if(get_member(VictimId, m_bHeadshotKilled)) {
-        VampHealth = VipM_Params_GetInt(Params, "ByHead", ByKill);
+        VampHealth = PCGet_Int(Params, "ByHead", ByKill);
     } else if (get_member(VictimId, m_bKilledByGrenade)) {
-        VampHealth = VipM_Params_GetInt(Params, "ByGrenade", ByKill);
+        VampHealth = PCGet_Int(Params, "ByGrenade", ByKill);
     } else {
         VampHealth = ByKill;
     }
