@@ -66,7 +66,23 @@ enum E_ModuleEvent{
     Module_OnMergeParams,
 }
 
-forward VipM_OnReadModuleUnit(const JSON:jUnit, const Trie:tParams);
+/**
+ * Вызывается .
+ *
+ * @param moduleName    Название модуля.
+ *
+ * @return VIPM_CONTINUE - модуль будет активирован, VIPM_STOP
+ */
+forward VipM_Modules_OnActivate(const moduleName[]);
+
+/**
+ * Вызывается перед активацией модуля.
+ *
+ * @param moduleName    Название модуля.
+ *
+ * @return VIPM_CONTINUE - модуль будет активирован, VIPM_STOP - активация модуля будет прервана.
+ */
+forward VipM_Modules_OnActivate(const moduleName[]);
 
 /**
  * Регистрирует новый модуль.

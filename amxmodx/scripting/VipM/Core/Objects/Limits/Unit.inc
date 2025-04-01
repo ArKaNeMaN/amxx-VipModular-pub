@@ -27,8 +27,8 @@ LimitUnit_Init() {
     LimitType_Init();
     
     g_aLimitUnits = ArrayCreate(S_LimitUnit, 1);
-    Forwards_Reg("ReadLimitUnit", ET_IGNORE, FP_CELL, FP_CELL); // TODO: call
-    Forwards_RegAndCall("InitLimits", ET_IGNORE);
+    
+    Forwards_RegAndCall("VipM_Limits_OnInited", ET_IGNORE);
 }
 
 LimitUnit_GetCount() {

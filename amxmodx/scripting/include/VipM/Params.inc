@@ -66,6 +66,7 @@ enum E_ParamType {
 }
 stock const VIPM_PARAM_TYPE_NAMES[E_ParamType][] = {"Custom", "Integer", "Float", "Bool", "String", "Color", "Vector2", "Vector3", "Limit", "Limits"};
 
+#pragma deprecated Use PCGet_*() stocks from ParamsController instead.
 stock any:VipM_Params_GetCell(const Trie:tParams, const sKey[], const any:iDef = 0) {
     if (tParams == Invalid_Trie) {
         return iDef;
@@ -75,18 +76,22 @@ stock any:VipM_Params_GetCell(const Trie:tParams, const sKey[], const any:iDef =
     return TrieGetCell(tParams, sKey, iVal) ? iVal : iDef;
 }
 
+#pragma deprecated Use PCGet_*() stocks from ParamsController instead.
 stock VipM_Params_GetInt(const Trie:tParams, const sKey[], const iDef = 0) {
     return _:VipM_Params_GetCell(tParams, sKey, iDef);
 }
 
+#pragma deprecated Use PCGet_*() stocks from ParamsController instead.
 stock bool:VipM_Params_GetBool(const Trie:tParams, const sKey[], const bool:bDef = false) {
     return VipM_Params_GetCell(tParams, sKey, bDef) ? true : false;
 }
 
+#pragma deprecated Use PCGet_*() stocks from ParamsController instead.
 stock Float:VipM_Params_GetFloat(const Trie:tParams, const sKey[], const Float:fDef = 0.0) {
     return Float:VipM_Params_GetCell(tParams, sKey, fDef);
 }
 
+#pragma deprecated Use PCGet_*() stocks from ParamsController instead.
 stock VipM_Params_GetStr(const Trie:tParams, const sKey[], sOut[], const iOutLen, const sDef[] = NULL_STRING) {
     new iWrittenLen = 0;
     if (
@@ -99,6 +104,7 @@ stock VipM_Params_GetStr(const Trie:tParams, const sKey[], sOut[], const iOutLen
     return copy(sOut, iOutLen, sDef);
 }
 
+#pragma deprecated Use PCGet_*() stocks from ParamsController instead.
 stock VipM_Params_GetStri(const Trie:tParams, const sKey[], const sDef[] = NULL_STRING) {
     new sStr[MAX_FMT_LENGTH]
     if (

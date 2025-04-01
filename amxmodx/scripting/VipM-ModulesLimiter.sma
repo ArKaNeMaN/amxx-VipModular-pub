@@ -1,5 +1,6 @@
 #include <amxmodx>
 #include <json>
+#include <VipModular>
 #include "VipM/Utils"
 #include "VipM/DebugMode"
 #include "VipM/ArrayTrieUtils"
@@ -20,7 +21,7 @@ public VipM_OnLoaded() {
     g_tModulesLimits = LoadModulesLimitsFromFile(MODULES_CONFIG_FILE, g_tModulesLimits);
 }
 
-public VipM_OnActivateModule(const sModuleName[]) {
+public VipM_Modules_OnActivate(const sModuleName[]) {
     if (
         g_tModulesLimits == Invalid_Trie
         || !TrieKeyExists(g_tModulesLimits, sModuleName)

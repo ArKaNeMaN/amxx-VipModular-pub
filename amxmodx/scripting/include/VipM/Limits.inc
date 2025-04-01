@@ -57,20 +57,23 @@ enum E_LimitsExecType {
  * Типы лимитов должны регистрироваться строго в рамках этого форварда.
  *
  * @note    Вызывается в рамках plugin_precache.
- *
+ * 
+ * @deprecated Use VipM_Limits_OnInited instead.
+ * 
  * @noreturn
  */
+#pragma deprecated Use VipM_Limits_OnInited instead.
 forward VipM_OnInitLimits();
 
 /**
- * Вызывается перед чтением параметров условного элемента.
+ * Вызывается в момент, когда нужно регистрировать типы лимитов.
+ * Типы лимитов должны регистрироваться строго в рамках этого форварда.
  *
- * @param jUnit     JSON-обьект с параметрами.
- * @param tParams   Хэш-карта с прочитанными параметрами. Может быть изменена.
+ * @note    Вызывается в рамках plugin_precache.
  *
- * @return          Если возвращено VIPM_STOP, условный элемент будет пропущен.
+ * @noreturn
  */
-forward VipM_OnReadLimitUnit(const JSON:jUnit, const Trie:tParams);
+forward VipM_Limits_OnInited();
 
 /**
  * Регистрирует в системе тип условного элемента.

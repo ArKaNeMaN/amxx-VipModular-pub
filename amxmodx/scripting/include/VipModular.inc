@@ -70,29 +70,14 @@ enum _:VipM_FwdReturn{
 }
 
 /**
- * Вызывается в момент инициалзиации модулей и лимитов.
+ * Вызывается после инициалзиации модулей и лимитов.
  *
  * @note    Вызывается из plugin_precache
  *
  * @noreturn
  */
+#pragma deprecated Use VipM_Modules_OnActivate() or VipM_Limits_OnInited() instead.
 forward VipM_OnInitModules();
-
-/**
- * Вызывается в момент чтения элемента конфига (модуля или лимита).
- *
- * @param jUnit     JSON-обьект с параметрами
- * @param tParams   Хэш-карта с прочитанными параметрами. Может быть изменена.
- *
- * @note    Параметр tParams содержит только прочитанные ядром параметры.
- *
- * @note    Соответствует событиям Limit_OnRead и Module_OnRead,
- *          и форвардам VipM_OnReadLimitUnit и VipM_OnReadModuleUnit.
- *          Вызывается перед ними.
- *
- * @return По умолчанию VIPM_CONTINUE. Если вернуть VIPM_STOP, элемент конфига будет проигнорирован.
- */
-forward VipM_OnReadUnit(const JSON:jUnit, const Trie:tParams);
 
 /**
  * Вызывается после полной загрузки системы привилегий.
@@ -102,6 +87,15 @@ forward VipM_OnReadUnit(const JSON:jUnit, const Trie:tParams);
  * @noreturn
  */
 forward VipM_OnLoaded();
+
+/**
+ * Обновляет привилегии указанного пользователя.
+ *
+ * @param UserId    Индекс игрока, чьи привилегии надо обновить.
+ *
+ * @noreturn
+ */
+native VipM_UserUpdate(const UserId);
 
 /**
  * Вызывается после загрузки привилегий игрока.
@@ -115,16 +109,9 @@ forward VipM_OnLoaded();
 forward VipM_OnUserUpdated(const UserId);
 
 /**
- * Обновляет привилегии указанного пользователя.
- *
- * @param UserId    Индекс игрока, чьи привилегии надо обновить.
- *
- * @noreturn
- */
-native VipM_UserUpdate(const UserId);
-
-/**
  * Выводит лог с указанием JSON-файла, из которого было прочитано указанное значене.
+ * 
+ * @deprecated
  *
  * @param jValue    Значение, для которого надо вывести лог.
  * @param sPrefix   Префикс лога. Например: ERROR, WARNING, INFO
@@ -133,6 +120,7 @@ native VipM_UserUpdate(const UserId);
  *
  * @noreturn
  */
+#pragma deprecated Use PCJson_*ForFile() instead.
 native VipM_Json_LogForFile(const JSON:jValue, const sPrefix[], const sMessage[], any:...);
 
 #include <VipM/Modules>

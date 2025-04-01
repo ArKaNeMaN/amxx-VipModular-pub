@@ -31,7 +31,7 @@ ModuleType_Init() {
 
     ArrayMapCreate(g_amModuleTypes, S_ModuleType);
     
-    Forwards_Reg("ActivateModule", ET_STOP, FP_STRING);
+    Forwards_Reg("VipM_Modules_OnActivate", ET_STOP, FP_STRING);
 }
 
 Array:ModuleType_GetAll() {
@@ -207,7 +207,7 @@ bool:ModuleType_Activate(const T_ModuleType:iModuleType) {
 
     if (!ModuleType[ModuleType_Active]) {
         Forwards_DefaultReturn(VIPM_CONTINUE);
-        if (Forwards_CallP("ActivateModule", ModuleType[ModuleType_Name]) != VIPM_CONTINUE) {
+        if (Forwards_CallP("VipM_Modules_OnActivate", ModuleType[ModuleType_Name]) != VIPM_CONTINUE) {
             return false;
         }
 

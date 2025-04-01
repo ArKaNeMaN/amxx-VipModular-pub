@@ -20,7 +20,7 @@ VipsManager_Init() {
     VipUnit_Init();
 
     g_aVips = ArrayCreate(1, 1);
-    Forwards_Reg("UserUpdated", ET_IGNORE, FP_CELL);
+    Forwards_Reg("VipM_OnUserUpdated", ET_IGNORE, FP_CELL);
 }
 
 VipsManager_VipsCount() {
@@ -100,7 +100,7 @@ VipsManager_UserReload(const UserId) {
         }
     }
 
-    Forwards_CallP("UserUpdated", UserId);
+    Forwards_CallP("VipM_OnUserUpdated", UserId);
 }
 
 VipsManager_UserReset(const UserId) {

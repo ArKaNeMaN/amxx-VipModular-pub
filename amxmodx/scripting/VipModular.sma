@@ -4,6 +4,8 @@
 #include "VipM/ArrayTrieUtils"
 #include "VipM/Utils"
 #include "VipM/Forwards"
+#include "VipM/Core/Objects/Modules/Type"
+#include "VipM/Core/Objects/Limits/Type"
 
 #pragma semicolon 1
 #pragma compress 1
@@ -23,11 +25,12 @@ public plugin_precache() {
     register_library(VIPM_LIBRARY);
     CreateConstCvar("vipm_version", PluginVersion);
 
-    Forwards_Init("VipM");
-    Forwards_Reg("ReadUnit", ET_IGNORE, FP_CELL, FP_CELL);
+    Forwards_Init();
 
     VipsManager_Init();
+    ModuleType_Init();
     SrvCmds_Init();
+    Forwards_RegAndCall("VipM_OnInitModules", ET_IGNORE); // deprecated
     
     VipsManager_SetRootDir(VipM_iGetCfgPath(""));
     VipsManager_LoadFromFile(VipM_iGetCfgPath("Vips.json"));
@@ -35,7 +38,7 @@ public plugin_precache() {
 
     ModuleType_ActivateUsed();
 
-    Forwards_RegAndCall("Loaded", ET_IGNORE);
+    Forwards_RegAndCall("VipM_OnLoaded", ET_IGNORE);
     server_print("[%s v%s] Loaded %d config units.", PluginName, PluginVersion, VipsManager_VipsCount());
     Dbg_PrintServer("Vip Modular run in debug mode!");
 }

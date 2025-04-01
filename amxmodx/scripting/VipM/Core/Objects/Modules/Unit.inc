@@ -5,6 +5,7 @@
 
 #include <amxmodx>
 #include "VipM/Utils"
+#include "VipM/Forwards"
 #include <VipM/Modules>
 #include "VipM/ArrayMap"
 #include "VipM/ArrayTrieUtils"
@@ -26,8 +27,8 @@ ModuleUnit_Init() {
     ModuleType_Init();
 
     g_aModuleUnits = ArrayCreate(S_ModuleUnit, 1);
-    Forwards_Reg("ReadModuleUnit", ET_IGNORE, FP_CELL, FP_CELL); // TODO: call
-    Forwards_RegAndCall("InitModules", ET_IGNORE);
+    
+    Forwards_RegAndCall("VipM_Modules_OnInited", ET_IGNORE);
 }
 
 ModuleUnit_GetCount() {

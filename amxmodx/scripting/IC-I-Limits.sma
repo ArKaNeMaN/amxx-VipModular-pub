@@ -2,6 +2,7 @@
 #include <json>
 #include <VipModular>
 #include <ItemsController>
+#include <ParamsController>
 #include "VipM/Utils"
 
 public stock const PluginName[] = "[IC-I] Limits";
