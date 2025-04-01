@@ -2,6 +2,12 @@
 
 Модульная система привилегий.
 
+## Требования
+
+- [ParamsController](https://github.com/AmxxModularEcosystem/ParamsController) версии [1.0.0-b5](https://github.com/AmxxModularEcosystem/ParamsController/releases/tag/1.0.0-b5) или [выше](https://github.com/AmxxModularEcosystem/ParamsController/releases/latest).
+- [CommandAliases](https://github.com/AmxxModularEcosystem/CommandAliases) версии [1.0.1](https://github.com/AmxxModularEcosystem/CommandAliases/releases/tag/1.0.1-fix1) или [выше](https://github.com/AmxxModularEcosystem/CommandAliases/releases/latest).
+- [ReAPI](https://github.com/rehlds/ReAPI) версии [5.24.0.300](https://github.com/rehlds/ReAPI/releases/tag/5.24.0.300) или [выше](https://github.com/rehlds/ReAPI/releases/latest).
+
 ## Инструкции по настройке
 
 - [Основные настройки](readme/configs.md)
