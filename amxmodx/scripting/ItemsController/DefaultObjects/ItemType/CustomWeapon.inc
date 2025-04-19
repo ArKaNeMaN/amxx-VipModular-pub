@@ -45,24 +45,27 @@ enum E_ItemType_CustomWeapon_GiveType {
 }
 
 static E_ItemType_CustomWeapon_Controller:UsingController = ItemType_CustomWeapon_Controller_None;
-static bool:AvailableControllers[E_ItemType_CustomWeapon_Controller] = {false, ...};
+
+// Почему-то через {true, ...} всё кроме первой ячейки ставится в false.
+static bool:AvailableControllers[E_ItemType_CustomWeapon_Controller] = {true, true, true, true};
 
 bool:DefaultObjects_ItemType_CustomWeapon_NativeFilter(const name[], const trap) {
     if (equal(name, "CWAPI_Weapons_Give")) {
-        AvailableControllers[ItemType_CustomWeapon_Controller_Cwapi] = !!trap;
+        AvailableControllers[ItemType_CustomWeapon_Controller_Cwapi] = false;
         return true;
     }
     if (equal(name, "CWAPI_Weapons_Find")) {
+        AvailableControllers[ItemType_CustomWeapon_Controller_Cwapi] = false;
         return true;
     }
 
     if (equal(name, "__auw__native__auw_give_weapon")) {
-        AvailableControllers[ItemType_CustomWeapon_Controller_Auw] = !!trap;
+        AvailableControllers[ItemType_CustomWeapon_Controller_Auw] = false;
         return true;
     }
 
     if (equal(name, "weapons_give_user_ultimate")) {
-        AvailableControllers[ItemType_CustomWeapon_Controller_Uw] = !!trap;
+        AvailableControllers[ItemType_CustomWeapon_Controller_Uw] = false;
         return true;
     }
 
@@ -71,7 +74,7 @@ bool:DefaultObjects_ItemType_CustomWeapon_NativeFilter(const name[], const trap)
 
 DefaultObjects_ItemType_CustomWeapon_Register() {
     UsingController = ItemType_CustomWeapon_Controller_None;
-    for (new i = 0; i < _:E_ItemType_CustomWeapon_Controller; ++i) {
+    for (new i = _:ItemType_CustomWeapon_Controller_Cwapi; i < _:E_ItemType_CustomWeapon_Controller; ++i) {
         if (AvailableControllers[E_ItemType_CustomWeapon_Controller:i]) {
             UsingController = E_ItemType_CustomWeapon_Controller:i;
         }
@@ -90,9 +93,9 @@ DefaultObjects_ItemType_CustomWeapon_Register() {
         return IC_RET_READ_FAIL;
     }
 
-    new Name[32];
-    json_object_get_string(instanceJson, "Name", Name, charsmax(Name));
-    TrieSetString(p, "Name", Name);
+    new name[64];
+    json_object_get_string(instanceJson, "Name", name, charsmax(name));
+    TrieSetString(p, "Name", name);
 
     TrieSetCell(p, "GiveType", _:ItemType_CustomWeapon_ReadGiveTypeFromJsonObject(instanceJson, "GiveType"));
 
@@ -105,7 +108,7 @@ DefaultObjects_ItemType_CustomWeapon_Register() {
         return IC_RET_GIVE_FAIL;
     }
 
-    static name[32];
+    static name[64];
     PCGet_Str(p, "Name", name, charsmax(name));
     if (!name[0]) {
         log_amx("[WARNING] Custom weapon name is empty.");
