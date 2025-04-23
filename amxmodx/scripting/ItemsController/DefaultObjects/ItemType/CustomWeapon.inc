@@ -51,21 +51,21 @@ static bool:AvailableControllers[E_ItemType_CustomWeapon_Controller] = {true, tr
 
 bool:DefaultObjects_ItemType_CustomWeapon_NativeFilter(const name[], const trap) {
     if (equal(name, "CWAPI_Weapons_Give")) {
-        AvailableControllers[ItemType_CustomWeapon_Controller_Cwapi] = false;
+        AvailableControllers[ItemType_CustomWeapon_Controller_Cwapi] = !!trap;
         return true;
     }
     if (equal(name, "CWAPI_Weapons_Find")) {
-        AvailableControllers[ItemType_CustomWeapon_Controller_Cwapi] = false;
+        AvailableControllers[ItemType_CustomWeapon_Controller_Cwapi] = !!trap;
         return true;
     }
 
     if (equal(name, "__auw__native__auw_give_weapon")) {
-        AvailableControllers[ItemType_CustomWeapon_Controller_Auw] = false;
+        AvailableControllers[ItemType_CustomWeapon_Controller_Auw] = !!trap;
         return true;
     }
 
     if (equal(name, "weapons_give_user_ultimate")) {
-        AvailableControllers[ItemType_CustomWeapon_Controller_Uw] = false;
+        AvailableControllers[ItemType_CustomWeapon_Controller_Uw] = !!trap;
         return true;
     }
 

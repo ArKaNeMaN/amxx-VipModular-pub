@@ -42,7 +42,7 @@ T_IC_ItemType:@_VipM_IC_RegisterType() {
 T_IC_Item:@_VipM_IC_JsonGetItem() {
     enum {Arg_InstanceJson = 1}
 
-    new JSON:isntanceJson = JSON:get_param(Arg_InstanceJson);
+    new JSON:isntanceJson = JSON:get_param_byref(Arg_InstanceJson);
 
     new T_IC_Item:item = ItemInstance_ReadFromJsonObject(isntanceJson);
     json_free(isntanceJson);
