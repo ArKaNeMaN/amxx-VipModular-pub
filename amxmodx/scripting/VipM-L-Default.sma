@@ -152,8 +152,12 @@ public VipM_OnInitModules(){
         "Max", ptFloat, false
     );
     VipM_Limits_RegisterTypeEvent("GameTime", Limit_OnCheck, "@OnGameTimeCheck");
+    
+    VipM_Limits_RegisterType("WasAlive", true, true);
+    VipM_Limits_RegisterType("WasKilled", true, true);
 
     RegisterHookChain(RG_CSGameRules_RestartRound, "@OnRestartRound", true);
+    RegisterHookChain(RG_CBasePlayer_Spawn, "@OnPlayerSpawn_Pre", false);
     RegisterHookChain(RG_CBasePlayer_Spawn, "@OnPlayerSpawn", true);
 
     g_tUsedInRound = TrieCreate();
@@ -167,6 +171,9 @@ public client_authorized(UserId, const AuthId[]){
 
     copy(g_sSteamIds[UserId], charsmax(g_sSteamIds[]), AuthId);
     get_user_ip(UserId, g_sIps[UserId], charsmax(g_sIps[]), true);
+    
+    VipM_Limits_SetStaticValue("WasAlive", false, playerIndex);
+    VipM_Limits_SetStaticValue("WasKilled", true, playerIndex);
 }
 
 @OnRestartRound() {
@@ -174,6 +181,11 @@ public client_authorized(UserId, const AuthId[]){
     if (get_member_game(m_bCompleteReset)) {
         TrieClear(g_tUsedInGame);
     }
+}
+
+@OnPlayerSpawn_Pre(const playerIndex) {
+    VipM_Limits_SetStaticValue("WasAlive", !!is_user_alive(playerIndex), playerIndex);
+    VipM_Limits_SetStaticValue("WasKilled", !is_user_alive(playerIndex), playerIndex);
 }
 
 @OnPlayerSpawn(const UserId) {
