@@ -38,7 +38,7 @@ bool:MenuItem_Read(const JSON:itemJson, item[S_MenuItem]) {
         return true;
     }
 
-    item[MenuItem_Items] = Json_Object_IC_GetItems(itemJson, "Items");
+    item[MenuItem_Items] = PCSingle_ObjIcItems(itemJson, "Items");
 
     if (item[MenuItem_Items] == Invalid_Array) {
         item[MenuItem_Type] = MenuItemType_Text;

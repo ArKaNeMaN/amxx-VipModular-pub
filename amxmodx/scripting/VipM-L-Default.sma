@@ -458,17 +458,17 @@ bool:@OnFlagsCheck(const Trie:Params, const UserId) {
 }
 
 @OnOrCheck(const Trie:Params, const UserId){
-    return VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_OR);
+    return PCGet_VipmLimitsCheck(Params, "Limits", UserId, Limit_Exec_OR);
 }
 
 @OnXorCheck(const Trie:Params, const UserId){
-    return VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_XOR);
+    return PCGet_VipmLimitsCheck(Params, "Limits", UserId, Limit_Exec_XOR);
 }
 
 @OnAndCheck(const Trie:Params, const UserId){
-    return VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_AND);
+    return PCGet_VipmLimitsCheck(Params, "Limits", UserId, Limit_Exec_AND);
 }
 
 @OnNotCheck(const Trie:Params, const UserId){
-    return !VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_AND);
+    return !PCGet_VipmLimitsCheck(Params, "Limits", UserId, Limit_Exec_AND);
 }

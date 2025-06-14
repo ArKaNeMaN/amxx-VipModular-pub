@@ -6,7 +6,7 @@
 #include <amxmodx>
 #include <ParamsController>
 
-#define VIPM_PARAM_NAME_MAX_LEN 32
+#define VIPM_PARAM_NAME_MAX_LEN PARAM_KEY_MAX_LEN
 
 /**
  * Vip Modular: Parameters
@@ -103,10 +103,12 @@ stock Array:VipM_Params_GetArr(const Trie:tParams, const sKey[]) {
     return Array:PCGet_Cell(tParams, sKey, Invalid_Array);
 }
 
+#pragma deprecated Use PCGet_VipmLimit() instead
 stock T_LimitUnit:VipM_Params_GetLimit(const Trie:tParams, const sKey[], const T_LimitUnit:iDef = Invalid_LimitUnit) {
     return T_LimitUnit:PCGet_Cell(tParams, sKey, iDef);
 }
 
+#pragma deprecated Use PCGet_VipmLimitCheck() instead
 stock bool:VipM_Params_ExecuteLimit(
     const Trie:tParams,
     const sKey[] = "Limit",
@@ -121,6 +123,7 @@ stock bool:VipM_Params_ExecuteLimit(
     return VipM_Limits_Execute(iLimit, UserId);
 }
 
+#pragma deprecated Use PCGet_VipmLimitsCheck() instead
 stock bool:VipM_Params_ExecuteLimitsList(
     const Trie:tParams,
     const sKey[] = "Limits",

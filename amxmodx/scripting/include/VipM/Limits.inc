@@ -1,9 +1,10 @@
-#if defined _vipmodular_l_included
+#if defined __vipm_limits_included
 	#endinput
 #endif
-#define _vipmodular_l_included
+#define __vipm_limits_included
 
 #include <json>
+#include <ParamsController>
 
 /**
  * Vip Modular: Limits
@@ -189,4 +190,30 @@ stock Array:Json_Object_GetLimits(const JSON:jObj, const sKey[], const bool:bDot
     json_free(jLimits);
 
     return aLimits;
+}
+
+stock T_LimitUnit:PCGet_VipmLimit(const Trie:p, const key[], const T_LimitUnit:def = Invalid_LimitUnit) {
+    return PCGet_Cell(p, key, def);
+}
+
+stock Array:PCGet_VipmLimits(const Trie:p, const key[], const Array:def = Invalid_Array) {
+    return PCGet_Cell(p, key, def);
+}
+
+stock bool:PCGet_VipmLimitCheck(const Trie:p, const key[], const playerIndex = 0, const bool:def = true) {
+    new T_LimitUnit:limit = PCGet_VipmLimit(p, key);
+    if (limit == Invalid_LimitUnit) {
+        return def;
+    }
+
+    return VipM_Limits_Execute(limit, playerIndex);
+}
+
+stock bool:PCGet_VipmLimitsCheck(const Trie:p, const key[], const playerIndex = 0, const E_LimitsExecType:type = Limit_Exec_OR, const bool:def = true) {
+    new Array:limits = PCGet_VipmLimits(p, key);
+    if (limits == Invalid_Array || ArraySize(limits) < 1) {
+        return def;
+    }
+
+    return VipM_Limits_ExecuteList(limits, playerIndex, type);
 }

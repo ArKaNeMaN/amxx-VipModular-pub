@@ -15,7 +15,7 @@
 #include "ItemsController/DefaultObjects/ItemType/Weapon"
 #include "ItemsController/DefaultObjects/ItemType/CustomWeapon"
 
-DefaultObjects_RegisterAll() {
+public IC_ItemType_OnInited() {
     // Затычка для тех мест, где при отсутствии предметов вылезает ошибка/варн
     IC_ItemType_SimpleRegister(.name = "None");
 
@@ -33,4 +33,12 @@ DefaultObjects_RegisterAll() {
     DefaultObjects_ItemType_Speed_Register();
     DefaultObjects_ItemType_Weapon_Register();
     DefaultObjects_ItemType_CustomWeapon_Register();
+}
+
+#include "ItemsController/DefaultObjects/ParamType/Item"
+#include "ItemsController/DefaultObjects/ParamType/Items"
+
+public ParamsController_OnRegisterTypes() {
+    DefaultObjects_ParamType_Item_Register();
+    DefaultObjects_ParamType_Items_Register();
 }

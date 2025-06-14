@@ -147,7 +147,7 @@ public client_disconnected(UserId) {
         return;
     }
 
-    if (!VipM_Params_ExecuteLimitsList(Params, "AutoopenLimits", UserId, Limit_Exec_AND)) {
+    if (!PCGet_VipmLimitsCheck(Params, "AutoopenLimits", UserId, Limit_Exec_AND)) {
         return;
     }
 
@@ -224,7 +224,7 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
         return;
     }
     
-    if (!VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_AND)) {
+    if (!PCGet_VipmLimitsCheck(Params, "Limits", UserId, Limit_Exec_AND)) {
         ChatPrintLIf(!bSilent, UserId, "MSG_MAIN_NOT_PASSED_LIMIT");
 
         Dbg_Log("_Cmd_Menu(%n, %s): Not passed main limits", UserId, bSilent ? "true" : "false");

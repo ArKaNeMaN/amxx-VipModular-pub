@@ -40,14 +40,9 @@ public IC_ItemType_OnInited() {
 }
 
 @OnIfGive(const playerIndex, const Trie:p) {
-    new Array:items = Invalid_Array;
-    if (VipM_Params_ExecuteLimitsList(p, "Limits", playerIndex, Limit_Exec_AND)) {
-        items = VipM_Params_GetArr(p, "Items");
-    } else {
-        items = VipM_Params_GetArr(p, "ElseItems");
+    if (!PCGet_VipmLimitsCheck(p, "Limits", playerIndex, Limit_Exec_AND)) {
+        return PCGet_IcItemsGive(p, "ElseItems", playerIndex) ? IC_RET_GIVE_SUCCESS : IC_RET_GIVE_FAIL;
     }
-    
-    return IC_Item_GiveArray(playerIndex, items)
-        ? IC_RET_GIVE_SUCCESS
-        : IC_RET_GIVE_FAIL;
+
+    return PCGet_IcItemsGive(p, "Items", playerIndex) ? IC_RET_GIVE_SUCCESS : IC_RET_GIVE_FAIL;
 }

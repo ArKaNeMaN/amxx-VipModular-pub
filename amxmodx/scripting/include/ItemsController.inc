@@ -5,10 +5,14 @@
 
 #include <amxmodx>
 #include <json>
+#include <ParamsController>
 
 #define IC_VERSION "1.0.0"
 stock const IC_LIBRARY[] = "items-controller";
 stock const IC_VERSION_CVAR[] = "ic_version";
+
+stock const IC_PARAM_TYPE_ITEM_NAME[] = "IC-Item";
+stock const IC_PARAM_TYPE_ITEMS_NAME[] = "IC-Items";
 
 #define IC_ITEM_TYPE_NAME_MAX_LEN 64
 #define IC_EVENT_LISTENER_FUNCTION_NAME_MAX_LEN 64
@@ -100,6 +104,30 @@ native T_IC_ItemType:IC_ItemType_Register(const name[]);
 native IC_ItemType_SetEventListener(const T_IC_ItemType:type, const E_ItemTypeEvent:event, const functionName[]);
 
 /**
+ * Добавляет параметры для типа предмета.
+ *
+ * @param type      Хендлер типа.
+ * @param any:...   Перечисление параметров.
+ * 
+ * @note            Формат перечисления параметров:
+ *                      IC_ItemType_AddParams(..., const paramName[], const paramType[], const bool:paramRequired, ...);
+ * 
+ *                  Где:
+ *                  - paramName - Название параметра;
+ *                  - paramType - Название типа параметра;
+ *                  - paramRequired - Обязателен ли параметр.
+ * 
+ *                  Пример:
+ *                      IC_ItemType_AddParams(type,
+ *                          "Param1", "String", true,
+ *                          "Param2", "Integer", false
+ *                      );
+ * 
+ * @noreturn
+ */
+native IC_ItemType_AddParams(const T_IC_ItemType:type, any:...);
+
+/**
  * Регистрирует новый тип предмета с обработчиками событий.
  *
  * @param name   Название типа.
@@ -124,8 +152,6 @@ stock T_IC_ItemType:IC_ItemType_SimpleRegister(const name[], const onRead[] = ""
 
 /**
  * Читает предмет из JSON-значения.
- * 
- * @note    Поддерживает ссылки вида "File:...". // TODO: Пока не поддерживаются)
  *
  * @param isntanceJson JSON-значение, содержажее предмет или ссылку на него.
  *
@@ -135,8 +161,6 @@ native T_IC_Item:IC_Item_ReadFromJson(const JSON:isntanceJson);
 
 /**
  * Читает массив предметов из JSON-значения.
- * 
- * @note    Поддерживает ссылки вида "File:...". // TODO: Пока не поддерживаются)
  *
  * @param isntancesJson JSON-значение, содержажее массив предметов, один предмет или ссылку.
  * @param array         Хендлер динамического массива, в который нужно дописать прочитанные предметы.
@@ -145,16 +169,9 @@ native T_IC_Item:IC_Item_ReadFromJson(const JSON:isntanceJson);
  */
 native Array:IC_Item_ReadArrayFromJson(const JSON:isntancesJson, &Array:array = Invalid_Array);
 
+#pragma deprecated Use PCSingle_ObjIcItems() instead.
 stock Array:Json_Object_IC_GetItems(const JSON:jObj, const sKey[], const bool:bDotNot = false) {
-    if (!json_object_has_value(jObj, sKey, .dot_not = bDotNot)) {
-        return Invalid_Array;
-    }
-
-    new JSON:jItems = json_object_get_value(jObj, sKey, bDotNot);
-    new Array:aItems = IC_Item_ReadArrayFromJson(jItems);
-    json_free(jItems);
-
-    return aItems;
+    return PCSingle_ObjIcItems(jObj, sKey, .dotNot = bDotNot);
 }
 
 /**
@@ -202,9 +219,6 @@ stock bool:IC_Item_GiveArray(const playerIndex, const Array:array) {
 
     return success;
 }
-
-// TODO: getters for params controller
-
 
 /**
  * Вызывается в момент инициалзиации типов предметов.
@@ -363,4 +377,29 @@ stock Array:Json_Object_GetItemsIC(const JSON:jObj, const sKey[], const bool:bDo
     json_free(jItems);
 
     return aItems;
+}
+
+stock T_IC_Item:PCSingle_ObjIcItem(const JSON:objectJson, const key[], const T_IC_Item:def = Invalid_IC_Item, const bool:dotNot = false, const bool:orFail = false) {
+    return PCSingle_ObjCell(objectJson, key, IC_PARAM_TYPE_ITEM_NAME, def, dotNot, orFail);
+}
+
+stock Array:PCSingle_ObjIcItems(const JSON:objectJson, const key[], const Array:def = Invalid_Array, const bool:dotNot = false, const bool:orFail = false) {
+    return PCSingle_ObjCell(objectJson, key, IC_PARAM_TYPE_ITEMS_NAME, def, dotNot, orFail);
+}
+
+stock T_IC_Item:PCGet_IcItem(const Trie:p, const key[], const T_IC_Item:def = Invalid_IC_Item) {
+    return PCGet_Cell(p, key, def);
+}
+
+stock Array:PCGet_IcItems(const Trie:p, const key[], const Array:def = Invalid_Array) {
+    return PCGet_Cell(p, key, def);
+}
+
+stock bool:PCGet_IcItemGive(const Trie:p, const key[], const playerIndex) {
+    new T_IC_Item:item = PCGet_IcItem(p, key);
+    return item != Invalid_IC_Item && IC_Item_Give(0playerIndex, item);
+}
+
+stock bool:PCGet_IcItemsGive(const Trie:p, const key[], const playerIndex) {
+    return IC_Item_GiveArray(playerIndex, PCGet_IcItems(p, key));
 }

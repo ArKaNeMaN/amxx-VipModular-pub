@@ -4,38 +4,19 @@
 #include <ItemsController>
 
 DefaultObjects_ItemType_Random_Register() {
-    IC_ItemType_SimpleRegister(
+    new T_IC_ItemType:type = IC_ItemType_SimpleRegister(
         .name = "Random",
-        .onRead = "@OnRandomRead",
         .onGive = "@OnRandomGive"
+    );
+    IC_ItemType_AddParams(type,
+        "Items", "IC-Items", true
     );
 }
 
-@OnRandomRead(const JSON:instanceJson, const Trie:p) {
-    TrieDeleteKey(p, "Name");
-
-    // TODO: Сделать как-то разные шансы
-    if (!json_object_has_value(instanceJson, "Items")) {
-        PCJson_LogForFile(instanceJson, "ERROR", "Param `Items` required for item `Random`.");
-        return IC_RET_READ_FAIL;
-    }
-    
-    new Array:aItems = Json_Object_IC_GetItems(instanceJson, "Items");
-    if (ArraySizeSafe(aItems) <= 1) {
-        PCJson_LogForFile(instanceJson, "ERROR", "Param `Items` must have >1 items.");
-        ArrayDestroy(aItems);
-        return IC_RET_READ_FAIL;
-    }
-
-    TrieSetCell(p, "Items", aItems);
-
-    return IC_RET_READ_SUCCESS;
-}
-
 @OnRandomGive(const playerIndex, const Trie:p) {
-    new Array:aItems = VipM_Params_GetArr(p, "Items");
-    new iRandomIndex = random_num(0, ArraySizeSafe(aItems) - 1);
-    new T_IC_Item:iRandomItem = ArrayGetCell(aItems, iRandomIndex);
+    new Array:items = PCGet_IcItems(p, "Items");
+    new iRandomIndex = random_num(0, ArraySizeSafe(items) - 1);
+    new T_IC_Item:iRandomItem = ArrayGetCell(items, iRandomIndex);
 
     return IC_Item_Give(playerIndex, iRandomItem) ? IC_RET_GIVE_SUCCESS : IC_RET_GIVE_FAIL;
 }

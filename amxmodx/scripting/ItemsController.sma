@@ -22,14 +22,15 @@ PluginInit() {
     register_plugin(PluginName, PluginVersion, PluginAuthor);
     register_library(IC_LIBRARY);
     CreateConstCvar(IC_VERSION_CVAR, IC_VERSION);
+    ParamsController_Init();
     Forwards_Init();
     
     ItemInstance_Init();
-    DefaultObjects_RegisterAll();
     Forwards_RegAndCall("VipM_IC_OnInitTypes", ET_IGNORE); // deprecated
 }
 
-#include "ItemsController/API/Items"
+#include "ItemsController/API/ItemType"
+#include "ItemsController/API/Item"
 #include "ItemsController/API/Compat"
 
 public plugin_natives() {
@@ -38,7 +39,8 @@ public plugin_natives() {
     register_native("IC_Init", "@_Init");
     register_native("VipM_IC_Init", "@_Init"); // deprecated
 
-    API_Items_Register();
+    API_ItemType_Register();
+    API_Item_Register();
     API_Compat_Register();
 }
 

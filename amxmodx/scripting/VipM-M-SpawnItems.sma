@@ -68,7 +68,7 @@ public VipM_Modules_OnInited() {
         return;
     }
 
-    if (!VipM_Params_ExecuteLimitsList(Params, "Limits", UserId, Limit_Exec_AND)) {
+    if (!PCGet_VipmLimitsCheck(Params, "Limits", UserId, Limit_Exec_AND)) {
         Dbg_Log("@GivePlayerItems(%n) Limits not passed", UserId);
         return;
     }

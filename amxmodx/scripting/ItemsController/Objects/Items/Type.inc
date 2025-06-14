@@ -11,7 +11,7 @@
 enum _:S_ItemType {
     ItemType_Name[IC_ITEM_TYPE_NAME_MAX_LEN],
     ItemType_Events[E_ItemTypeEvent],
-    // Array:ItemType_Params // TODO: use params controller
+    Array:ItemType_Params,
 }
 
 static Array:ItemTypes = Invalid_Array;
@@ -40,6 +40,7 @@ T_IC_ItemType:ItemType_Construct(const name[]) {
     new typeObject[S_ItemType];
     copy(typeObject[ItemType_Name], charsmax(typeObject[ItemType_Name]), name);
     arrayset(typeObject[ItemType_Events], INVALID_HANDLE, sizeof(typeObject[ItemType_Events]));
+    typeObject[ItemType_Params]= ArrayCreate(1, 1);
     
     new T_IC_ItemType:type = T_IC_ItemType:ArrayPushArray(ItemTypes, typeObject);
     TrieSetCell(ItemTypesMap, typeObject[ItemType_Name], type);
@@ -106,6 +107,15 @@ ItemType_MakeEventListener(const E_ItemTypeEvent:event, const pluginIndex, const
     return listener;
 }
 
+ItemType_AddParams(const T_IC_ItemType:type, const Array:params) {
+    new typeObject[S_ItemType];
+    ItemType_Get(type, typeObject);
+
+    for (new i = 0, ii = ArraySize(params); i < ii; ++i) {
+        ArrayPushCell(typeObject[ItemType_Params], ArrayGetCell(params, i));
+    }
+}
+
 bool:ItemType_Give(const playerIndex, const T_IC_ItemType:type, const Trie:params) {
     new typeObject[S_ItemType];
     ItemType_Get(type, typeObject);
@@ -120,17 +130,30 @@ bool:ItemType_Give(const playerIndex, const T_IC_ItemType:type, const Trie:param
     return ret == IC_RET_GIVE_SUCCESS;
 }
 
-bool:ItemType_ReadParamsFromJsonObject(const T_IC_ItemType:type, const JSON:paramsJson, const Trie:params) {
+bool:ItemType_ReadParamsFromJsonObject(const T_IC_ItemType:type, const JSON:paramsJson, &Trie:params) {
     new typeObject[S_ItemType];
     ItemType_Get(type, typeObject);
 
-    // TODO: Использовать ParamsController
+    new errField[PARAM_KEY_MAX_LEN], E_ParamsReadErrorType:errType;
+    ParamsController_Param_ReadList(typeObject[ItemType_Params], paramsJson, params, errType, errField, charsmax(errField));
+    if (errType != ParamsReadError_None) {
+        switch (errType) {
+            case ParamsReadError_RequiredParamNotPresented:
+                PCJson_ErrorForFile(paramsJson, "Param '%s' is required for item type '%s'.", errField, typeObject[ItemType_Name]);
+            case ParamsReadError_ParamValueIsInvalid:
+                PCJson_ErrorForFile(paramsJson, "Param '%s' has invalid value.", errField);
+        }
+        return false;
+    }
 
     // deprecated
-    new nameParam[256];
-    json_object_get_string(paramsJson, "Name", nameParam, charsmax(nameParam));
-    TrieSetString(params, "Name", nameParam);
+    if (!TrieKeyExists(params, "Name")) {
+        new nameParam[256];
+        json_object_get_string(paramsJson, "Name", nameParam, charsmax(nameParam));
+        TrieSetString(params, "Name", nameParam);
+    }
 
+    // deprecated?
     if (typeObject[ItemType_Events][ItemType_OnRead] != INVALID_HANDLE) {
         new ret = IC_RET_READ_SUCCESS;
         ExecuteForward(typeObject[ItemType_Events][ItemType_OnRead], ret, paramsJson, params);
