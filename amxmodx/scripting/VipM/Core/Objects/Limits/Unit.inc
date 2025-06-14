@@ -64,7 +64,7 @@ static bool:LimitUnit__Get(const T_LimitUnit:iLimitUnit, LimitUnit[S_LimitUnit],
 
 static T_LimitType:LimitUnit__ReadType(const JSON:jLimitUnit) {
     new sLimitTypeName[VIPM_LIMITS_TYPE_NAME_MAX_LEN];
-    Json_Object_GetString(jLimitUnit, "Limit", sLimitTypeName, charsmax(sLimitTypeName));
+    PCSingle_ObjString(jLimitUnit, "Limit", sLimitTypeName, charsmax(sLimitTypeName));
     trim(sLimitTypeName);
 
     if (!sLimitTypeName[0]) {

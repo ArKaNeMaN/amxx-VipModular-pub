@@ -61,7 +61,7 @@ static any:ModuleUnit__GetValue(const T_ModuleUnit:iModuleUnit, const iCell) {
 
 static T_ModuleType:ModuleUnit__ReadType(const JSON:jModuleUnit) {
     new sModuleTypeName[VIPM_MODULES_TYPE_NAME_MAX_LEN];
-    Json_Object_GetString(jModuleUnit, "Module", sModuleTypeName, charsmax(sModuleTypeName));
+    PCSingle_ObjString(jModuleUnit, "Module", sModuleTypeName, charsmax(sModuleTypeName));
     trim(sModuleTypeName);
 
     if (!sModuleTypeName[0]) {

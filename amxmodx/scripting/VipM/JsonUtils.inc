@@ -46,52 +46,6 @@ stock Trie:Json_ReadObjectToTrie(const JSON:jObject, &Trie:tTrie = Invalid_Trie)
     return tTrie;
 }
 
-stock bool:Json_Object_GetBool(const JSON:jObj, const sKey[], const bool:bDefault = false, const bool:bDotNot = false) {
-    if (!json_object_has_value(jObj, sKey, JSONBoolean, bDotNot)) {
-        return bDefault;
-    }
-    
-    return json_object_get_bool(jObj, sKey, bDotNot);
-}
-
-stock Json_Object_GetInt(const JSON:jObj, const sKey[], const iDefault = 0, const bool:bDotNot = false) {
-    if (!json_object_has_value(jObj, sKey, JSONNumber, bDotNot)) {
-        return iDefault;
-    }
-    
-    return json_object_get_number(jObj, sKey, bDotNot);
-}
-
-stock Float:Json_Object_GetFloat(const JSON:jObj, const sKey[], const Float:fDefault = 0.0, const bool:bDotNot = false) {
-    if (!json_object_has_value(jObj, sKey, JSONNumber, bDotNot)) {
-        return fDefault;
-    }
-    
-    return json_object_get_real(jObj, sKey, bDotNot);
-}
-
-stock Json_Object_GetString(
-    const JSON:jObj,
-    const sKey[],
-    sOut[],
-    const iOutLen,
-    const sDefault[] = "",
-    const bool:bDotNot = false
-) {
-    if (!json_object_has_value(jObj, sKey, JSONString, bDotNot)) {
-        return copy(sOut, iOutLen, sDefault);
-    } else {
-        return json_object_get_string(jObj, sKey, sOut, iOutLen, bDotNot);
-    }
-}
-
-stock Json_Object_GetStr(const JSON:jObj, const sKey[], const sDefault[] = "", const bool:bDotNot = false) {
-    new sRes[MAX_FMT_LENGTH];
-    Json_Object_GetString(jObj, sKey, sRes, charsmax(sRes), sDefault, bDotNot);
-    
-    return sRes;
-}
-
 stock Json_Object_GetColoredChatMessage(
     const JSON:jObj,
     const sKey[],
@@ -100,7 +54,7 @@ stock Json_Object_GetColoredChatMessage(
     const sDefault[] = "",
     const bool:bDotNot = false
 ) {
-    new iRes = Json_Object_GetString(jObj, sKey, sOut, iOutLen, sDefault, bDotNot);
+    new iRes = PCSingle_ObjString(jObj, sKey, sOut, iOutLen, sDefault, bDotNot);
     
     iRes -= replace_all(sOut, iOutLen, "^^1", "^1");
     iRes -= replace_all(sOut, iOutLen, "^^3", "^3");

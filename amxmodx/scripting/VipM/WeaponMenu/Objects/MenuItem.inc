@@ -50,8 +50,8 @@ bool:MenuItem_Read(const JSON:itemJson, item[S_MenuItem]) {
     item[MenuItem_ShowLimits] = Json_Object_GetLimits(itemJson, "ShowLimits");
     item[MenuItem_ActiveLimits] = Json_Object_GetLimits(itemJson, "ActiveLimits");
     item[MenuItem_Limits] = Json_Object_GetLimits(itemJson, "Limits");
-    item[MenuItem_FakeInactive] = Json_Object_GetBool(itemJson, "FakeInactive", false);
-    item[MenuItem_UseCounter] = Json_Object_GetBool(itemJson, "UseCounter", true);
+    item[MenuItem_FakeInactive] = PCSingle_ObjBool(itemJson, "FakeInactive", false);
+    item[MenuItem_UseCounter] = PCSingle_ObjBool(itemJson, "UseCounter", true);
 
     return true;
 }

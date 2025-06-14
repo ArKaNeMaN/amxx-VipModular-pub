@@ -5,6 +5,7 @@
 
 #include <amxmodx>
 #include <json>
+#include <ParamsController>
 #include <VipM/Params>
 #include <VipM/Limits>
 #include "VipM/ArrayTrieUtils"
@@ -79,6 +80,7 @@ bool:CfgParam_ReadList(
     }
 
     if (List == Invalid_Array) {
+        // deprecated
         Params = Json_ReadObjectToTrie(jParams, Params);
     } else {
         ArrayForeachArray (List => Param[S_CfgParam]) {
@@ -99,17 +101,17 @@ bool:CfgParam_ReadList(
                     continue;
 
                 case ptInteger:
-                    TrieSetCell(Params, Param[CfgParam_Name], Json_Object_GetInt(jParams, Param[CfgParam_Name]));
+                    TrieSetCell(Params, Param[CfgParam_Name], PCSingle_ObjInt(jParams, Param[CfgParam_Name]));
                     
                 case ptFloat:
-                    TrieSetCell(Params, Param[CfgParam_Name], Json_Object_GetFloat(jParams, Param[CfgParam_Name]));
+                    TrieSetCell(Params, Param[CfgParam_Name], PCSingle_ObjFloat(jParams, Param[CfgParam_Name]));
                     
                 case ptBoolean:
-                    TrieSetCell(Params, Param[CfgParam_Name], Json_Object_GetBool(jParams, Param[CfgParam_Name]));
+                    TrieSetCell(Params, Param[CfgParam_Name], PCSingle_ObjBool(jParams, Param[CfgParam_Name]));
 
                 case ptString: {
                     new sParam[128];
-                    Json_Object_GetString(jParams, Param[CfgParam_Name], sParam, charsmax(sParam));
+                    PCSingle_ObjString(jParams, Param[CfgParam_Name], sParam, charsmax(sParam));
                     TrieSetString(Params, Param[CfgParam_Name], sParam);
                 }
 

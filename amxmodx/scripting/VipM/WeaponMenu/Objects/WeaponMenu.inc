@@ -28,7 +28,7 @@ enum _:S_WeaponMenu {
 }
 
 bool:WeaponMenu_Read(const JSON:menuJson, Menu[S_WeaponMenu]) {
-    Json_Object_GetString(menuJson, "Name", Menu[WeaponMenu_Name], charsmax(Menu[WeaponMenu_Name]));
+    PCSingle_ObjString(menuJson, "Name", Menu[WeaponMenu_Name], charsmax(Menu[WeaponMenu_Name]));
 
     if (Json_Object_GetColoredChatMessage(
         menuJson, "FakeMessage",
@@ -43,12 +43,12 @@ bool:WeaponMenu_Read(const JSON:menuJson, Menu[S_WeaponMenu]) {
         return false;
     }
 
-    Json_Object_GetString(menuJson, "Title", Menu[WeaponMenu_Title], charsmax(Menu[WeaponMenu_Title]), Menu[WeaponMenu_Name]);
+    PCSingle_ObjString(menuJson, "Title", Menu[WeaponMenu_Title], charsmax(Menu[WeaponMenu_Title]), Menu[WeaponMenu_Name]);
 
-    Menu[WeaponMenu_Count] = Json_Object_GetInt(menuJson, "Count", -1);
-    Menu[WeaponMenu_BackOnExit] = Json_Object_GetBool(menuJson, "BackOnExit", false);
-    Menu[WeaponMenu_PerPage] = Json_Object_GetInt(menuJson, "PerPage", -1);
-    Menu[WeaponMenu_ShowPage] = Json_Object_GetBool(menuJson, "ShowPage", true);
+    Menu[WeaponMenu_Count] = PCSingle_ObjInt(menuJson, "Count", -1);
+    Menu[WeaponMenu_BackOnExit] = PCSingle_ObjBool(menuJson, "BackOnExit", false);
+    Menu[WeaponMenu_PerPage] = PCSingle_ObjInt(menuJson, "PerPage", -1);
+    Menu[WeaponMenu_ShowPage] = PCSingle_ObjBool(menuJson, "ShowPage", true);
     Menu[WeaponMenu_Limits] = Json_Object_GetLimits(menuJson, "Limits");
 
     return true;
