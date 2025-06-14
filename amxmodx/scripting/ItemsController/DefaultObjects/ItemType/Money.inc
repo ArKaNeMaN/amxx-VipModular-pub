@@ -9,17 +9,13 @@ DefaultObjects_ItemType_Money_Register() {
         .onRead = "@OnMoneyRead",
         .onGive = "@OnMoneyGive"
     );
+    IC_ItemType_AddParams(type,
+        "Amount", "Integer", true,
+        "TrackChange", "Boolean", false
+    );
 }
 
 @OnMoneyRead(const JSON:instanceJson, const Trie:p) {
-    TrieDeleteKey(p, "Name");
-
-    if (!json_object_has_value(instanceJson, "Amount", JSONNumber)) {
-        PCJson_LogForFile(instanceJson, "ERROR", "Param `Amount` required for item `Money`.");
-        return IC_RET_READ_FAIL;
-    }
-    TrieSetCell(p, "Amount", json_object_get_number(instanceJson, "Amount"));
-
     if (json_object_has_value(instanceJson, "GiveType", JSONString)) {
         new sBuffer[32];
         json_object_get_string(instanceJson, "GiveType", sBuffer, charsmax(sBuffer));
@@ -29,10 +25,6 @@ DefaultObjects_ItemType_Money_Register() {
         } else {
             TrieSetCell(p, "GiveType", accountSet);
         }
-    }
-
-    if (json_object_has_value(instanceJson, "TrackChange", JSONBoolean)) {
-        TrieSetCell(p, "TrackChange", json_object_get_bool(instanceJson, "TrackChange"));
     }
 
     return IC_RET_READ_SUCCESS;

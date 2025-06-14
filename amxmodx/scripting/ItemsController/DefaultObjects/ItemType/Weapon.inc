@@ -9,24 +9,14 @@ DefaultObjects_ItemType_Weapon_Register() {
         .onRead = "@OnWeaponRead",
         .onGive = "@OnWeaponGive"
     );
+    IC_ItemType_AddParams(type,
+        "Name", "String", true,
+        "BpAmmo", "Integer", false
+    );
 }
 
 @OnWeaponRead(const JSON:instanceJson, const Trie:p) {
-    new Name[32];
-    json_object_get_string(instanceJson, "Name", Name, charsmax(Name));
-
-    // if(get_weaponid(Name) == 0){
-    //     log_amx("[WARNING] Weapon `%s` not found.", Name);
-    //     return IC_RET_READ_FAIL;
-    // }
-
     TrieSetCell(p, "GiveType", _:Json_Object_GetGiveType(instanceJson, "GiveType"));
-
-    if (json_object_has_value(instanceJson, "BpAmmo", JSONNumber)) {
-        TrieSetCell(p, "BpAmmo", json_object_get_number(instanceJson, "BpAmmo"));
-    }
-
-    TrieSetString(p, "Name", Name);
 
     return IC_RET_READ_SUCCESS;
 }
