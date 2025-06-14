@@ -4,6 +4,7 @@
 #define __vipm_core_objects_vip_unit_included
 
 #include <amxmodx>
+#include <VipModular>
 #include "VipM/Utils"
 #include "VipM/ArrayTrieUtils"
 #include "VipM/JsonUtils"

@@ -45,41 +45,31 @@ public VipM_Modules_OnInited(){
     if (!is_user_alive(UserId)) {
         return;
     }
-
-    new Trie:Params = VipM_Modules_GetParams(MODULE_NAME, UserId);
-    if (Params == Invalid_Trie) {
-        return;
-    }
     
-    Dbg_Log("@Event_PlayerSpawned(%d): Limits Count = %d", UserId, ArraySizeSafe(PCGet_Cell(Params, "Limits", Invalid_Array)));
-    if (!PCGet_VipmLimitsCheck(Params, "Limits", UserId, Limit_Exec_AND)) {
+    if (!VipM_Modules_HasModule(MODULE_NAME, UserId)) {
         return;
     }
-    Dbg_Log("@Event_PlayerSpawned(%d): Round №%d -> Passed", UserId, get_member_game(m_iTotalRoundsPlayed) + 1);
 
-    new Health;
-    if (TrieGetCell(Params, "Health", Health) && Health > 0) {
-        if (!PCGet_Bool(Params, "SetHealth", true)) {
-            Health += floatround(get_entvar(UserId, var_health));
-
-            new MaxHealth;
-            if (TrieGetCell(Params, "MaxHealth", MaxHealth) && MaxHealth > 0) {
-                Health = min(Health, MaxHealth);
-            }
-        }
-        set_entvar(UserId, var_health, float(Health));
+    new Trie:p = VipM_Modules_GetParams(MODULE_NAME, UserId);
+    
+    if (!PCGet_VipmLimitsCheck(p, "Limits", UserId, Limit_Exec_AND)) {
+        return;
     }
 
-    new Armor;
-    if (TrieGetCell(Params, "Armor", Armor) && Armor > 0) {
-        if (!PCGet_Bool(Params, "SetArmor", true)) {
-            Health += rg_get_user_armor(UserId);
-
-            new MaxHealth;
-            if (TrieGetCell(Params, "MaxArmor", MaxHealth) && MaxHealth > 0) {
-                Health = min(Health, MaxHealth);
-            }
+    new health = PCGet_Int(p, "Health", 0);
+    new maxHealth = PCGet_Int(p, "MaxHealth", floatround(Float:get_entvar(UserId, var_max_health)));
+    if (health > 0) {
+        if (!PCGet_Bool(p, "SetHealth", true)) {
+            health = min(floatround(get_entvar(UserId, var_health)) + health, maxHealth);
         }
-        rg_set_user_armor(UserId, Armor, PCGet_Bool(Params, "Helmet", false) ? ARMOR_VESTHELM : ARMOR_KEVLAR);
+        set_entvar(UserId, var_health, float(health));
+    }
+
+    new armor = PCGet_Int(p, "Armor", 0);
+    if (armor > 0) {
+        if (!PCGet_Bool(p, "SetArmor", true)) {
+            armor = min(rg_get_user_armor(UserId) + armor, PCGet_Int(p, "MaxArmor", 100));
+        }
+        rg_set_user_armor(UserId, armor, PCGet_Bool(p, "Helmet", false) ? ARMOR_VESTHELM : ARMOR_KEVLAR);
     }
 }

@@ -317,6 +317,8 @@ public client_authorized(UserId, const AuthId[]) {
     //
     // P.S. Или лучше всё же пихать в параметры идентификатор, по котому их разделять?
     // Или оба сразу?)
+    //
+    // UPD: Устарело, не стоит рассчитывать на кэширование ссылок.
 
     if (TrieKeyExists(g_tUsedInGame, sTrieKey)) {
         return false;

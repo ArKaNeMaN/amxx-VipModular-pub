@@ -45,22 +45,22 @@ public VipM_Modules_OnInited(){
         return;
     }
 
-    new Trie:Params = VipM_Modules_GetParams(MODULE_NAME, UserId);
-    if (Params == Invalid_Trie) {
+    new Trie:p = VipM_Modules_GetParams(MODULE_NAME, UserId);
+    if (p == Invalid_Trie) {
         return;
     }
 
-    if (!VipM_Limits_ExecuteList(PCGet_Cell(Params, "Limits", Invalid_Array), UserId)) {
+    if (!PCGet_VipmLimitsCheck(p, "Limits", UserId, Limit_Exec_AND)) {
         return;
     }
 
-    new MaxHealth = PCGet_Int(Params, "MaxHealth", 100);
+    new MaxHealth = PCGet_Int(p, "MaxHealth", 100);
     new Health = floatround(get_entvar(UserId, var_health));
     if (Health >= MaxHealth) {
         return;
     }
     
-    new ByKill = PCGet_Int(Params, "ByKill", 0);
+    new ByKill = PCGet_Int(p, "ByKill", 0);
     new VampHealth = 0;
     new ActiveItem; ActiveItem = get_member(UserId, m_pActiveItem);
     if (
@@ -68,11 +68,11 @@ public VipM_Modules_OnInited(){
         && is_entity(ActiveItem)
         && rg_get_iteminfo(ActiveItem, ItemInfo_iId) == CSW_KNIFE
     ) {
-        VampHealth = PCGet_Int(Params, "ByKnife", ByKill);
+        VampHealth = PCGet_Int(p, "ByKnife", ByKill);
     } else if(get_member(VictimId, m_bHeadshotKilled)) {
-        VampHealth = PCGet_Int(Params, "ByHead", ByKill);
+        VampHealth = PCGet_Int(p, "ByHead", ByKill);
     } else if (get_member(VictimId, m_bKilledByGrenade)) {
-        VampHealth = PCGet_Int(Params, "ByGrenade", ByKill);
+        VampHealth = PCGet_Int(p, "ByGrenade", ByKill);
     } else {
         VampHealth = ByKill;
     }

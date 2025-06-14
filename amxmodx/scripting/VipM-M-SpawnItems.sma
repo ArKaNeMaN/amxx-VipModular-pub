@@ -2,6 +2,7 @@
 #include <json>
 #include <reapi>
 #include <VipModular>
+#include <ItemsController>
 #include "VipM/Utils"
 #include "VipM/DebugMode"
 
@@ -30,21 +31,7 @@ public VipM_Modules_OnInited() {
 }
 
 @OnReadConfig(const JSON:jCfg, Trie:Params) {
-    if (!json_object_has_value(jCfg, "Items")) {
-        log_amx("[WARNING] Field `Items` required.");
-        return VIPM_STOP;
-    }
-    
-    new JSON:jItems = json_object_get_value(jCfg, "Items");
-    new Array:aItems = IC_Item_ReadArrayFromJson(jItems);
-    json_free(jItems);
-
-    if (ArraySizeSafe(aItems) < 1) {
-        ArrayDestroySafe(aItems);
-        log_amx("[WARNING] Field `Items` is empty.");
-        return VIPM_STOP;
-    }
-    TrieSetCell(Params, "Items", aItems);
+    TrieSetCell(Params, "Items", PCSingle_ObjIcItems(jCfg, "Items", .orFail = true));
 
     return VIPM_CONTINUE;
 }
@@ -62,24 +49,18 @@ public VipM_Modules_OnInited() {
         return;
     }
     
-    new Trie:Params = VipM_Modules_GetParams(MODULE_NAME, UserId);
-    if (Params == Invalid_Trie) {
-        Dbg_Log("@GivePlayerItems(%n) Has not access", UserId);
-        return;
-    }
-
-    if (!PCGet_VipmLimitsCheck(Params, "Limits", UserId, Limit_Exec_AND)) {
-        Dbg_Log("@GivePlayerItems(%n) Limits not passed", UserId);
-        return;
-    }
-
-    new Array:aItems = Array:PCGet_Int(Params, "Items", _:Invalid_Array);
-    if (aItems == Invalid_Array) {
-        Dbg_Log("@GivePlayerItems(%n) Items array is empty", UserId);
+    if (!VipM_Modules_HasModule(MODULE_NAME, UserId)) {
         return;
     }
     
-    if (IC_Item_GiveArray(UserId, aItems)) {
+    new Trie:p = VipM_Modules_GetParams(MODULE_NAME, UserId);
+
+    if (!PCGet_VipmLimitsCheck(p, "Limits", UserId, Limit_Exec_AND)) {
+        Dbg_Log("@GivePlayerItems(%n) Limits not passed", UserId);
+        return;
+    }
+    
+    if (PCGet_IcItemsGive(p, "Items", UserId)) {
         Dbg_Log("@GivePlayerItems(%n) Items given", UserId);
     } else {
         Dbg_Log("@GivePlayerItems(%n) Items not given", UserId);

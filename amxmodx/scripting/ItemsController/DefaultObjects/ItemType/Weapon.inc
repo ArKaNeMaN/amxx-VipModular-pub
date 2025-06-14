@@ -4,7 +4,7 @@
 #include <ItemsController>
 
 DefaultObjects_ItemType_Weapon_Register() {
-    IC_ItemType_SimpleRegister(
+    new T_IC_ItemType:type = IC_ItemType_SimpleRegister(
         .name = "Weapon",
         .onRead = "@OnWeaponRead",
         .onGive = "@OnWeaponGive"

@@ -4,7 +4,7 @@
 #include <ItemsController>
 
 DefaultObjects_ItemType_Money_Register() {
-    IC_ItemType_SimpleRegister(
+    new T_IC_ItemType:type = IC_ItemType_SimpleRegister(
         .name = "Money",
         .onRead = "@OnMoneyRead",
         .onGive = "@OnMoneyGive"
