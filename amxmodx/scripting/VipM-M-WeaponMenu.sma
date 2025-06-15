@@ -167,15 +167,15 @@ public client_disconnected(UserId) {
         CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU_SILENT);
     }
     
-    Dbg_PrintServer("@Task_AutoOpen(%d): fAutoCloseDelay = %.2f", UserId, fAutoCloseDelay);
+    Dbg_Log("@Task_AutoOpen(%d): fAutoCloseDelay = %.2f", UserId, fAutoCloseDelay);
     if (fAutoCloseDelay > 0.0) {
-        Dbg_PrintServer("@Task_AutoOpen(%d): Start auto close task", UserId);
+        Dbg_Log("@Task_AutoOpen(%d): Start auto close task", UserId);
         set_task(fAutoCloseDelay, "@Task_AutoClose", TASK_OFFSET_AUTO_CLOSE + UserId);
     }
 }
 
 @Task_AutoClose(UserId) {
-    Dbg_PrintServer("@Task_AutoClose(%d)", UserId);
+    Dbg_Log("@Task_AutoClose(%d)", UserId);
     UserId -= TASK_OFFSET_AUTO_CLOSE;
     menu_cancel(UserId);
     show_menu(UserId, 0, "");
@@ -256,7 +256,7 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
     static Menu[S_WeaponMenu];
     ArrayGetArray(aMenus, MenuId, Menu);
 
-    if (!VipM_Limits_ExecuteList(Menu[WeaponMenu_Limits], UserId)) {
+    if (Menu[WeaponMenu_Limits] != Invalid_Array && !VipM_Limits_ExecuteList(Menu[WeaponMenu_Limits], UserId, Limit_Exec_AND)) {
         ChatPrintLIf(!bSilent, UserId, "MSG_MENU_NOT_PASSED_LIMIT");
         Dbg_Log("_Cmd_Menu(%n, %s): Not passed menu limits", UserId, bSilent ? "true" : "false");
         return;
@@ -298,9 +298,9 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
     }
 
     if (
-        !VipM_Limits_ExecuteList(MenuItem[MenuItem_ShowLimits], UserId)
-        || !VipM_Limits_ExecuteList(MenuItem[MenuItem_ActiveLimits], UserId)
-        || !VipM_Limits_ExecuteList(MenuItem[MenuItem_Limits], UserId)
+        !VipM_Limits_ExecuteList(MenuItem[MenuItem_ShowLimits], UserId, Limit_Exec_AND)
+        || !VipM_Limits_ExecuteList(MenuItem[MenuItem_ActiveLimits], UserId, Limit_Exec_AND)
+        || !VipM_Limits_ExecuteList(MenuItem[MenuItem_Limits], UserId, Limit_Exec_AND)
     ) {
         ChatPrintLIf(!bSilent, UserId, "MSG_MENUITEM_NOT_PASSED_LIMIT");
 

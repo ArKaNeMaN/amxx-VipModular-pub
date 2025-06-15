@@ -75,7 +75,10 @@ Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
 
     new iItemIndex = 0;
     ArrayForeachArray(Menu[WeaponMenu_Items] => MenuItem[S_MenuItem]) {
-        if (!VipM_Limits_ExecuteList(MenuItem[MenuItem_ShowLimits], UserId)) {
+        if (
+            MenuItem[MenuItem_ShowLimits] != Invalid_Array
+            && !VipM_Limits_ExecuteList(MenuItem[MenuItem_ShowLimits], UserId, Limit_Exec_AND)
+        ) {
             continue;
         }
 
@@ -84,7 +87,9 @@ Menu_WeaponsMenu(const UserId, const MenuId, const Menu[S_WeaponMenu]) {
                 static Cmd[128];
                 CommandAliases_GetMainCmd(CMD_WEAPON_MENU, Cmd, charsmax(Cmd));
 
-                new bool:bIsActive = VipM_Limits_ExecuteList(MenuItem[MenuItem_ActiveLimits], UserId);
+                new bool:bIsActive = MenuItem[MenuItem_ShowLimits] == Invalid_Array
+                    || VipM_Limits_ExecuteList(MenuItem[MenuItem_ActiveLimits], UserId, Limit_Exec_AND);
+
                 menu_additem(iMenu, fmt("%s%s", bIsActive ? "" : "\d", MenuItem[MenuItem_Title]), fmt("%s %d %d", Cmd, MenuId, __i__));
                 if (!bIsActive && !MenuItem[MenuItem_FakeInactive]) {
                     menu_item_setcall(iMenu, iItemIndex, iInactiveItemHandler);
