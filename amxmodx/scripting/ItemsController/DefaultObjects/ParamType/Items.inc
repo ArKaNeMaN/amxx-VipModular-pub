@@ -1,5 +1,4 @@
 #include <amxmodx>
-#include <reapi>
 #include <json>
 #include <ParamsController>
 #include <ItemsController>
@@ -7,6 +6,7 @@
 DefaultObjects_ParamType_Items_Register() {
     ParamsController_RegSimpleType(IC_PARAM_TYPE_ITEMS_NAME, "@OnItemsParamTypeRead");
 }
+
 @OnItemsParamTypeRead(const JSON:valueJson) {
     new Array:items = IC_Item_ReadArrayFromJson(valueJson);
 

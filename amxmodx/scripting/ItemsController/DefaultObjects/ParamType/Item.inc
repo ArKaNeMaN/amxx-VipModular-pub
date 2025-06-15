@@ -1,5 +1,4 @@
 #include <amxmodx>
-#include <reapi>
 #include <json>
 #include <ParamsController>
 #include <ItemsController>

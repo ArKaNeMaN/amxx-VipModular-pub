@@ -19,6 +19,7 @@ public stock const PluginDescription[] = "Modular vip system";
 #include "VipM/Core/Objects/Modules/Type"
 #include "VipM/Core/VipsManager"
 #include "VipM/Core/SrvCmds"
+#include "VipM/DefaultObjects/Registrar"
 
 public plugin_precache() {
     register_plugin(PluginName, PluginVersion, PluginAuthor);

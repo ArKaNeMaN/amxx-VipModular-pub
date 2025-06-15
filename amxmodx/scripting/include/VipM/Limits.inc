@@ -12,10 +12,12 @@
 
 #define VIPM_LIMITS_TYPE_NAME_MAX_LEN 64
 
+stock const VIPM_PARAM_TYPE_LIMIT_NAME[] = "VipM-Limit";
+stock const VIPM_PARAM_TYPE_LIMITS_NAME[] = "VipM-Limits";
+
 enum T_LimitUnit {Invalid_LimitUnit = -1}
 
 enum E_LimitEvent{
-
     /*
      * Описание:    Вызывается после прочтения параметров условного элемента.
      * Возв. тип:   VipM_FwdReturn
@@ -42,7 +44,6 @@ enum E_LimitEvent{
 }
 
 enum E_LimitsExecType {
-    
     /* ИЛИ */
     Limit_Exec_OR,
 
