@@ -10,8 +10,8 @@ DefaultObjects_ItemType_Health_Register() {
         .onGive = "@OnHealthGive"
     );
     IC_ItemType_AddParams(type,
-        "Health", "Integer", true,
-        "MaxHealth", "Integer", false,
+        "Health", "Float", true,
+        "MaxHealth", "Float", false,
         "SetHealth", "Boolean", false
     );
 }
