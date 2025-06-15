@@ -7,9 +7,6 @@
 #include "VipM/WeaponMenu/Objects/WeaponMenu"
 #include "VipM/WeaponMenu/Objects/MenuItem"
 
-#pragma semicolon 1
-#pragma compress 1
-
 public stock const PluginName[] = "[VipM-M] Weapon Menu";
 public stock const PluginVersion[] = _VIPM_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
@@ -17,14 +14,6 @@ public stock const PluginURL[] = _VIPM_PLUGIN_URL;
 public stock const PluginDescription[] = "Vip modular`s module - Weapon Menu";
 
 new const MODULE_NAME[] = "WeaponMenu";
-
-new const CMD_WEAPON_MENU[] = "vipmenu";
-new const CMD_WEAPON_MENU_SILENT[] = "vipmenu_silent";
-new const CMD_SWITCH_AUTOOPEN[] = "vipmenu_autoopen";
-
-#include "VipM/ArrayTrieUtils"
-#include "VipM/Utils"
-#include "VipM/CommandAliases"
 
 enum {
     TASK_OFFSET_AUTO_OPEN = 100,
@@ -87,13 +76,10 @@ public VipM_Modules_OnInited() {
 @OnModuleActivate() {
     RegisterHookChain(RG_CBasePlayer_Spawn, "@OnPlayerSpawn", true);
     RegisterHookChain(RG_CSGameRules_RestartRound, "@OnRestartRound", false);
-    
-    // TODO: Use CommandAliases plugin
-    CommandAliases_Open(GET_FILE_JSON_PATH("Cmds/WeaponMenu"), true);
-    CommandAliases_RegisterClient(CMD_WEAPON_MENU, "@Cmd_Menu"); // vipmenu <menu-id> <item-id>
-    CommandAliases_RegisterClient(CMD_WEAPON_MENU_SILENT, "@Cmd_MenuSilent");
-    CommandAliases_RegisterClient(CMD_SWITCH_AUTOOPEN, "@Cmd_SwitchAutoOpen");
-    CommandAliases_Close();
+
+    register_clcmd(VIPM_M_WEAPONMENU_CMD_MENU, "@Cmd_Menu");
+    register_clcmd(VIPM_M_WEAPONMENU_CMD_MENU_SILENT, "@Cmd_MenuSilent");
+    register_clcmd(VIPM_M_WEAPONMENU_CMD_AUTOOPEN_TOGGLE, "@Cmd_SwitchAutoOpen");
 }
 
 ResetUserMenuCounters(const UserId) {
@@ -162,9 +148,9 @@ public client_disconnected(UserId) {
     new iMenuNum = PCGet_Int(tParams, "AutoopenMenuNum", -1);
 
     if (iMenuNum > 0) {
-        CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU_SILENT, IntToStr(iMenuNum - 1));
+        client_cmd(UserId, "%s %d", VIPM_M_WEAPONMENU_CMD_MENU_SILENT, iMenuNum - 1);
     } else {
-        CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU_SILENT);
+        client_cmd(UserId, VIPM_M_WEAPONMENU_CMD_MENU_SILENT);
     }
     
     Dbg_Log("@Task_AutoOpen(%d): fAutoCloseDelay = %.2f", UserId, fAutoCloseDelay);
@@ -231,11 +217,9 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
         return;
     }
 
-    CMD_INIT_PARAMS();
-
-    if (CMD_ARG_NUM() < 1) {
+    if (read_argc() < 2) {
         if (ArraySizeSafe(aMenus) == 1) {
-            CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU, "0");
+            client_cmd(UserId, "%s %d", VIPM_M_WEAPONMENU_CMD_MENU, 0);
         } else {
             static MainMenuTitle[128];
             PCGet_Str(Params, "MainMenuTitle", MainMenuTitle, charsmax(MainMenuTitle));
@@ -244,7 +228,7 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
         return;
     }
 
-    new MenuId = read_argv_int(CMD_ARG(1));
+    new MenuId = read_argv_int(2);
     if (
         ArraySizeSafe(aMenus) <= MenuId
         || MenuId < 0
@@ -268,12 +252,12 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
         return;
     }
 
-    if (CMD_ARG_NUM() < 2) {
+    if (read_argc() < 3) {
         Menu_WeaponsMenu(UserId, MenuId, Menu);
         return;
     }
 
-    new ItemId = read_argv_int(CMD_ARG(2));
+    new ItemId = read_argv_int(3);
     if (
         ArraySizeSafe(Menu[WeaponMenu_Items]) <= ItemId
         || ItemId < 0
@@ -326,7 +310,7 @@ _Cmd_Menu(const UserId, const bool:bSilent = false) {
             || iItemsLeft != 0
         )
     ) {
-        CommandAliases_ClientCmd(UserId, CMD_WEAPON_MENU, "%d", MenuId);
+        client_cmd(UserId, "%s %d", VIPM_M_WEAPONMENU_CMD_MENU, MenuId);
     }
 }
 

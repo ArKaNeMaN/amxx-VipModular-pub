@@ -68,23 +68,6 @@ stock IsPlayerAlive(const playerIndex) {
 #define GET_FILE_JSON_PATH(%1) \
     VipM_iGetCfgPath(fmt(__JSON_FILE_TEMPLATE_STR, %1))
 
-
-stock __CMD_NULL_ARG = 0;
-stock CMD_INIT_PARAMS() {
-    __CMD_NULL_ARG = 0;
-    static Cmd[32];
-    read_argv(__CMD_NULL_ARG, Cmd, charsmax(Cmd));
-    if (equali(Cmd, "say", 3)) {
-        __CMD_NULL_ARG++;
-    }
-}
-
-#define CMD_ARG(%1) \
-    (__CMD_NULL_ARG + %1)
-
-#define CMD_ARG_NUM() \
-    (read_argc() - __CMD_NULL_ARG - 1)
-
 #define json_array_foreach(%1:%2) \
     if (json_is_array(%1)) \
         for (new %2 = 0; %2 < json_array_get_count(%1); %2++)

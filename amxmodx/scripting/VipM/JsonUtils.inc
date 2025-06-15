@@ -7,10 +7,11 @@
 #include <json>
 #include <ParamsController>
 
-#define JSON_UTILS__MAX_KEY_LENGTH 128
-#define JSON_UTILS__MAX_STRING_LENGTH 256
-#define JSON_UTILS__MAX_REF_LENGTH 128
+#define JSON_UTILS__MAX_KEY_LENGTH PARAM_KEY_MAX_LEN
+#define JSON_UTILS__MAX_STRING_LENGTH PARAM_VALUE_MAX_LEN
 
+// deprecated
+// Все параметры надо указывать явно
 stock Trie:Json_ReadObjectToTrie(const JSON:jObject, &Trie:tTrie = Invalid_Trie) {
     if (tTrie == Invalid_Trie) {
         tTrie = TrieCreate();
@@ -46,6 +47,7 @@ stock Trie:Json_ReadObjectToTrie(const JSON:jObject, &Trie:tTrie = Invalid_Trie)
     return tTrie;
 }
 
+// TODO: Перенести в контроллер параметров
 stock Json_Object_GetColoredChatMessage(
     const JSON:jObj,
     const sKey[],

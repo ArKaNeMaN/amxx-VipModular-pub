@@ -1,14 +1,11 @@
 #include <amxmodx>
-#include "VipM/Natives"
 #include "VipM/Utils"
 #include "VipM/JsonUtils"
 #include "VipM/Core/VipsManager"
 
 API_Main_Init() {
-    Natives_Init("VipM");
-
-    Natives_Reg("UserUpdate");
-    Natives_Reg("Json_LogForFile");
+    register_native("VipM_UserUpdate", "@_UserUpdate");
+    register_native("VipM_Json_LogForFile", "@_Json_LogForFile");
 }
 
 @_UserUpdate() {

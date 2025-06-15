@@ -55,7 +55,7 @@ bool:WeaponMenu_Read(const JSON:menuJson, Menu[S_WeaponMenu]) {
 }
 
 Array:WeaponMenu_ReadList(const JSON:jWeaponMenus, &Array:aWeaponMenus = Invalid_Array) {
-    ArrayCreateIfNotCreated(aWeaponMenus, S_WeaponMenu, 1);
+    ArrayCreateIfNotCreated(aWeaponMenus, S_WeaponMenu);
 
     new JSON:linkedJson;
     PCJson_HandleLinkedValue(jWeaponMenus, linkedJson);

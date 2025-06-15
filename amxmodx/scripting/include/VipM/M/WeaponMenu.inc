@@ -5,6 +5,10 @@
 
 #define VIPM_M_WEAPONMENU_EXPIRE_STATUS_MAX_LEN 64
 
+stock const VIPM_M_WEAPONMENU_CMD_MENU[] = "vipm_m_weaponmenu_menu";
+stock const VIPM_M_WEAPONMENU_CMD_MENU_SILENT[] = "vipm_m_weaponmenu_menu_silent";
+stock const VIPM_M_WEAPONMENU_CMD_AUTOOPEN_TOGGLE[] = "vipm_m_weaponmenu_autoopen_toggle";
+
 /**
  * Устанавливает статус окончания привилегий, выводимый игроку в оружейном меню.
  * 

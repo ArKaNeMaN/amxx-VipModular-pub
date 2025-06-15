@@ -110,7 +110,7 @@ T_ModuleUnit:ModuleUnit_Read(const JSON:valueJson) {
 }
 
 Array:ModuleUnit_ReadList(const JSON:jModuleUnits, &Array:aModuleUnits = Invalid_Array) {
-    ArrayCreateIfNotCreated(aModuleUnits, 1, 1);
+    ArrayCreateIfNotCreated(aModuleUnits);
 
     if (!json_is_array(jModuleUnits)) {
         new T_ModuleUnit:iModuleUnit = ModuleUnit_Read(jModuleUnits);

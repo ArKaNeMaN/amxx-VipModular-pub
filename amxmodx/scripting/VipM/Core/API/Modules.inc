@@ -1,16 +1,13 @@
 #include <amxmodx>
 #include "VipM/DebugMode"
-#include "VipM/Natives"
 #include "VipM/Core/Objects/Param"
 
 API_Modules_Init(){
-    Natives_Init("VipM");
-
-    Natives_Reg("Modules_Register");
-    Natives_Reg("Modules_AddParams");
-    Natives_Reg("Modules_RegisterEvent");
-    Natives_Reg("Modules_IsActive");
-    Natives_Reg("Modules_GetParams");
+    register_native("VipM_Modules_Register", "@_Modules_Register");
+    register_native("VipM_Modules_AddParams", "@_Modules_AddParams");
+    register_native("VipM_Modules_RegisterEvent", "@_Modules_RegisterEvent");
+    register_native("VipM_Modules_IsActive", "@_Modules_IsActive");
+    register_native("VipM_Modules_GetParams", "@_Modules_GetParams");
 }
 
 T_ModuleType:@_Modules_Register(const PluginId) {

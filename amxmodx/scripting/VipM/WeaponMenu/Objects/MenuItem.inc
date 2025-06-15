@@ -57,7 +57,7 @@ bool:MenuItem_Read(const JSON:itemJson, item[S_MenuItem]) {
 }
 
 Array:MenuItem_ReadList(const JSON:itemsJson, &Array:items = Invalid_Array) {
-    ArrayCreateIfNotCreated(items, S_MenuItem, 1);
+    ArrayCreateIfNotCreated(items, S_MenuItem);
     
     new JSON:linkedJson;
     PCJson_HandleLinkedValue(itemsJson, linkedJson);

@@ -115,7 +115,7 @@ T_VipUnit:VipUnit_Read(const JSON:valueJson) {
 }
 
 Array:VipUnit_ReadList(const JSON:jVipUnits, &Array:aVipUnits = Invalid_Array) {
-    ArrayCreateIfNotCreated(aVipUnits, 1, 1);
+    ArrayCreateIfNotCreated(aVipUnits);
 
     if (!json_is_array(jVipUnits)) {
         new T_VipUnit:iVipUnit = VipUnit_Read(jVipUnits);

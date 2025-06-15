@@ -113,7 +113,7 @@ T_LimitUnit:LimitUnit_Read(const JSON:valueJson) {
 }
 
 Array:LimitUnit_ReadList(const JSON:jLimitUnits, &Array:aLimitUnits = Invalid_Array) {
-    ArrayCreateIfNotCreated(aLimitUnits, 1, 1);
+    ArrayCreateIfNotCreated(aLimitUnits);
 
     if (!json_is_array(jLimitUnits)) {
         new T_LimitUnit:iLimitUnit = LimitUnit_Read(jLimitUnits);

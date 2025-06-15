@@ -1,25 +1,22 @@
 #include <amxmodx>
 #include <VipM/Limits>
-#include "VipM/Natives"
 
 #include "VipM/Core/Objects/Limits/Type"
 #include "VipM/Core/Objects/Limits/Unit"
 #include "VipM/Core/Objects/Param"
 
 API_Limits_Init() {
-    Natives_Init("VipM");
+    register_native("VipM_Limits_RegisterType", "@_Limits_RegisterType");
+    register_native("VipM_Limits_AddTypeParams", "@_Limits_AddTypeParams");
+    register_native("VipM_Limits_RegisterTypeEvent", "@_Limits_RegisterTypeEvent");
 
-    Natives_Reg("Limits_RegisterType");
-    Natives_Reg("Limits_AddTypeParams");
-    Natives_Reg("Limits_RegisterTypeEvent");
+    register_native("VipM_Limits_ReadFromJson", "@_Limits_ReadFromJson");
+    register_native("VipM_Limits_ReadListFromJson", "@_Limits_ReadListFromJson");
 
-    Natives_Reg("Limits_ReadFromJson");
-    Natives_Reg("Limits_ReadListFromJson");
+    register_native("VipM_Limits_SetStaticValue", "@_Limits_SetStaticValue");
 
-    Natives_Reg("Limits_SetStaticValue");
-
-    Natives_Reg("Limits_Execute");
-    Natives_Reg("Limits_ExecuteList");
+    register_native("VipM_Limits_Execute", "@_Limits_Execute");
+    register_native("VipM_Limits_ExecuteList", "@_Limits_ExecuteList");
 }
 
 // native VipM_Limits_RegisterType(const sLimitTypeName[], const bool:bForPlayer = true, const bool:bStatic = false);
