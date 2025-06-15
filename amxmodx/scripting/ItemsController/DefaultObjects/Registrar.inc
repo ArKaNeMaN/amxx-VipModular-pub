@@ -14,6 +14,7 @@
 #include "ItemsController/DefaultObjects/ItemType/Speed"
 #include "ItemsController/DefaultObjects/ItemType/Weapon"
 #include "ItemsController/DefaultObjects/ItemType/CustomWeapon"
+#include "ItemsController/DefaultObjects/ItemType/Function"
 
 public IC_ItemType_OnInited() {
     // Затычка для тех мест, где при отсутствии предметов вылезает ошибка/варн
@@ -33,6 +34,7 @@ public IC_ItemType_OnInited() {
     DefaultObjects_ItemType_Speed_Register();
     DefaultObjects_ItemType_Weapon_Register();
     DefaultObjects_ItemType_CustomWeapon_Register();
+    DefaultObjects_ItemType_Function_Register();
 }
 
 #include "ItemsController/DefaultObjects/ParamType/Item"
