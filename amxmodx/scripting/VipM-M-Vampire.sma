@@ -14,7 +14,7 @@ public stock const PluginDescription[] = "Vip modular`s module - Vampire";
 
 new const MODULE_NAME[] = "Vampire";
 
-public VipM_Modules_OnInited(){
+public VipM_Modules_OnInited() {
     register_plugin(PluginName, PluginVersion, PluginAuthor);
     register_dictionary("VipM-Vampire.ini");
 
@@ -32,11 +32,11 @@ public VipM_Modules_OnInited(){
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnActivated, "@Event_ModuleActivate");
 }
 
-@Event_ModuleActivate(){
+@Event_ModuleActivate() {
     RegisterHookChain(RG_CBasePlayer_Killed, "@Event_PlayerKilled", true);
 }
 
-@Event_PlayerKilled(const VictimId, UserId, InflictorId){
+@Event_PlayerKilled(const VictimId, UserId, InflictorId) {
     if (
         UserId == VictimId
         || !is_user_alive(UserId)

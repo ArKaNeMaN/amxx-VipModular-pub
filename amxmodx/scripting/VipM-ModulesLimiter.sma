@@ -1,6 +1,7 @@
 #include <amxmodx>
 #include <json>
 #include <VipModular>
+#include <ParamsController>
 #include "VipM/Utils"
 #include "VipM/DebugMode"
 #include "VipM/ArrayTrieUtils"
@@ -11,14 +12,14 @@ public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = _VIPM_PLUGIN_URL;
 public stock const PluginDescription[] = "Modules activation controller";
 
-new const MODULES_CONFIG_FILE[] = "Modules";
+new const CONFIG_FILE_PATH[] = "Modules.json";
 
 new Trie:g_tModulesLimits = Invalid_Trie;
 
 public VipM_OnLoaded() {
     register_plugin(PluginName, PluginVersion, PluginAuthor);
     
-    g_tModulesLimits = LoadModulesLimitsFromFile(MODULES_CONFIG_FILE, g_tModulesLimits);
+    g_tModulesLimits = LoadModulesLimitsFromFile(PCPath_iMakePath(fmt("%s/%s", VIPM_CONFIGS_FOLDER_NAME, CONFIG_FILE_PATH)));
 }
 
 public VipM_Modules_OnActivate(const sModuleName[]) {
@@ -42,21 +43,21 @@ public VipM_Modules_OnActivate(const sModuleName[]) {
     return VIPM_CONTINUE;
 }
 
-Trie:LoadModulesLimitsFromFile(const sFileName[], Trie:tModules = Invalid_Trie) {
-    if (tModules == Invalid_Trie) {
-        tModules = TrieCreate();
+Trie:LoadModulesLimitsFromFile(const filePath[], &Trie:modules = Invalid_Trie) {
+    if (modules == Invalid_Trie) {
+        modules = TrieCreate();
     }
 
-    new JSON:jFile = PCJson_ParseFile(GET_FILE_JSON_PATH(sFileName));
+    new JSON:jFile = PCJson_ParseFile(filePath);
     if (jFile == Invalid_JSON) {
-        log_error(0, "Invalid JSON syntax. File `%s`.", GET_FILE_JSON_PATH(sFileName));
-        return tModules;
+        log_error(0, "Invalid JSON syntax. File `%s`.", filePath);
+        return modules;
     }
 
     if (!json_is_array(jFile)) {
         PCJson_LogForFile(jFile, "WARNING", "Root value must be an array.");
         PCJson_Free(jFile);
-        return tModules;
+        return modules;
     }
 
     json_array_foreach_value (jFile: i => jItem) {
@@ -82,12 +83,12 @@ Trie:LoadModulesLimitsFromFile(const sFileName[], Trie:tModules = Invalid_Trie) 
         }
 
         ArrayForeachString (aModuleNames: j => sModuleName[VIPM_MODULES_TYPE_NAME_MAX_LEN]) {
-            if (TrieKeyExists(tModules, sModuleName)) {
+            if (TrieKeyExists(modules, sModuleName)) {
                 PCJson_LogForFile(jItem, "WARNING", "Duplicate limits for module `%s`.", sModuleName);
                 continue;
             }
 
-            TrieSetCell(tModules, sModuleName, aLimits);
+            TrieSetCell(modules, sModuleName, aLimits);
         }
         
         json_free(jItem);
@@ -95,5 +96,5 @@ Trie:LoadModulesLimitsFromFile(const sFileName[], Trie:tModules = Invalid_Trie) 
     }
 
     PCJson_Free(jFile);
-    return tModules;
+    return modules;
 }

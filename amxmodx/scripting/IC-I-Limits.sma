@@ -9,34 +9,20 @@ public stock const PluginName[] = "[IC-I] Limits";
 public stock const PluginVersion[] = IC_VERSION;
 public stock const PluginAuthor[] = "ArKaNeMaN";
 public stock const PluginURL[] = "https://github.com/ArKaNeMaN/amxx-VipModular-pub";
-public stock const PluginDescription[] = "[ItemsController-Item] Items using limtis.";
+public stock const PluginDescription[] = "[ItemsController-Item] Items using limits.";
 
 public IC_ItemType_OnInited() {
     register_plugin(PluginName, PluginVersion, PluginAuthor);
 
-    IC_ItemType_SimpleRegister(
+    new T_IC_ItemType:type = IC_ItemType_SimpleRegister(
         .name = "If",
-        .onRead = "@OnIfRead",
         .onGive = "@OnIfGive"
     );
-}
-
-@OnIfRead(const JSON:instanceJson, const Trie:p) {
-    if (!json_object_has_value(instanceJson, "Items")) {
-        PCJson_LogForFile(instanceJson, "ERROR", "Param `Items` required for item `If`.");
-        return IC_RET_READ_FAIL;
-    }
-
-    if (!json_object_has_value(instanceJson, "Limits")) {
-        PCJson_LogForFile(instanceJson, "ERROR", "Limits `Items` required for item `If`.");
-        return IC_RET_READ_FAIL;
-    }
-    
-    TrieSetCell(p, "Items", IC_Item_ReadArrayFromJson(json_object_get_value(instanceJson, "Items")));
-    TrieSetCell(p, "ElseItems", IC_Item_ReadArrayFromJson(json_object_get_value(instanceJson, "ElseItems")));
-    TrieSetCell(p, "Limits", VipM_Limits_ReadListFromJson(json_object_get_value(instanceJson, "Limits")));
-
-    return IC_RET_READ_SUCCESS;
+    IC_ItemType_AddParams(type,
+        "Limits", "VipM-Limits", true,
+        "Items", "IC-Items", false,
+        "ElseItems", "IC-Items", false
+    );
 }
 
 @OnIfGive(const playerIndex, const Trie:p) {

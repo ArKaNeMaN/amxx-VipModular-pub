@@ -16,7 +16,7 @@ public stock const PluginDescription[] = "Vip modular`s module - SpawnHealth";
 
 new const MODULE_NAME[] = "SpawnHealth";
 
-public VipM_Modules_OnInited(){
+public VipM_Modules_OnInited() {
     register_plugin(PluginName, PluginVersion, PluginAuthor);
 
     VipM_Modules_Register(MODULE_NAME, true);
@@ -37,11 +37,11 @@ public VipM_Modules_OnInited(){
     VipM_Modules_RegisterEvent(MODULE_NAME, Module_OnActivated, "@Event_ModuleActivate");
 }
 
-@Event_ModuleActivate(){
+@Event_ModuleActivate() {
     RegisterHookChain(RG_CBasePlayer_Spawn, "@Event_PlayerSpawned", true);
 }
 
-@Event_PlayerSpawned(const UserId){
+@Event_PlayerSpawned(const UserId) {
     if (!is_user_alive(UserId)) {
         return;
     }

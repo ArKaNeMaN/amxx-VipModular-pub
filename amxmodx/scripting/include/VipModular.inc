@@ -9,8 +9,14 @@
 stock const VIPM_LIBRARY[] = "VipModular";
 #define _VIPM_VERSION "5.0.0-b13"
 stock const VIPM_VERSION[] = _VIPM_VERSION;
-stock const VIPM_CFG_PATH[] = "plugins/VipModular";
 #define _VIPM_PLUGIN_URL "https://github.com/ArKaNeMaN/amxx-VipModular-pub"
+
+// deprecated
+stock const VIPM_CFG_PATH[] = "plugins/VipModular";
+// new
+stock const VIPM_CONFIGS_FOLDER_NAME[] = "VipModular";
+stock const VIPM_VIPS_CONFIG_FILE_PATH[] = "Vips.json";
+stock const VIPM_VIPS_CONFIG_DIR_PATH[] = "Vips";
 
 /**
  * Получение пути, относительно папки с конфигами вип-системы или AmxModX.
@@ -21,9 +27,12 @@ stock const VIPM_CFG_PATH[] = "plugins/VipModular";
  * @param Path      Путь / Название файла.
  * @param sOut      Буффер для записи полученного пути.
  * @param iOutLen   Размер буфера.
+ * 
+ * @deprecated Use PCPath_MakePath() from ParamsController instead
  *
  * @return  Кол-во записанных в буфер ячеек.
  */
+#pragma deprecated Use PCPath_MakePath() from ParamsController instead
 stock VipM_GetCfgPath(const sPath[] = "", sOut[], const iOutLen){
     static __amxx_configsdir[PLATFORM_MAX_PATH];
     if (!__amxx_configsdir[0]) {
@@ -46,9 +55,12 @@ stock VipM_GetCfgPath(const sPath[] = "", sOut[], const iOutLen){
  *          Иначе из папки вип-системы (см. константу VIPM_CFG_PATH).
  *
  * @param Path      Путь / Название файла.
+ * 
+ * @deprecated Use PCPath_iMakePath() from ParamsController instead
  *
  * @return  Полученный путь.
  */
+#pragma deprecated Use PCPath_iMakePath() from ParamsController instead
 stock VipM_iGetCfgPath(const sPath[] = "") {
     new sRetPath[PLATFORM_MAX_PATH];
     VipM_GetCfgPath(sPath, sRetPath, charsmax(sRetPath));

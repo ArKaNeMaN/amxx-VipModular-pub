@@ -1,14 +1,12 @@
 #include <amxmodx>
 #include <VipModular>
+#include <ParamsController>
 #include "VipM/DebugMode"
 #include "VipM/ArrayTrieUtils"
 #include "VipM/Utils"
 #include "VipM/Forwards"
 #include "VipM/Core/Objects/Modules/Type"
 #include "VipM/Core/Objects/Limits/Type"
-
-#pragma semicolon 1
-#pragma compress 1
 
 public stock const PluginName[] = "Vip Modular";
 public stock const PluginVersion[] = _VIPM_VERSION;
@@ -33,9 +31,9 @@ public plugin_precache() {
     SrvCmds_Init();
     Forwards_RegAndCall("VipM_OnInitModules", ET_IGNORE); // deprecated
     
-    VipsManager_SetRootDir(VipM_iGetCfgPath(""));
-    VipsManager_LoadFromFile(VipM_iGetCfgPath("Vips.json"));
-    VipsManager_LoadFromFolder(VipM_iGetCfgPath("Vips"));
+    VipsManager_SetRootDir(PCPath_iMakePath(VIPM_CONFIGS_FOLDER_NAME));
+    VipsManager_LoadFromFile(PCPath_iMakePath(fmt("%s/%s", VIPM_CONFIGS_FOLDER_NAME, VIPM_VIPS_CONFIG_FILE_PATH)));
+    VipsManager_LoadFromFolder(PCPath_iMakePath(fmt("%s/%s", VIPM_CONFIGS_FOLDER_NAME, VIPM_VIPS_CONFIG_DIR_PATH)));
 
     ModuleType_ActivateUsed();
 
