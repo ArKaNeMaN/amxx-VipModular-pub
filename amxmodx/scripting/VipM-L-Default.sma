@@ -172,8 +172,8 @@ public client_authorized(UserId, const AuthId[]){
     copy(g_sSteamIds[UserId], charsmax(g_sSteamIds[]), AuthId);
     get_user_ip(UserId, g_sIps[UserId], charsmax(g_sIps[]), true);
     
-    VipM_Limits_SetStaticValue("WasAlive", false, playerIndex);
-    VipM_Limits_SetStaticValue("WasKilled", true, playerIndex);
+    VipM_Limits_SetStaticValue("WasAlive", false, UserId);
+    VipM_Limits_SetStaticValue("WasKilled", true, UserId);
 }
 
 @OnRestartRound() {
